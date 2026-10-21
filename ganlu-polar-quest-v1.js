@@ -178,8 +178,23 @@ function renderReward(){
  el('polarQuestQuestion').hidden=true;
  el('polarQuestFinish').hidden=true;
  el('polarQuestReward').hidden=false;
- el('polarRewardIcon').innerHTML=atlasArtwork(chapterIndex);
- el('polarRewardIcon').className='polarAwardEmoji atlasRewardEmblem theme-'+atlasStyles[chapterIndex];
+ const rewardEmblem=el('polarRewardIcon');
+ // Both sides reuse the exact collectible SVG for this chapter.
+ const artwork=atlasArtwork(chapterIndex);
+ rewardEmblem.className='polarAwardEmoji atlasRewardEmblem theme-'+atlasStyles[chapterIndex];
+ rewardEmblem.innerHTML=
+   '<span class="atlasRewardOrbit" aria-hidden="true"></span>'
+  +'<span class="atlasRewardCoin" aria-hidden="true">'
+  +'<span class="atlasRewardCoinFace atlasRewardCoinFront">'+artwork+'</span>'
+  +'<span class="atlasRewardCoinFace atlasRewardCoinBack">'+artwork+'</span>'
+  +'</span>'
+  +'<span class="atlasRewardSpark atlasRewardSpark1" aria-hidden="true"></span>'
+  +'<span class="atlasRewardSpark atlasRewardSpark2" aria-hidden="true"></span>'
+  +'<span class="atlasRewardSpark atlasRewardSpark3" aria-hidden="true"></span>';
+ // Restart the one-time full 360° spin for every new chapter, without affecting saved progress.
+ rewardEmblem.classList.remove('rewardSpin3D');
+ void rewardEmblem.offsetWidth;
+ rewardEmblem.classList.add('rewardSpin3D');
  justUnlocked=chapterIndex;
  updateSummary();
  el('polarRewardName').textContent=ch.reward+' · 图鉴解锁';
