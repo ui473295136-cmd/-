@@ -1,19 +1,75 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>船客 · 成交参谋</title><meta name="theme-color" content="#6b5344"><meta name="robots" content="noindex,nofollow"><link rel="stylesheet" href="./sales-copilot/style.css"></head><body>
-<div class="shell"><aside class="sidebar"><div class="logo"><span class="mark">✦</span><div><strong>船客 · 成交参谋</strong><small>POLAR SALES COPILOT</small></div></div><p class="sect">工作空间</p><nav><button class="nav active" data-page="home">◈　客户分析</button><button class="nav" data-page="cases">▤　客户档案 <span id="total">0</span></button><button class="nav" data-page="library">☷　异议话术库</button><button class="nav" data-page="docs">▣　产品资料</button></nav><div class="bottom">◉　仅保存在当前浏览器<br><small>本地辅助版 · v1.0</small></div></aside>
-<div class="right"><header><b>船客旅行 <span>/</span> <span id="trail">客户分析</span></b><small>不承诺库存 · 不制造虚假紧迫感</small></header>
-<main><section class="page active" id="home"><div class="title-row"><div><div class="eyebrow">SALES INTELLIGENCE</div><h1>客户这句话，该怎么接？</h1><p>把客户顾虑说清楚，再给销售一条有方向的回复。</p></div><button class="ghost" id="demo">试用案例 ↗</button></div>
-<div class="stats"><div><small>客户档案</small><strong id="countCases">0</strong><span>本机保存</span></div><div><small>累计分析</small><strong id="countRun">0</strong><span>本地生成</span></div><div><small>待跟进</small><strong id="countDue">0</strong><span>已设置日期</span></div></div>
-<div class="columns"><article class="panel"><div class="panel-title"><i>01</i><div><h2>客户对话</h2><p>粘贴文字或识别聊天截图</p></div></div><div class="twocol"><label>客户备注<input id="client" maxlength="50" placeholder="如：王姐·南极半岛"></label><label>沟通阶段<select id="stage"><option>初次咨询</option><option>方案对比</option><option>已报价</option><option>准备预订</option><option>暂缓考虑</option></select></label></div>
-<label>客户原话 / 完整对话<textarea id="chat" placeholder="建议保留前后5—10轮对话，例如：&#10;客户：你们比同行贵两万，我再考虑考虑吧。&#10;销售：我们这个服务比较好。"></textarea></label>
-<div class="upload"><input type="file" accept="image/png,image/jpeg,image/webp" multiple id="files" hidden><div><b>⌑　微信聊天截图识别</b><button class="tiny" id="choose">上传图片</button></div><p>支持多张图片；在浏览器内识别，识别结果请手动核实。</p><div id="thumbs"></div><small id="ocrMsg"></small></div>
-<p class="sub">常见问题 · 快速试填</p><div class="chips"><button data-demo="price">嫌价格贵</button><button data-demo="silent">已读不回</button><button data-demo="seasick">担心晕船</button><button data-demo="family">家人商量</button><button data-demo="compare">对比同行</button><button data-demo="date">出发时间</button><button data-demo="trust">服务保障</button><button data-demo="pause">客户暂缓</button></div>
-<div class="foot"><small>● 默认脱敏保存</small><button class="primary" id="run">分析客户对话 →</button></div></article>
-<article class="panel output"><div class="panel-title"><i>02</i><div><h2>分析结果</h2><p>判断依据、回复建议和下一步动作</p></div><span class="pill">本地规则辅助</span></div>
-<div id="empty" class="empty"><div>✧</div><h3>让销售的每一句话更有方向</h3><p>输入对话后，生成客户顾虑、待核实事项、三种微信话术和跟进建议。</p></div>
-<div id="result" hidden><div class="signal"><small>首要沟通阻力</small><h3 id="issue"></h3><p id="desc"></p><div id="tags"></div></div><div class="group"><div class="group-head">判断依据 <small>不把猜测当事实</small></div><p id="proof"></p></div><div class="group"><div class="group-head">回复前先核实</div><ul id="checks"></ul></div><div class="group"><div class="group-head">三种可复制微信回复</div><div class="tabs"><button class="active" data-tone="natural">自然聊天</button><button data-tone="professional">专业解释</button><button data-tone="advance">适度推进</button></div><div class="reply"><div><small id="toneName"></small><button id="copy">⧉ 复制回复</button></div><p id="reply"></p></div></div><div class="step"><b>→ 下一步动作</b><p id="next"></p><small id="avoid"></small></div><div class="foot"><button class="ghost" id="save">保存客户记录</button><button class="tiny" id="clear">清空输入</button></div></div></article></div>
-<p class="disclaimer">本版使用场景规则，不调用大模型。推断仅供参考；重要承诺、航次库存、报价和政策需要人工核实。</p></section>
-<section class="page" id="cases"><div class="title-row"><div><div class="eyebrow">CUSTOMER FILES</div><h1>客户档案</h1><p>跟进时间、阶段、关键顾虑都可以找到。</p></div><div class="backup-actions"><button class="ghost" id="import">导入备份 ↑</button><input type="file" id="importFile" accept=".json,application/json" hidden><button class="ghost" id="export">导出备份 ↓</button></div></div><div class="filters"><input id="searchCases" placeholder="搜索客户、聊天内容"><select id="filterStage"><option value="">所有阶段</option><option>初次咨询</option><option>方案对比</option><option>已报价</option><option>准备预订</option><option>暂缓考虑</option></select></div><div id="caseList" class="list"></div></section>
-<section class="page" id="library"><div class="title-row"><div><div class="eyebrow">PLAYBOOK</div><h1>高频异议处理</h1><p>不是万能套路，是基于真实问题的处理框架。</p></div></div><div id="libraryList" class="cards"></div></section>
-<section class="page" id="docs"><div class="title-row"><div><div class="eyebrow">KNOWLEDGE BASE</div><h1>船客内部产品资料</h1><p>只录入核实过的资料。旧政策不会自动变成现价。</p></div></div><div class="panel docForm"><h2>新增资料摘要</h2><div class="twocol"><label>资料名称<input id="docName" placeholder="如：2027南极半岛优惠政策"></label><label>资料分类<select id="docType"><option>航次与行程</option><option>价格政策</option><option>船舶资料</option><option>签证及出行</option><option>常见问题</option></select></label></div><label>已经核实的资料内容<textarea id="docText" class="short" placeholder="粘贴政策正文、特殊条款、适用航次和信息来源。"></textarea></label><div class="foot"><label class="expiry">有效至 <input type="date" id="docExpires"></label><button id="saveDoc" class="primary">保存资料</button></div></div><div class="filters"><input id="searchDocs" placeholder="查找船名、航次或政策"></div><div class="list" id="docsList"></div></section>
-</main></div></div>
-<div id="toast" role="status" aria-live="polite"></div><script src="./sales-copilot/engine.js" defer></script><script src="./sales-copilot/app.js" defer></script></body></html>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#243d49">
+<meta name="robots" content="noindex,nofollow">
+<title>船客 · 生图工坊 | Polar Visual Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./sales-copilot/studio.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <a class="brand" href="./sales-copilot.html"><span class="brand-mark">船</span><span><b>船客 · 生图工坊</b><small>POLAR VISUAL STUDIO</small></span></a>
+    <div class="side-label">创作工作台</div>
+    <button class="side-link active" data-scroll="workspace"><span class="side-icon">✳</span>行程转视觉</button>
+    <button class="side-link" data-scroll="copyPanel"><span class="side-icon">文</span>配套文案</button>
+    <button class="side-link" data-scroll="promptPanel"><span class="side-icon">✧</span>GPT 生图指令</button>
+    <div class="side-note"><span class="note-star">✦</span><b>把行程，变成作品。</b><p>先核对事实，再交给 GPT 生图。价格、日期、船名等关键信息由你确认后排版。</p></div>
+    <div class="side-bottom"><span class="status-dot"></span>本地创作模式 <span class="side-version">V1.0</span></div>
+  </aside>
+  <main class="main-area">
+    <header class="topbar"><div class="crumb"><span>船客创意工具</span><i>/</i><b>生图工坊</b></div><div class="top-right"><span class="privacy"><span>●</span> 文件仅在当前浏览器解析</span><span class="avatar">CK</span></div></header>
+    <section class="welcome"><div class="welcome-copy"><div class="eyebrow"><span></span> FROM ITINERARY TO VISUAL</div><h1>一份行程，<em>一键开启</em><br>视觉创作。</h1><p>上传 Word、PDF 或行程文本，整理核心卖点，生成海报文案与 GPT 生图指令。图片生成后，还可以导入底图，自动排版并导出成品。</p><div class="welcome-tags"><span>01 · 提取行程</span><span>02 · 选择风格</span><span>03 · GPT 生图</span><span>04 · 导出成品</span></div></div><div class="hero-art" aria-hidden="true"><div class="hero-orbit"></div><div class="hero-sun"></div><div class="mountain mountain-back"></div><div class="mountain mountain-front"></div><div class="hero-sea"></div><div class="hero-spark s1">✦</div><div class="hero-spark s2">✧</div><div class="hero-art-caption"><span>FIELD NOTES / 01</span><b>BEYOND THE ORDINARY</b></div></div></section>
+    <div class="work-grid" id="workspace">
+      <div class="left-column">
+        <section class="panel">
+          <div class="panel-heading"><div><span class="step-no">01</span><h2>导入行程资料</h2></div><span class="heading-note">WORD / PDF / TXT</span></div>
+          <label class="dropzone" id="dropzone" for="itineraryFile"><input id="itineraryFile" type="file" accept=".docx,.pdf,.txt,.md,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"><span class="upload-icon">↥</span><b>拖入行程文件，或点击选择</b><span class="drop-hint">支持 DOCX、PDF、TXT、MD，单个文件最大 20MB</span><span class="file-chip" id="fileChip" hidden></span></label>
+          <div class="field-label"><label for="itineraryText">行程原文 / 识别内容</label><span id="charCount">0 字</span></div><textarea id="itineraryText" rows="7" placeholder="也可以直接粘贴行程内容。建议包含：行程日期、天数、目的地、船名、每天安排、费用包含、价格政策和报名条件。"></textarea>
+          <div class="inline-actions"><span id="parseStatus" class="subtle-status">内容只在本页处理，不会自动上传到服务器。</span><button class="btn btn-soft" id="extractBtn">提取行程要点 ↗</button></div>
+          <div class="extracted" id="extracted" hidden><div class="extracted-title"><span>✓</span> 已整理出的信息 <small>请人工核对后用于发布</small></div><div class="extracted-grid" id="extractedGrid"></div></div>
+        </section>
+        <section class="panel">
+          <div class="panel-heading"><div><span class="step-no">02</span><h2>选择创作方向</h2></div><span class="heading-note">VISUAL DIRECTION</span></div>
+          <div class="field-label"><span>视觉风格</span><span class="small-muted">选择一种主风格</span></div>
+          <div class="style-grid" id="styleGrid">
+            <button class="style-card selected" data-style="editorial"><span class="style-preview editorial-preview"><i>POLAR</i><b>极地纪实</b><small>PHOTO ESSAY</small></span><span class="style-name">高级旅行画册</span><span class="style-desc">真实摄影 · 克制留白</span><span class="selected-mark">✓</span></button>
+            <button class="style-card" data-style="luxury"><span class="style-preview luxury-preview"><i>THE</i><b>极境之旅</b><small>PRIVATE COLLECTION</small></span><span class="style-name">轻奢杂志风</span><span class="style-desc">深色调 · 精致金色</span><span class="selected-mark">✓</span></button>
+            <button class="style-card" data-style="documentary"><span class="style-preview doc-preview"><i>FIELD</i><b>探险手记</b><small>EXPEDITION LOG</small></span><span class="style-name">探险纪实风</span><span class="style-desc">地图感 · 科考手记</span><span class="selected-mark">✓</span></button>
+            <button class="style-card" data-style="minimal"><span class="style-preview minimal-preview"><i>01 / 07</i><b>去看世界尽头</b><small>LESS, BUT BETTER</small></span><span class="style-name">极简高级风</span><span class="style-desc">大留白 · 强排版</span><span class="selected-mark">✓</span></button>
+            <button class="style-card" data-style="cinematic"><span class="style-preview cinema-preview"><i>ANTARCTICA</i><b>冰海史诗</b><small>WIDE ANGLE</small></span><span class="style-name">电影叙事风</span><span class="style-desc">宏大景别 · 氛围光</span><span class="selected-mark">✓</span></button>
+            <button class="style-card" data-style="illustration"><span class="style-preview illus-preview"><i>TRAVEL NOTES</i><b>极地漫游</b><small>ILLUSTRATED</small></span><span class="style-name">艺术插画风</span><span class="style-desc">手绘质感 · 轻松友好</span><span class="selected-mark">✓</span></button>
+          </div>
+          <div class="two-fields"><div><label for="format">出图版式</label><select id="format"><option value="xhs">小红书内页 / 3:4</option><option value="poster">竖版宣传海报 / 3:4</option><option value="story">视频号封面 / 16:9</option><option value="square">朋友圈方图 / 1:1</option><option value="storyTall">竖屏封面 / 9:16</option><option value="long">行程长图 / 1:4</option></select></div><div><label for="audience">目标受众</label><select id="audience"><option value="高品质旅行人群">高品质旅行人群</option><option value="退休及银发旅行者">退休及银发旅行者</option><option value="首次去南北极的旅行者">首次去南北极的旅行者</option><option value="摄影与自然爱好者">摄影与自然爱好者</option><option value="家庭与朋友结伴出行">家庭与朋友结伴出行</option></select></div></div>
+          <div class="two-fields"><div><label for="projectName">产品 / 行程名称</label><input id="projectName" placeholder="例如：南极半岛深度探险"></div><div><label for="brandName">品牌署名</label><input id="brandName" value="船客旅行 · 媛媛甄选"></div></div>
+          <div class="two-fields"><div><label for="mainTitle">海报主标题</label><input id="mainTitle" placeholder="留空则自动拟定"></div><div><label for="subtitle">副标题 / 一句话卖点</label><input id="subtitle" placeholder="留空则按行程内容提炼"></div></div>
+          <div class="field-label"><label for="highlights">希望重点呈现的卖点</label><span class="small-muted">一条一行，最多 5 条</span></div><textarea id="highlights" rows="3" placeholder="例如：南极半岛登陆探索&#10;冲锋舟巡游冰山与野生动物&#10;船上专家讲座"></textarea>
+          <div class="two-fields"><div><label for="priceInfo">价格 / 出发日期（选填）</label><input id="priceInfo" placeholder="仅填写已核实的信息"></div><div><label for="callToAction">行动提示</label><select id="callToAction"><option value="了解完整行程">了解完整行程</option><option value="咨询航期与舱位">咨询航期与舱位</option><option value="收藏这份旅行灵感">收藏这份旅行灵感</option><option value="联系旅行顾问">联系旅行顾问</option><option value="不加销售引导">不加销售引导</option></select></div></div>
+          <div class="notice"><span>✧</span><p><b>重要信息不让 AI 猜。</b>日期、价格、船名、包含项目和名额等信息，请从原始文件核对后再使用；没有提供的内容不会自动编造。</p></div>
+          <button class="btn btn-primary btn-generate" id="generateBtn"><span>✦</span> 生成海报方案与配套文案 <i>→</i></button>
+        </section>
+      </div>
+      <div class="right-column">
+        <section class="panel preview-panel"><div class="panel-heading"><div><span class="step-no">03</span><h2>海报预览</h2></div><span class="live-pill"><span></span> LIVE PREVIEW</span></div>
+          <div class="poster-stage"><div class="poster-frame" id="posterFrame"><canvas id="posterCanvas" width="750" height="1000" aria-label="海报预览画布"></canvas></div></div>
+          <div class="preview-foot"><span id="previewSize">3:4 · 竖版海报</span><span>文字为矢量排版，可后期调整</span></div>
+          <div class="image-import"><div class="image-import-head"><b>已有 GPT 生成的底图？</b><span>导入后自动排版</span></div><label class="image-upload" for="backgroundFile"><span>＋</span> 导入 GPT 生图底图 <input id="backgroundFile" type="file" accept="image/png,image/jpeg,image/webp"></label><button class="text-btn" id="removeBackground" hidden>移除底图，恢复模板背景</button><p>建议先用下方 GPT 指令生成无文字底图，再导入这里叠加清晰中文标题，避免 AI 生成错字。</p></div>
+          <div class="preview-actions"><button class="btn btn-soft" id="refreshPreview">更新预览</button><button class="btn btn-primary" id="downloadPoster">下载海报 PNG ↓</button></div>
+        </section>
+        <section class="panel output-panel" id="copyPanel"><div class="panel-heading"><div><span class="step-no">04</span><h2>配套发布文案</h2></div><span class="heading-note">COPYWRITING</span></div>
+          <div class="output-tabs"><button class="output-tab active" data-copy="social">社交平台文案</button><button class="output-tab" data-copy="short">精简版</button><button class="output-tab" data-copy="moments">朋友圈版</button></div><div class="copy-output" id="copyOutput">生成海报方案后，这里会同步生成适合发布的配套文案。文案会基于你提供的行程信息，不自动添加未经核实的价格、日期或承诺。</div><div class="output-bottom"><span id="copyCount">等待生成</span><button class="copy-btn" id="copyCopy">复制文案 ↗</button></div>
+        </section>
+        <section class="panel output-panel" id="promptPanel"><div class="panel-heading"><div><span class="step-no">05</span><h2>GPT 生图指令</h2></div><span class="heading-note">GPT IMAGE</span></div><p class="panel-intro">这里生成的是给 GPT 生图智能体使用的完整指令。网页不会假装自己已经调用 GPT；点击下方按钮会复制指令并打开 ChatGPT，由 GPT 生成底图。</p><div class="prompt-output" id="promptOutput">选择视觉风格并生成海报方案后，这里会生成可直接交给 GPT 生图的详细提示词。</div><div class="prompt-actions"><button class="btn btn-soft" id="copyPrompt">复制生图指令</button><button class="btn btn-primary" id="openChatGPT">复制并打开 GPT 生图 ↗</button></div><div class="prompt-tip"><span>ⓘ</span> 生成底图后保存图片，再导入右侧“GPT 生图底图”区域，即可叠加真实文字并下载成品。</div></section>
+      </div>
+    </div>
+    <footer class="page-footer"><span>船客旅行 · 创意工作台</span><span>事实由行程资料提供 · 视觉由 GPT 生图 · 中文由本页排版</span><span>POLAR VISUAL STUDIO</span></footer>
+  </main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="./sales-copilot/studio.js"></script>
+</body></html>
