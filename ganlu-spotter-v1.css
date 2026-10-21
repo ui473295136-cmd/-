@@ -122,3 +122,63 @@
  .spotterGoldStar,.spotterAwardBackdrop:before,.spotterAwardBackdrop:after,.spotterCardOrbit,.spotterAwardCard:after{animation:none!important}
  .spotterAwardVisible .spotterAwardCard{animation:none!important;opacity:1;transform:none}
 }
+/* V2: Real photographic expedition posters. Nothing identifies mistakes before a click. */
+.spotterPoster.spotterPhotoScene{height:650px;overflow:hidden;border:1px solid rgba(255,255,255,.86);background:#14374a;box-shadow:0 16px 40px rgba(12,49,68,.2);border-radius:13px}
+.spotterPhotoScene .spotterPosterArt{position:absolute;inset:0;z-index:-2;overflow:hidden;background:linear-gradient(145deg,#142f44,#6b96a0)}
+.spotterPhotoScene .spotterPhotoFallback{position:absolute;inset:0;z-index:0;background:linear-gradient(130deg,#122c40,#3d7684 48%,#9ec5c0)}
+.spotterPhotoScene .spotterPhoto{display:block;position:absolute;z-index:1;inset:0;width:100%;height:100%;object-fit:cover;object-position:center center;filter:saturate(.82) contrast(1.045)}
+.spotterPhotoScene.spotterTheme-georgia .spotterPhoto{object-position:center 59%;filter:saturate(.85) contrast(1.06)}
+.spotterPhotoScene.spotterTheme-flight .spotterPhoto{object-position:center 64%;filter:saturate(.75) contrast(1.08)}
+.spotterPhotoScene.spotterTheme-arctic .spotterPhoto{object-position:center 53%;filter:saturate(.78) contrast(1.02)}
+.spotterPhotoScene.spotterTheme-grand .spotterPhoto{object-position:center 49%;filter:saturate(.85) contrast(1.05)}
+.spotterPhotoScene:after{position:absolute;inset:0;z-index:-1;background:linear-gradient(180deg,rgba(5,24,39,.84) 0%,rgba(8,32,47,.42) 26%,rgba(7,27,38,.16) 43%,rgba(7,22,36,.20) 70%,rgba(4,21,31,.83) 100%),linear-gradient(90deg,rgba(8,24,35,.2),transparent 80%);content:"";pointer-events:none}
+.spotterPhotoScene .spotterPhotoGrain{position:absolute;inset:0;z-index:-1;background:repeating-linear-gradient(97deg,transparent 0px,rgba(243,240,217,.019) 2px,transparent 4px);pointer-events:none}
+.spotterPhotoScene .spotterPosterTop{top:6%;left:6%;right:6%;z-index:2;pointer-events:none}
+.spotterPhotoScene .spotterPosterBrand{font-size:11px;letter-spacing:.17em;font-weight:800;color:#fffaf0;text-shadow:0 1px 3px #0e2a36}
+.spotterPhotoScene .spotterPosterBrand span{font-weight:450;color:rgba(238,243,233,.65);margin-left:10px}
+.spotterPhotoScene .spotterPosterSerial{font-size:10px;letter-spacing:.15em;color:#d8e9e8}
+.spotterPhotoScene .spotterPosterDeck{font-size:11px;font-weight:650;letter-spacing:.23em;color:#d5c69e;margin-top:20px}
+.spotterPhotoScene .spotterPosterTop h3{font:800 clamp(30px,4vw,47px)/1.2 "STSong","Songti SC",serif;color:#fffdf2;letter-spacing:.09em;margin:6px 0 10px;text-shadow:0 4px 16px rgba(4,22,29,.58)}
+.spotterPhotoScene .spotterPosterSubtitle{gap:9px;align-items:center;color:rgba(255,247,230,.8);font-size:12px;letter-spacing:.08em}
+.spotterPhotoScene .spotterPosterSubtitle span{background:none;border:0;padding:0;backdrop-filter:none;font-size:12px}
+.spotterPhotoScene .spotterPosterSubtitle i{opacity:.5;font-size:11px}
+.spotterPhotoScene .spotterPosterBottom{font-size:9px;letter-spacing:.06em;color:rgba(252,249,238,.7);z-index:2;bottom:2.8%;left:4%;right:4%;pointer-events:none}
+.spotterPhotoScene .spotterStampLayer{position:absolute;z-index:3;inset:0}
+.spotterPhotoScene .spotterClue{position:absolute;display:flex;align-items:center;justify-content:center;gap:3px;left:var(--sx);top:var(--sy);transform:translate(-50%,-50%);z-index:1;max-width:32%;min-width:18%;min-height:56px;border:none;border-radius:6px;box-shadow:none;background:transparent;color:#fff7e4;font:750 15px/1.35 "Microsoft YaHei","PingFang SC",sans-serif;text-align:center;text-shadow:0 2px 9px rgba(0,0,0,.8),0 1px 2px rgba(0,0,0,.7);padding:6px;cursor:crosshair;transition:background .18s,outline-color .18s;outline:2px solid transparent;outline-offset:3px;overflow-wrap:anywhere}
+.spotterPhotoScene .spotterClue:not(.found):hover{background:rgba(12,45,57,.20);outline-color:rgba(251,228,159,.34)}
+.spotterPhotoScene .spotterClueText{position:relative;z-index:1}
+.spotterPhotoScene .spotterClue0{font-size:15px;font-weight:850;color:#f8f3eb}
+.spotterPhotoScene .spotterClue1{font-size:12px;font-weight:800;letter-spacing:.06em;color:#fff3d3}
+.spotterPhotoScene .spotterClue1:before{content:"⌖";font-size:24px;vertical-align:middle;color:#f5c575;margin-right:3px}
+.spotterPhotoScene .spotterClue2{font:850 19px/1.2 "STSong","Songti SC",serif;color:#fff0bb;letter-spacing:.03em;max-width:30%}
+.spotterPhotoScene .spotterClue3{font:800 13px/1.5 "Microsoft YaHei",sans-serif;color:#fff4d9;max-width:29%;border-top:1px solid rgba(255,237,190,.55);border-bottom:1px solid rgba(255,237,190,.55);min-height:61px}
+.spotterPhotoScene .spotterClue4{max-width:31%;font-size:13px;letter-spacing:.02em;color:#fff}
+.spotterPhotoScene .spotterClue5{max-width:30%;font-size:12px;letter-spacing:.02em;color:#fff1d4}
+.spotterPhotoScene .spotterClueTrue{min-width:unset;max-width:24%;min-height:45px;font:550 11px/1.5 "Microsoft YaHei",sans-serif;color:rgba(243,252,248,.93);padding:6px 9px;text-align:center;background:rgba(11,56,66,.19);border:1px solid rgba(212,238,233,.34);border-radius:100px;text-shadow:0 2px 5px rgba(0,0,0,.6)}
+.spotterPhotoScene .spotterClueTrue:hover{background:rgba(11,56,66,.35)}
+.spotterPhotoScene .spotterClueTrue.spotterMistake{background:rgba(177,70,48,.65);outline:2px solid rgba(255,209,166,.5);animation:spotterShake .35s ease}
+.spotterPhotoScene .spotterFoundMark{position:absolute;right:-7px;top:-5px;width:29px;height:29px;border-radius:50%;display:none;align-items:center;justify-content:center;background:#2d9072;color:#fff;font-size:17px;text-shadow:none;box-shadow:0 0 0 3px rgba(219,249,225,.7),0 0 21px #a9ecd0}
+.spotterPhotoScene .spotterClue.found{background:rgba(35,127,99,.36);outline:3px solid #b9f4d2;border-radius:12px;text-shadow:0 1px 3px rgba(0,0,0,.8)}
+.spotterPhotoScene .spotterClue.found .spotterFoundMark{display:flex;animation:spotterHit .38s both}
+.spotterPhotoScene.spotterTheme-antarctic .spotterClue0:before{content:"🐻‍❄️";font-size:48px;display:block;line-height:1.05;text-shadow:0 8px 16px rgba(0,0,0,.25)}
+.spotterPhotoScene.spotterTheme-arctic .spotterClue0:before{content:"🐧";font-size:43px;display:block;line-height:1.05}
+.spotterPhotoScene.spotterTheme-flight .spotterClue0:before{content:"✈";font-size:37px;display:block;color:#effcff;line-height:1.05}
+.spotterPhotoScene.spotterTheme-georgia .spotterClue0:before{content:"⌖";font-size:38px;display:block;color:#ffe0a0}
+.spotterPhotoScene.spotterTheme-grand .spotterClue0:before{content:"¥";font-size:39px;display:block;color:#ffe3ab;font-family:serif}
+.spotterPhotoScene .spotterClue0{flex-direction:column}
+.spotterPhotoScene .spotterClue3:after{content:"✦";position:absolute;top:-12px;right:0;font-size:12px;color:#ffe3aa}
+@media(max-width:630px){
+ .spotterPoster.spotterPhotoScene{height:650px}
+ .spotterPhotoScene .spotterPosterTop h3{font-size:24px;letter-spacing:.05em}
+ .spotterPhotoScene .spotterPosterDeck{margin-top:10px}
+ .spotterPhotoScene .spotterPosterBrand{font-size:10px}
+ .spotterPhotoScene .spotterPosterBrand span{display:none}
+ .spotterPhotoScene .spotterPosterSubtitle span{font-size:10px}
+ .spotterPhotoScene .spotterClue{font-size:11px;max-width:37%;min-height:60px;padding:5px;line-height:1.45}
+ .spotterPhotoScene .spotterClue0:before{font-size:29px!important}
+ .spotterPhotoScene .spotterClue1:before{font-size:16px}
+ .spotterPhotoScene .spotterClue2{font-size:14px}
+ .spotterPhotoScene .spotterClue3,.spotterPhotoScene .spotterClue4,.spotterPhotoScene .spotterClue5{font-size:10px}
+ .spotterPhotoScene .spotterClueTrue{font-size:9px;max-width:26%;min-height:39px;padding:4px}
+ .spotterPhotoScene .spotterPosterBottom{font-size:7px}
+}
