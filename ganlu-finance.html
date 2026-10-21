@@ -944,6 +944,7 @@
  const stayName=s=>({double:'双人拼住',single:'每人单独住一间',triple:'三人同舱'}[s]||s);
  function plan(r,c,n,customer='new',stay='double',priceOverride=null,today=bjToday(),atlasPromo='earlybird',gaokaoCount=1,atlasOptions={}){
    const errors=[],warnings=[],steps=[],standardSteps=[],assumptions=[],policy=policyState(r,today);
+   const usePolicy=Boolean(r?.hasPolicy); // 优惠金额不因为超出文件有效期而改为原价；仍显示须确认的过期警示。
    const price=priceOverride===null||priceOverride===undefined?c?.price:Number(priceOverride);
    const q={route:r,cabin:c,people:n,customer,stay,deadline:r?.deadline||null,today,policy,price,standard:null,offer:null,status:'manual',statusReason:'',errors,warnings,steps,standardSteps,assumptions,baseRate:1,groupRate:0,groupSaving:0,loyalDeduction:0,postAdd:0,bonusDeduction:0,copyOffer:false,offerValid:false,conditional:false,manualGroup:false,policyName:'',singleSupplement:null,singleTotal:null,thirdPeople:0,regularPeople:n,atlasPromo,gaokaoCount:atlasPromo==='gaokao'?gaokaoCount:null,upgradeTarget:null,atlasChild:false,atlasOptions,atlasDeduction:0,atlasDeductionItems:[]};
    const fail=s=>{errors.push(s);q.statusReason=errors.join('；');return q};
@@ -967,9 +968,9 @@
    standardSteps.push(`舱型原价：${money(price)}/人 × ${n}人 = ${money(q.standard)}`);
    if(stay==='single')standardSteps.push('右侧为舱型基础原价；独住房差在左侧报价中单独计算。');
    if(r.date<=today)warnings.push('该航次已到出发日期，本次为历史试算。');
-   if(policy.code==='expired')warnings.push(`优惠已于${dateCN(r.deadline)}截止，本次不使用该文件的限时折扣、多人减免及老客减免。`);
-   if(policy.code==='upcoming')warnings.push(`优惠自${dateCN(r.validFrom)}起生效，本次按常规价格计算。`);
-   if(policy.code==='unknown')warnings.push('文件有效期不完整，本次仅计算有明确依据的常规价格。');
+   if(policy.code==='expired')warnings.push(`政策已于${dateCN(r.deadline)}截止。左侧仍按原优惠条款测算，能否按此价格报名须经产品部确认，不视为自动延期。`);
+   if(policy.code==='upcoming')warnings.push(`优惠自${dateCN(r.validFrom)}起生效；左侧为提前试算价，报名时须确认是否适用。`);
+   if(policy.code==='unknown')warnings.push('文件优惠有效期不完整，左侧仅为按已知优惠条款的试算价；报名须确认。');
    if(fixedTriple){
      assumptions.push('三人间按每位价格计算，同舱第三人同价；须满足三人同报条件。');
      if(n%3!==0)warnings.push('当前人数不足整间三人，本次按每位价格报价；该房型需三人同报。');
@@ -994,9 +995,9 @@
    const thirdRatio=(ponant||atlas)?.5:.6;
    const regularBase=price*q.regularPeople;
    const thirdCharge=price*q.thirdPeople*thirdRatio;
-   let ratePercent=100,name=policy.valid?'本舱型按原价':'无有效限时优惠 · 按常规价格',postAdd=0;
-   let allowBenefits=policy.valid;
-   if(policy.valid){
+   let ratePercent=100,name=usePolicy?'按文件优惠条款试算':'暂无明确优惠 · 常规价格',postAdd=0;
+   let allowBenefits=usePolicy;
+   if(usePolicy){
      if(!Number.isFinite(r.rate)||r.rate<=0||r.rate>1)return fail('优惠折扣数据不完整，无法确定优惠金额。');
      if(atlas){
        if(atlasPromo==='earlybird'){ratePercent=93;name='早鸟93折';}
@@ -1028,12 +1029,12 @@
      if(extraRate===null)return fail('文件未给出该航次的单房差金额。');
      q.singleSupplement=price*extraRate*n;
      q.singleTotal=q.standard+q.singleSupplement;
-     if(!(policy.valid&&ponant))postAdd=q.singleSupplement;
+     if(!(usePolicy&&ponant))postAdd=q.singleSupplement;
      if(atlas){
        ratePercent=100;allowBenefits=false;name='常规单人入住 · 原价×150%';
        warnings.push('文件未明确单房差与早鸟、多人及老客优惠的叠加口径，本次按基础原价×150%计算。');
      }
-     if(haishen&&policy.valid){
+     if(haishen&&usePolicy){
        // 文件给出常规单住总价，未说明70%房差如何与各优惠叠加；明确报价常规方案。
        ratePercent=100;allowBenefits=false;name='常规单人住 · 原价加70%房差';
        warnings.push('文件未明确单房差与优惠的叠加口径，本次按可确定的常规独住价报价。');
@@ -1049,14 +1050,15 @@
    let discounted=regularBase*ratePercent/100;
    let groupSaving=discounted*groupRate;
    let loyal=allowBenefits&&customer==='old'?(r.loyal||0)*(atlas&&stay==='triple'?n:q.regularPeople):0;
-   const bonus=allowBenefits&&silversea&&today<='2026-03-03'?888*q.regularPeople:0;
-   if(atlas&&policy.valid&&atlasPromo==='adult_child'){
+   const bonus=allowBenefits&&silversea?888*q.regularPeople:0;
+   if(bonus&&today>'2026-03-03')warnings.push('原报名红包活动已于3月3日结束；左侧仍包含该红包金额，报名适用性须确认。');
+   if(atlas&&usePolicy&&atlasPromo==='adult_child'){
      discounted=price*.93+price*.80;
      groupRate=0;groupSaving=0;
      // 老客减免只按成人计算；儿童8折不叠加其他优惠。
      loyal=customer==='old'?(r.loyal||0):0;
    }
-   if(atlas&&policy.valid&&atlasPromo==='gaokao'){
+   if(atlas&&usePolicy&&atlasPromo==='gaokao'){
      const companions=n-gaokaoCount;
      discounted=price*gaokaoCount*.80+price*companions*.93;
      groupSaving=price*companions*.93*groupRate;
@@ -1080,10 +1082,10 @@
      steps.push(`正常价旅客：${q.regularPeople}人 × ${money(price)} = ${money(regularBase)}`);
      steps.push(atlas?`同舱第3/4人：${q.thirdPeople}人 × ${money(price)} × 50% = ${money(thirdCharge)}（按全款50%计价）`:`同舱第三人：${q.thirdPeople}人 × ${money(price)} × ${thirdRatio*100}% = ${money(thirdCharge)}（不再打折）`);
    }
-   if(atlas&&policy.valid&&atlasPromo==='adult_child'){
+   if(atlas&&usePolicy&&atlasPromo==='adult_child'){
      steps.push(`成人早鸟93折：${money(price)} × 93% = ${money(price*.93)}`);
      steps.push(`孩子优惠8折：${money(price)} × 80% = ${money(price*.80)}`);
-   }else if(atlas&&policy.valid&&atlasPromo==='gaokao'){
+   }else if(atlas&&usePolicy&&atlasPromo==='gaokao'){
      steps.push(`应届高考生：${gaokaoCount}人 × ${money(price)} × 80% = ${money(price*gaokaoCount*.80)}`);
      steps.push(`其他同行人：${n-gaokaoCount}人 × ${money(price)} × 93% = ${money(price*(n-gaokaoCount)*.93)}`);
    }else if(ratePercent<100)steps.push(`${name}：${money(regularBase)} × ${ratePercent}% = ${money(discounted)}`);
@@ -1094,7 +1096,7 @@
    }
    if(loyal)steps.push(`老客户减免：${money(r.loyal)}/人 × ${atlas&&stay==='triple'?n:q.regularPeople}人 = −${money(loyal)}`);
    if(bonus)steps.push(`3月3日前报名红包：¥888 × ${q.regularPeople}人 = −${money(bonus)}`);
-   if(postAdd)steps.push(ponant&&policy.valid&&stay==='single'?`陆地酒店单住费：¥5,000 × ${n}人 = +${money(postAdd)}`:`常规单房差：${money(price)} × ${haishen?70:50}% × ${n}人 = +${money(postAdd)}`);
+   if(postAdd)steps.push(ponant&&usePolicy&&stay==='single'?`陆地酒店单住费：¥5,000 × ${n}人 = +${money(postAdd)}`:`常规单房差：${money(price)} × ${haishen?70:50}% × ${n}人 = +${money(postAdd)}`);
    for(const item of atlasDeductionItems)steps.push(`${item.label}：−${money(item.perPerson)}/人 × ${n}人 = −${money(item.perPerson*n)}`);
    if(!Number.isInteger(raw))steps.push(`计算金额${money(raw)}，总价统一四舍五入至元。`);
    steps.push(`本次报价合计：${money(q.offer)}`);
@@ -1103,21 +1105,25 @@
  function customerText(q){
    if(!q||q.status!=='ready'||!Number.isFinite(q.offer))return '';
    const {route:r,cabin:c,people:n}=q;
+   const usePolicy=Boolean(r?.hasPolicy);
    const yuan=v=>v.toLocaleString('zh-CN',{useGrouping:false,maximumFractionDigits:2})+'元';
    const lines=['【船客旅行 · 航次报价】',`航次：${r.date} ${r.name}`,`舱型：${nameCabin(c)}`,`人数：${n}人｜入住：${r.id==='c0708'&&q.stay==='triple'?'三/四人同舱':stayName(q.stay)}`,`舱型原价：${yuan(q.price)}/人，${n}人共${yuan(q.standard)}`];
-   if(q.policy.valid){
+   if(usePolicy){
      lines.push(`报价方案：${q.policyName}`);
      if(q.groupSaving)lines.push(r.id==='c0708'?`多人优惠：符合人数条件的正常价旅客，在基础折后价上再减${q.groupRate*100}%`:`多人优惠：在基础折后价上再减${q.groupRate*100}%`);
      if(q.loyalDeduction)lines.push(`老客户减免：${yuan(q.loyalDeduction)}`);
      if(q.bonusDeduction)lines.push(`报名红包：减${yuan(q.bonusDeduction)}`);
      lines.push(`政策有效期：截至${dateCN(r.deadline)}（北京时间，含当日）`);
+     if(q.policy.code==='expired')lines.push('【重要】原优惠政策已过期：报价按原优惠条款试算，最终能否以此价格报名须经产品部/旅行顾问核实，不代表优惠自动延期。');
+     if(q.policy.code==='upcoming')lines.push('【提醒】优惠尚未开始，当前为提前试算价，报名价格须确认。');
+     if(q.policy.code==='unknown')lines.push('【提醒】优惠有效期不完整，报名价格须确认。');
    }else lines.push(q.policy.code==='expired'?`限时优惠已于${dateCN(r.deadline)}截止，本次按常规价格。`:q.policy.code==='upcoming'?`限时优惠尚未生效，本次按常规价格。`:'当前无已确认有效的限时优惠，按常规价格。');
    if(q.atlasDeductionItems?.length)for(const item of q.atlasDeductionItems)lines.push(`${item.label}减免：${yuan(item.perPerson)}/人 × ${n}人 = −${yuan(item.perPerson*n)}`);
    if(q.thirdPeople)lines.push(r.id==='c0708'?`同舱第3/4人${q.thirdPeople}位，按全款50%计价；不计入多人优惠人数。${q.loyalDeduction?'老客户减免按每位旅客计算。':''}`:`含同舱第三人${q.thirdPeople}位，按原价${r.id==='d1110'?50:60}%计费，不叠加优惠。`);
    if(q.upgradeTarget)lines.push(`免费升舱方案：${q.policyName}（数量有限，需确认舱位）。`);
-   if(q.atlasChild&&q.policy.valid)lines.push('1大1小专属方案：成人早鸟93折，孩子8折；孩子未满18岁。');
-   if(q.gaokaoCount&&q.policy.valid)lines.push(`应届高考生${q.gaokaoCount}位按8折（需提供证明），其他同行人按早鸟93折。`);
-   if(q.postAdd)lines.push(`${r.id==='d1110'&&q.policy.valid&&q.stay==='single'?'陆地酒店单住费':'单房差'}：${yuan(q.postAdd)}`);
+   if(q.atlasChild&&usePolicy)lines.push('1大1小专属方案：成人早鸟93折，孩子8折；孩子未满18岁。');
+   if(q.gaokaoCount&&usePolicy)lines.push(`应届高考生${q.gaokaoCount}位按8折（需提供证明），其他同行人按早鸟93折。`);
+   if(q.postAdd)lines.push(`${r.id==='d1110'&&usePolicy&&q.stay==='single'?'陆地酒店单住费':'单房差'}：${yuan(q.postAdd)}`);
    lines.push(`报价合计：${yuan(q.offer)}（平均约${yuan(q.offer/n)}/人）`);
    if(isFixedTriple(c))lines.push('三人间须满足三人同报条件，同舱第三人同价。');
    if(q.stay==='double')lines.push('按双人拼住计价，不含单房差。');
@@ -1258,9 +1264,9 @@
    $('offerLabel').textContent='优惠价格';
    $('discountTotal').textContent=ready?P.money(q.offer):'金额待确认';
    $('discountAvg').textContent=ready?`平均约 ${P.money(q.offer/q.people)}/人`:'补齐价格依据后自动出价';
-   $('offerBadge').textContent=ready?(q.policy.valid?'已计算':'按常规价'):'待核价';
-   $('offerBadge').classList.toggle('wait',!q.policy.valid||!ready);
-   $('offerCaveat').textContent=ready?q.policyName:'请查看下方说明';
+   $('offerBadge').textContent=!ready?'待核价':q.policy.code==='expired'?'政策过期 · 待确认':q.policy.code==='upcoming'?'未生效 · 试算':q.policy.code==='unknown'?'日期待确认':q.route.hasPolicy?'优惠试算':'常规价格';
+   $('offerBadge').classList.toggle('wait',!ready||!q.policy.valid);
+   $('offerCaveat').textContent=ready?(q.policy.code==='expired'?'按原优惠试算，报名价须确认':q.policyName):'请查看下方说明';
    $('miniPrice').textContent=ready?P.money(q.offer):'金额待确认';
    $('groupBanner').classList.add('hidden');
    $('explanation').innerHTML=(q.steps.length?q.steps:[q.statusReason||'请选择报价条件。']).map((s,i)=>`<div class="${ready&&i===q.steps.length-1?'sum':''}">${esc(s)}</div>`).join('');
