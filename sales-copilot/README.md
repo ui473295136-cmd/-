@@ -23,7 +23,7 @@
 
 ## 使用入口
 
-主页面：`sales-copilot/index.html`。静态网页无需构建工具，GitHub Pages 开启后可通过 `https://ui473295136-cmd.github.io/-/sales-copilot/` 访问。需在仓库 Settings → Pages 检查部署方式为 main / (root)。如果仓库未启用 GitHub Pages，此地址不会自动生效。
+主入口：根目录 `sales-copilot.html`（复用 `sales-copilot/` 中的样式与脚本）；项目页入口：`sales-copilot/index.html`。建议使用 `https://ui473295136-cmd.github.io/-/sales-copilot.html`。静态网页无需构建工具；如果网页尚未发布，需在仓库 Settings → Pages 检查部署方式为 main / (root)。
 
 ## 重要限制
 
