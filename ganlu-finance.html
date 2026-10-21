@@ -476,6 +476,7 @@
     "policy": "2027.01.30 营销政策",
     "deadline": "2026-09-30",
     "rate": 0.94,
+    "latest5oRate": 0.90,
     "loyal": 5000,
     "groupRoom8": true,
     "pdf": "2027.1.30-2.15 （2027春节）飞船游南极·天涯双城记17天(1).pdf",
@@ -483,7 +484,7 @@
     "hasPolicy": true,
     "notes": [
       "直客优惠截止2026年9月30日。普通94折；4–7人额外2%，8人且至少4间房额外3%。",
-      "5层非船头海景新客周年庆92折，与原4层客人加2500元升舱的方案二选一。按该文件有效期执行，不假定活动延期。",
+      "5层海景房最新优惠9折；新政策的截止日期及与其他优惠叠加规则尚未提供，报名请确认。",
       "老客户本人及直系亲属在有效直客政策基础上，每人再减5000元。",
       "3层原价升5层船头、3人给2间房及邀约政策，需按具体报名方案另算。",
       "4层三人房三人同报，同舱第三人同价。常规全程单房差为原价的70%；未明确折扣与房差叠加时按常规单住价出价。"
@@ -973,7 +974,7 @@
  const hasThirdBed=(r,c)=>r?.id==='b0202'||(r?.id==='d1110'&&c?.capacity>=3)||(r?.id==='c0708'&&c?.capacity>=3);
  const stayName=s=>({double:'双人拼住',single:'每人单独住一间',triple:'三人同舱'}[s]||s);
  function plan(r,c,n,customer='new',stay='double',priceOverride=null,today=bjToday(),atlasPromo='earlybird',gaokaoCount=1,atlasOptions={}){
-   const errors=[],warnings=[],steps=[],standardSteps=[],assumptions=[],policy=policyState(r,today);
+   const errors=[],warnings=[],steps=[],standardSteps=[],assumptions=[],policy=r?.id==='b0130'&&c?.id==='5o'?{code:'latest_unconfirmed',valid:false,label:'5层海景9折 · 截止日期待确认'}:policyState(r,today);
    const usePolicy=Boolean(r?.hasPolicy); // 优惠金额不因为超出文件有效期而改为原价；仍显示须确认的过期警示。
    const price=priceOverride===null||priceOverride===undefined?c?.price:Number(priceOverride);
    const q={route:r,cabin:c,people:n,customer,stay,deadline:r?.deadline||null,today,policy,price,standard:null,offer:null,status:'manual',statusReason:'',errors,warnings,steps,standardSteps,assumptions,baseRate:1,groupRate:0,groupSaving:0,loyalDeduction:0,postAdd:0,bonusDeduction:0,copyOffer:false,offerValid:false,conditional:false,manualGroup:false,policyName:'',singleSupplement:null,singleTotal:null,thirdPeople:0,regularPeople:n,atlasPromo,gaokaoCount:atlasPromo==='gaokao'?gaokaoCount:null,upgradeTarget:null,atlasChild:false,atlasOptions,atlasDeduction:0,atlasDeductionItems:[]};
@@ -998,6 +999,7 @@
    standardSteps.push(`舱型原价：${money(price)}/人 × ${n}人 = ${money(q.standard)}`);
    if(stay==='single')standardSteps.push('右侧为舱型基础原价；独住房差在左侧报价中单独计算。');
    if(r.date<=today)warnings.push('该航次已到出发日期，本次为历史试算。');
+   if(policy.code==='latest_unconfirmed')warnings.push('5层海景房按最新9折试算，优惠截止日期和叠加规则请与产品部确认。');
    if(policy.code==='expired')warnings.push(`政策已于${dateCN(r.deadline)}截止。左侧仍按原优惠条款测算，能否按此价格报名须经产品部确认，不视为自动延期。`);
    if(policy.code==='upcoming')warnings.push(`优惠自${dateCN(r.validFrom)}起生效；左侧为提前试算价，报名时须确认是否适用。`);
    if(policy.code==='unknown')warnings.push('文件优惠有效期不完整，左侧仅为按已知优惠条款的试算价；报名须确认。');
@@ -1047,7 +1049,9 @@
        if(stay==='single'){name='正价报名 · 免邮轮单房差';postAdd=5000*n;}
        else if(n>=4&&rooms>=2){ratePercent=93;name='4人起、至少2间房 · 93折';}
        else {ratePercent=95;name='早鸟95折';}
-     }else if(['b0118','b0130'].includes(r.id)&&c.id==='5o'&&customer==='new'){
+     }else if(r.id==='b0130'&&c.id==='5o'){
+       ratePercent=90;name='5层海景房最新9折';
+     }else if(r.id==='b0118'&&c.id==='5o'&&customer==='new'){
        ratePercent=92;name='5层非船头海景 · 新客周年庆92折';
        assumptions.push('周年庆92折按5层非船头房计算，与加价升舱活动二选一。');
      }else if(r.id==='b0118'&&c.id==='5o'){
@@ -1265,7 +1269,7 @@
    const offDay=P.weekendCountdown(today);
    $('palaceDays').textContent=offDay.badge;
    $('palaceCountdown').textContent=offDay.title;
-   $('deadline').textContent=P.dateCN(r.deadline)+'（含当日）';
+   $('deadline').textContent=q.policy.code==='latest_unconfirmed'?'9折政策截止日期待确认':P.dateCN(r.deadline)+'（含当日）';
    const flag=$('policyFlag');flag.textContent=q.policy.label;flag.classList.toggle('valid',q.policy.valid);flag.classList.toggle('invalid',!q.policy.valid);
    const cabinSummary=q.upgradeTarget?`${P.nameCabin(c)} · 免费升舱至${q.upgradeTarget}`:P.nameCabin(c);
    const staySummary=r.id==='c0708'&&q.stay==='triple'?'三/四人同舱':P.stayName(q.stay);
@@ -1281,7 +1285,7 @@
    $('offerLabel').textContent='优惠价格';
    $('discountTotal').textContent=ready?P.money(q.offer):'金额待确认';
    $('discountAvg').textContent=ready?`平均约 ${P.money(q.offer/q.people)}/人`:'补齐价格依据后自动出价';
-   $('offerBadge').textContent=!ready?'待核价':q.policy.code==='expired'?'政策过期 · 待确认':q.policy.code==='upcoming'?'未生效 · 试算':q.policy.code==='unknown'?'日期待确认':q.route.hasPolicy?'优惠试算':'常规价格';
+   $('offerBadge').textContent=!ready?'待核价':q.policy.code==='expired'?'政策过期 · 待确认':q.policy.code==='upcoming'?'未生效 · 试算':q.policy.code==='unknown'?'日期待确认':q.policy.code==='latest_unconfirmed'?'9折 · 日期待确认':q.route.hasPolicy?'优惠试算':'常规价格';
    $('offerBadge').classList.toggle('wait',!ready||!q.policy.valid);
    $('offerCaveat').textContent=ready?(q.policy.code==='expired'?'按原优惠试算，报名价须确认':q.policyName):'请查看下方说明';
    $('miniPrice').textContent=ready?P.money(q.offer):'金额待确认';
