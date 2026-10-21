@@ -7,18 +7,18 @@ const app=window.ChuankeApp;
 if(!p||!app||!$('policyDesk'))return;
 const ids=['a1122','a1204','b0118','b0130'];
 const info={
- a1122:{name:'11/22 南乔治亚＋半岛',type:'大满贯连走',head:'已报名1122的客户：原合同价格基础上增加5万元，接走1204后段航次。',items:[
+ a1122:{name:'11/22 南乔治亚＋半岛',type:'大满贯连走',head:'已报名1122的客户：在原合同每人价格基础上，每人加5万元，接走1204后段航次。',items:[
   ['适合谁','摄影深度游、已报名1122且希望继续探索南极的客户'],
   ['玩法','与1204连走，船去船回，阿根廷往返；两期目前仅长城站拜访重复，其他计划登陆点不同'],
   ['签证','群公告称仅需办理阿根廷签证；仍须根据国籍、转机和证件实际核实'],
   ['房型权益','4层海景升5层海景释放少量权益，先到先得；群通知未说明是否免费或具体差价，不自动计入报价']
  ],warn:'连走总人数上限10人，两期中间有换房可能；航线、登陆点取决于最终天气与安全安排。'},
- a1204:{name:'12/04 南极半岛航次',type:'大满贯连走',head:'已报名1204的客户：原合同价格基础上增加8万元，向前连走1122双岛航次。',items:[
+ a1204:{name:'12/04 南极半岛航次',type:'大满贯连走',head:'已报名1204的客户：在原合同每人价格基础上，每人加8万元，向前连走1122双岛航次。',items:[
   ['适合谁','已报名1204、想加上南乔治亚与深度摄影体验的客户'],
   ['玩法','与1122连走，船去船回，阿根廷往返；计划登陆点除长城站外不同'],
   ['签证','群公告称仅需阿根廷签证；个人具体转机/身份条件仍须核实'],
   ['房型权益','4层海景升5层海景释放少量权益，先到先得；升舱是否免费或需补差价尚待项目组确认']
- ],warn:'连走合计上限10人，可能换房；群消息“加5万/8万”未写明整单或每人，计算器按每人试算，签约前必须确认。'},
+ ],warn:'连走合计上限10人，可能换房。5万／8万元明确为每人加价，按实际连走人数计算；签证、转机及名额仍须核实。'},
  b0118:{name:'01/18 南乔治亚＋半岛',type:'邀约与舱位权益',head:'已报名客户可做邀约现金减免，或用邀约权益申请4层海景免费升5层海景（二选一）。',items:[
   ['已报名邀约','每邀约1位朋友，双方享相应减免；已报名2人仅邀1位时，各减0.5个百分点；最低到9折。差价在尾款退回'],
   ['升级二选一','已报名4层海景客户可与受邀朋友一起免费升5层海景，不能同时领取邀约现金减免'],
@@ -61,7 +61,7 @@ function renderInfo(){
  $('policyDeskJoin').hidden=!['a1122','a1204'].includes(route);
  $('policyDeskInvite').hidden=!['b0118','b0130'].includes(route);
  if(['a1122','a1204'].includes(route)){
-  $('policyJoinExtra').textContent=route==='a1122'?'¥50,000 / 每位连走客户（待核实）':'¥80,000 / 每位连走客户（待核实）';
+  $('policyJoinExtra').textContent=route==='a1122'?'¥50,000 / 每人加价':'¥80,000 / 每人加价';
   showJoin();
  }
  if(['b0118','b0130'].includes(route)){
@@ -102,7 +102,7 @@ function showJoin(){
  }
  area.innerHTML='<strong>预计连走总价：'+money((base+per)*count)+'</strong>'
    +'<span>单人：原合同价 '+money(base)+' ＋ 连走加价 '+money(per)+' = '+money(base+per)+'</span>'
-   +'<small>共'+count+'人；按每人原合同价及每人连走加价测算。须确认合同计算口径和剩余名额。</small>';
+   +'<small>共'+count+'人；按每人原合同价及每人连走加价测算。加价为每人费用，剩余名额须确认。</small>';
 }
 function copyText(text){
  if(navigator.clipboard&&window.isSecureContext)return navigator.clipboard.writeText(text);
@@ -113,7 +113,7 @@ function copyText(text){
 async function copyJoin(){
  const route=$('route').value,id=info[route],cnt=Number($('policyJoinCount').value),price=Number($('policyJoinBase').value),add=route==='a1122'?50000:80000;
  if(!id||!Number.isInteger(cnt)||cnt<1||cnt>10||!(price>0)){ $('policyDeskStatus').textContent='请先填写正确的原合同单价及连走人数。';return;}
- const text='【船客旅行 · 双航次连走测算】\n已报名航次：'+id.name+'\n连走人数：'+cnt+'人\n原合同价：'+price+'元/人\n追加费用：'+add+'元/人\n预计连走总价：'+((price+add)*cnt)+'元\n备注：限10人、可能中途换房，价格口径和签证转机须核实。';
+ const text='【船客旅行 · 双航次连走测算】\n已报名航次：'+id.name+'\n连走人数：'+cnt+'人\n原合同价：'+price+'元/人\n追加费用：'+add+'元/人\n预计连走总价：'+((price+add)*cnt)+'元\n备注：限10人、可能中途换房，签证转机和名额须核实。';
  try{await copyText(text);$('policyDeskStatus').textContent='连走测算已复制。';}catch(e){$('policyDeskStatus').textContent='复制未成功，请手动整理。';}
 }
 function showInvite(){
