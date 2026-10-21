@@ -120,7 +120,7 @@ function updateProgress(){
 }
 function display(){
  if(!active)return;
- $('spotterTeaser').hidden=true;$('spotterPlay').hidden=false;
+ $('spotterPlay').hidden=false;
  if(state.complete){renderComplete();return;}
  const p=posters[state.stage];
  $('spotterCase').textContent=p.name;
@@ -230,7 +230,6 @@ function downloadCard(){
  ctx.font='500 27px sans-serif';ctx.fillText('CHUANKE  ·  POLAR EXPEDITION',600,1320);
  const link=document.createElement('a');link.download='船客-极地打假总督认证卡.png';link.href=canvas.toDataURL('image/png');document.body.appendChild(link);link.click();link.remove();
 }
-$('spotterTeaserStart').addEventListener('click',open);
 document.querySelectorAll('[data-spotter-open]').forEach(btn=>btn.addEventListener('click',open));
 $('spotterPosterMount').addEventListener('click',e=>{
  if(e.target.closest('#spotterShowMedal')){award();return;}
