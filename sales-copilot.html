@@ -31,7 +31,7 @@
           <div class="panel-heading"><div><span class="step-no">01</span><h2>导入行程资料</h2></div><span class="heading-note">WORD / PDF / TXT</span></div>
           <label class="dropzone" id="dropzone" for="itineraryFile"><input id="itineraryFile" type="file" accept=".docx,.pdf,.txt,.md,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"><span class="upload-icon">↥</span><b>拖入行程文件，或点击选择</b><span class="drop-hint">支持 DOCX、PDF、TXT、MD，单个文件最大 20MB</span><span class="file-chip" id="fileChip" hidden></span></label>
           <div class="field-label"><label for="itineraryText">行程原文 / 识别内容</label><span id="charCount">0 字</span></div><textarea id="itineraryText" rows="7" placeholder="也可以直接粘贴行程内容。建议包含：行程日期、天数、目的地、船名、每天安排、费用包含、价格政策和报名条件。"></textarea>
-          <div class="inline-actions"><span id="parseStatus" class="subtle-status">内容只在本页处理，不会自动上传到服务器。</span><button class="btn btn-soft" id="extractBtn">提取行程要点 ↗</button></div>
+          <div class="inline-actions"><span id="parseStatus" class="subtle-status">内容只在本页处理，不会自动上传到服务器。</span><div class="action-group"><button class="btn btn-soft" id="demoBtn">载入演示行程</button><button class="btn btn-soft" id="extractBtn">提取行程要点 ↗</button></div></div>
           <div class="extracted" id="extracted" hidden><div class="extracted-title"><span>✓</span> 已整理出的信息 <small>请人工核对后用于发布</small></div><div class="extracted-grid" id="extractedGrid"></div></div>
         </section>
         <section class="panel">
