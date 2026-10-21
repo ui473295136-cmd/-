@@ -63,16 +63,16 @@ function drawSeal(ctx,x,y){
  ctx.restore();
 }
 let canvas,quoted;
-function generateQuoteCanvas(q){
+function generateQuoteCanvas(q, forcedHeight){
  canvas=$('quoteEdictCanvas');if(!canvas)return;
- canvas.width=1080;canvas.height=1480;
+ canvas.width=1080;canvas.height=forcedHeight||1280;
  const ctx=canvas.getContext('2d');
  if(!ctx)return;
- const grad=ctx.createLinearGradient(0,0,1080,1480);
+ const grad=ctx.createLinearGradient(0,0,1080,canvas.height);
  grad.addColorStop(0,'#fff8e9');grad.addColorStop(.55,'#f7e9d1');grad.addColorStop(1,'#fff7e9');
- ctx.fillStyle=grad;ctx.fillRect(0,0,1080,1480);
- ctx.strokeStyle='#a58a64';ctx.lineWidth=5;ctx.strokeRect(41,40,998,1399);
- ctx.strokeStyle='#dcc6a3';ctx.lineWidth=2;ctx.strokeRect(56,56,968,1369);
+ ctx.fillStyle=grad;ctx.fillRect(0,0,1080,canvas.height);
+ ctx.strokeStyle='#a58a64';ctx.lineWidth=5;ctx.strokeRect(41,40,998,canvas.height-81);
+ ctx.strokeStyle='#dcc6a3';ctx.lineWidth=2;ctx.strokeRect(56,56,968,canvas.height-111);
  ctx.textAlign='center';ctx.fillStyle='#94744d';ctx.font='32px "Songti SC","STSong",serif';
  ctx.fillText('船 客 旅 行 · 航 次 报 价',540,149);
  ctx.font='bold 76px "Songti SC","STSong",serif';ctx.fillStyle='#66462e';
@@ -95,20 +95,15 @@ function generateQuoteCanvas(q){
  ctx.textAlign='right';ctx.fillStyle='#766149';ctx.font='25px sans-serif';ctx.fillText('约 '+money(q.offer/q.people)+' / 人',922,y+134);
  y+=264;ctx.textAlign='left';ctx.fillStyle='#715842';ctx.font='30px "PingFang SC",sans-serif';
  y=fillTextWrap(ctx,'未打折舱位原价合计：'+money(q.standard),127,y,840,51,2)+10;
- ctx.font='26px "PingFang SC",sans-serif';y=fillTextWrap(ctx,'政策文件截止：'+fmtCN(q.route.deadline),127,y,840,43,2)+18;
- const isExpired=q.policy.code==='expired';
- const warn=isExpired?'【重要提醒】优惠文件已过期，本报价仍按原优惠条款试算；能否按此价报名须由旅行顾问或产品部核实，不代表优惠自动延期。'
- :q.policy.code==='upcoming'?'【提醒】优惠政策尚未开始，本报价为政策试算价，实际报名价格须确认。'
- :q.policy.code==='unknown'?'【提醒】文件有效期不完整，报名价格须另行核实。'
- :'【提示】请以实际政策、舱位和最终合同确认为准；具体资格须由旅行顾问核实。';
- const warnY=Math.max(y,1140);
- ctx.fillStyle='#fff7ee';ctx.fillRect(120,warnY-31,840,157);
- ctx.fillStyle=isExpired?'#a04438':'#745b42';ctx.font='25px "PingFang SC",sans-serif';
- fillTextWrap(ctx,warn,145,warnY+11,790,38,3);
- drawSeal(ctx,866,1321);
+
+ // Share card intentionally omits the policy-expiry date and warning callout.
+ // Keep the small, permanent no-lock-price statement at the bottom.
+ const neededHeight=Math.max(1280,Math.ceil(y+205));
+ if(neededHeight>canvas.height){generateQuoteCanvas(q,neededHeight);return;}
+ drawSeal(ctx,866,canvas.height-157);
  ctx.fillStyle='#8f7d67';ctx.font='23px "PingFang SC",sans-serif';
- ctx.fillText('本单为计算工具生成的试算凭证，不构成船司保留舱位或锁价承诺。',122,1343);
- ctx.fillText('生成日期：'+fmtCN(bjToday())+'  ·  船客旅行',122,1386);
+ ctx.fillText('本单为计算工具生成的试算凭证，不构成船司保留舱位或锁价承诺。',122,canvas.height-112);
+ ctx.fillText('生成日期：'+fmtCN(bjToday())+'  ·  船客旅行',122,canvas.height-68);
 }
 function quoteDialogOpen(){
  const q=getQuote();
@@ -122,7 +117,7 @@ function quoteDialogOpen(){
  const dialog=$('quoteEdictDialog');
  try{if(typeof dialog.showModal==='function')dialog.showModal();else dialog.setAttribute('open','');}
  catch(e){dialog.setAttribute('open','');}
- $('quoteEdictStatus').textContent=q.policy.code==='expired'?'已标注原优惠政策过期，发给客户前请先核价。':'已根据当前报价条件生成图片，建议发给客户前确认舱位。';
+ $('quoteEdictStatus').textContent=q.policy.code==='expired'?'原优惠政策已过期，发给客户前请先确认价格能否适用。':'已根据当前报价条件生成图片，建议发给客户前确认舱位。';
 }
 function closeQuote(){
  const dialog=$('quoteEdictDialog');
