@@ -145,7 +145,7 @@ function downloadCard(){
  ctx.font='bold 70px "Songti SC","STSong",serif';ctx.fillStyle='#f5dc9b';ctx.fillText('极地打假总督',600,781);
  ctx.font='600 39px "Songti SC","STSong",serif';ctx.fillStyle='#c9b382';ctx.fillText('船客 · 专属认证',600,858);
  ctx.strokeStyle='#967f50';ctx.beginPath();ctx.moveTo(340,934);ctx.lineTo(860,934);ctx.stroke();
- ctx.font='500 34px "Songti SC","STSong",serif';ctx.fillText('5 张海报 · 30 处错误全部识破',600,1045);
+ ctx.font='500 34px "Songti SC","STSong",serif';ctx.fillText('5 份档案 · 30 处错误全部识破',600,1045);
  ctx.font='500 27px sans-serif';ctx.fillText('CHUANKE  ·  POLAR EXPEDITION',600,1320);
  const link=document.createElement('a');link.download='船客-极地打假总督认证卡.png';link.href=canvas.toDataURL('image/png');document.body.appendChild(link);link.click();link.remove();
 }
