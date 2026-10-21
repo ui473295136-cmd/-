@@ -60,6 +60,85 @@
     if(typeof loadFeed==='function')loadFeed();
   }
   var h=function(s){return String(s===undefined||s===null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+  // Shared symbol-and-meme picker for chat and post comments.
+  // Keep every selection in the editable text; the usual send/submit action is unchanged.
+  var socialEmojiOptions={
+    common:['😀','😁','😂','🤣','🥹','😭','🥰','😍','😊','😎','🤔','😱','😮‍💨','🙃','😤','🫠','🥳','🎉','👏','👍','👀','❤️','🫶','🙏','🌹','✨','🍀','💰','🐧','🐻‍❄️','🚢','💐'],
+    palace:['👑 本宫来了','🥹 臣妾做不到','👀 本宫不信','🙌 皇上英明','😮‍💨 容本宫想想','💅 本宫很淡定','🤫 嘘，悄悄说','☕ 本宫在吃瓜','🧧 接住福气','🍀 今日好运','🎉 恭喜出单','🚢 航次顺利','🫶 感谢小主','👏 给你点赞','🐧 企鹅贴贴','🐻‍❄️ 北极熊报到']
+  };
+  function emojiMarkup(kind){
+    var id='socialEmojiPanel-'+kind;
+    var group=function(list,category,hidden){
+      return '<div class="socialEmojiGrid" data-social-emoji-grid="'+category+'"'+(hidden?' hidden':'')+'>'
+        +list.map(function(item){
+          return '<button type="button" class="socialEmojiItem '+(category==='palace'?'socialEmojiPhrase':'')+'" data-social-emoji-insert="'+h(item)+'" title="'+h(item)+'" aria-label="插入 '+h(item)+'">'+h(item)+'</button>';
+        }).join('')+'</div>';
+    };
+    return '<div class="socialEmojiWrap">'
+      +'<button type="button" class="socialEmojiToggle" data-social-emoji-toggle aria-controls="'+id+'" aria-expanded="false">😄 表情包 <span aria-hidden="true">⌄</span></button>'
+      +'<div class="socialEmojiPicker" id="'+id+'" data-social-emoji-panel hidden>'
+      +'<div class="socialEmojiTabs" role="tablist" aria-label="表情分类">'
+      +'<button type="button" role="tab" aria-selected="true" class="active" data-social-emoji-tab="common">😀 常用表情</button>'
+      +'<button type="button" role="tab" aria-selected="false" data-social-emoji-tab="palace">👑 甘露寺表情</button>'
+      +'</div>'
+      +group(socialEmojiOptions.common,'common',false)
+      +group(socialEmojiOptions.palace,'palace',true)
+      +'<p class="socialEmojiTip">点击表情插入文字，不会自动发送</p>'
+      +'</div></div>';
+  }
+  function closeAllEmojiPanels(except){
+    document.querySelectorAll('.socialEmojiWrap').forEach(function(wrap){
+      if(wrap===except)return;
+      var panel=wrap.querySelector('[data-social-emoji-panel]'),toggle=wrap.querySelector('[data-social-emoji-toggle]');
+      if(panel)panel.hidden=true;
+      if(toggle)toggle.setAttribute('aria-expanded','false');
+    });
+  }
+  function handleEmojiControls(event){
+    var action=event.target.closest('[data-social-emoji-toggle],[data-social-emoji-tab],[data-social-emoji-insert]');
+    if(!action)return;
+    var wrap=action.closest('.socialEmojiWrap'),panel=wrap&&wrap.querySelector('[data-social-emoji-panel]');
+    if(!wrap||!panel)return;
+    event.preventDefault();
+    if(action.hasAttribute('data-social-emoji-toggle')){
+      var willOpen=panel.hidden;
+      closeAllEmojiPanels(wrap);
+      panel.hidden=!willOpen;
+      action.setAttribute('aria-expanded',String(willOpen));
+      return;
+    }
+    if(action.hasAttribute('data-social-emoji-tab')){
+      var category=action.getAttribute('data-social-emoji-tab');
+      panel.querySelectorAll('[data-social-emoji-grid]').forEach(function(grid){
+        grid.hidden=grid.getAttribute('data-social-emoji-grid')!==category;
+      });
+      panel.querySelectorAll('[data-social-emoji-tab]').forEach(function(tab){
+        var selected=tab.getAttribute('data-social-emoji-tab')===category;
+        tab.classList.toggle('active',selected);
+        tab.setAttribute('aria-selected',String(selected));
+      });
+      return;
+    }
+    if(action.hasAttribute('data-social-emoji-insert')){
+      var form=wrap.closest('form');
+      var target=form&&form.querySelector('textarea[name="body"],textarea[name="comment"]');
+      if(!target)return;
+      var value=action.getAttribute('data-social-emoji-insert')||'';
+      var start=Number.isInteger(target.selectionStart)?target.selectionStart:target.value.length;
+      var end=Number.isInteger(target.selectionEnd)?target.selectionEnd:start;
+      var max=target.maxLength>0?target.maxLength:240;
+      if(target.value.length-(end-start)+value.length>max){
+        var message=form.querySelector('[data-social-comment-status]')||$('socialChatStatus');
+        if(message)message.textContent='表情插入后会超过240字，请先删减一些文字。';
+        return;
+      }
+      target.setRangeText(value,start,end,'end');
+      target.dispatchEvent(new Event('input',{bubbles:true}));
+      panel.hidden=true;
+      wrap.querySelector('[data-social-emoji-toggle]').setAttribute('aria-expanded','false');
+      target.focus();
+    }
+  }
   function readableTime(value){
     var d=new Date(value);
     if(!Number.isFinite(d.getTime()))return '刚刚';
@@ -379,6 +458,8 @@
         +'<textarea name="comment" maxlength="240" required placeholder="友善回复这条吐槽，最多240字"></textarea>'
         +'<div class="socialCommentFoot"><small>评论和回复会同步给所有访问者</small><button class="socialCommentSubmit" type="submit">发表评论</button></div>'
         +'<div class="socialStatus" data-social-comment-status role="status" aria-live="polite"></div></form>';
+      var commentInput=mount.querySelector('textarea[name="comment"]');
+      if(commentInput)commentInput.insertAdjacentHTML('afterend',emojiMarkup('comment'));
       lastThreadSignature=signature;
       applyCounts();
     }catch(e){
@@ -407,6 +488,14 @@
   if(savedName)$('socialNick').value=savedName;
   else if($('boardNickname')?.value)$('socialNick').value=$('boardNickname').value;
   $('socialNick').addEventListener('change',function(){nick()});
+  // Chat and comments share the same emoji picker; comment toolbars are mounted as threads open.
+  var chatFields=$('socialChatForm').querySelector('.socialChatFields');
+  if(chatFields)chatFields.insertAdjacentHTML('afterend',emojiMarkup('chat'));
+  $('socialChatForm').addEventListener('click',handleEmojiControls);
+  $('boardPosts').addEventListener('click',handleEmojiControls);
+  document.addEventListener('pointerdown',function(event){
+    if(!event.target.closest('.socialEmojiWrap'))closeAllEmojiPanels(null);
+  });
 
   $('socialPostsTab').addEventListener('click',function(){setTab('posts')});
   $('socialChatTab').addEventListener('click',function(){setTab('chat')});
