@@ -110,7 +110,7 @@
  .quizEmoji{font-size:20px}
 }
 
-</style></head><body>
+</style><link rel="stylesheet" href="./ganlu-social-v1.css"></head><body>
 <header class="mast"><div class="petals" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <svg class="roofArt" viewBox="0 0 400 220" aria-hidden="true"><g fill="none" stroke="#e7d2ad" stroke-linecap="round" stroke-linejoin="round"><path d="M26 128 Q122 120 193 70 Q253 115 369 115" stroke-width="5"/><path d="M42 142 Q125 132 193 88 Q251 127 354 127" stroke-width="2"/><path d="M76 143 L76 220 M326 133 L326 220 M111 137 L111 220 M291 134 L291 220" stroke-width="6"/><path d="M74 164 H329 M99 183 H302 M154 165 V220 M247 166 V220" stroke-width="2"/><path d="M20 132 Q47 140 66 130 M351 125 Q373 135 392 125" stroke-width="2"/><path d="M164 86 Q193 40 218 82 M165 85 Q195 69 218 83" stroke-width="3"/></g><g fill="#e1c69d" opacity=".18"><path d="M55 141 L195 81 L350 135 L350 220 L55 220Z"/></g></svg>
 <div class="wrap mastInner"><div><h1>甘露寺·财务部</h1>
@@ -162,8 +162,23 @@
 <section class="panel funPanel" id="complaintPanel" aria-labelledby="boardHeading">
   <div class="funTop">
     <div><h2 id="boardHeading">碎嘴阁 · 吐槽专区</h2><p>有话直说，别憋在心里。这里不问你是哪宫的，只管把话说清楚。</p></div>
-    <span class="livePill">全员同步 · 约5秒刷新</span>
+    <span class="livePill">多人互动 · 聊天约3秒同步</span>
   </div>
+<div class="socialControls">
+  <button class="socialBell" id="socialBell" type="button">🔔 消息提醒 <span class="socialBadge" id="socialBellBadge" hidden>0</span></button>
+  <button class="socialDesktopBtn" id="socialDesktopBtn" type="button">开启桌面通知</button>
+  <small id="socialDesktopStatus" style="font-size:11px;color:#968371">站内红点始终可用；桌面通知需要浏览器授权</small>
+</div>
+<div class="socialNotifyBox" id="socialNoticePanel" hidden>
+  <h3>碎嘴阁 · 消息匣</h3>
+  <p id="socialUnreadSummary">暂无未读消息</p>
+  <div class="socialNoticeItems" id="socialNoticeList"><p class="socialNoticeEmpty">暂时还没有收到回复。</p></div>
+</div>
+<div class="socialTabs" role="tablist" aria-label="吐槽与聊天">
+  <button type="button" id="socialPostsTab" class="active" role="tab" aria-selected="true" aria-controls="socialPostsArea">✎ 吐槽广场 · 评论</button>
+  <button type="button" id="socialChatTab" role="tab" aria-selected="false" aria-controls="socialChatArea">☕ 实时茶话会 <span class="socialBadge" id="socialChatBadge" hidden>0</span></button>
+</div>
+<div id="socialPostsArea" role="tabpanel" aria-labelledby="socialPostsTab">
   <form id="boardForm" class="boardForm">
     <div class="boardFormRow">
       <div class="field"><label for="boardNickname">你的宫中称号</label><input id="boardNickname" name="nickname" maxlength="16" value="匿名小主" required autocomplete="nickname" placeholder="例如：碎玉轩熬夜人"></div>
@@ -173,6 +188,19 @@
   </form>
   <div class="boardStatus" id="boardStatus" role="status" aria-live="polite">正在召集各宫小主……</div>
   <div class="boardPosts" id="boardPosts" aria-live="polite"><div class="boardEmpty">碎嘴阁刚开门，等你来递第一本折子。</div></div>
+</div>
+<div class="socialChatArea" id="socialChatArea" role="tabpanel" aria-labelledby="socialChatTab" hidden>
+  <div class="socialChatHead"><strong>茶话会 · 大家都在聊</strong><small id="socialLiveStatus" role="status">正在连接聊天……</small></div>
+  <div class="socialChatStream" id="socialChatStream" role="log" aria-label="公共聊天记录" aria-live="off"><div class="socialThreadEmpty">聊天加载中……</div></div>
+  <form class="socialChatForm" id="socialChatForm">
+    <div class="socialChatFields">
+      <label for="socialNick">我的宫中称号<input id="socialNick" name="nickname" maxlength="16" placeholder="例如：碎玉轩吃瓜人" value="匿名小主" required></label>
+      <label for="socialChatInput">说点什么<textarea id="socialChatInput" name="body" maxlength="240" required placeholder="大家都可以看到，最多240字。按 Enter 发送，Shift+Enter 换行。"></textarea></label>
+    </div>
+    <div class="socialChatFormFoot"><small>公共聊天 · 尊重彼此，不要发布手机号和隐私信息。</small><button class="socialSend" id="socialSend" type="submit">发送消息</button></div>
+    <div class="socialStatus" id="socialChatStatus" role="status" aria-live="polite"></div>
+  </form>
+</div>
 </section>
 <section class="panel funPanel" id="quizPanel" aria-labelledby="quizHeading">
   <div class="funTop">
@@ -1285,6 +1313,7 @@
  'use strict';
  const BOARD_API='https://wpfqcztbxxarsrruuuce.supabase.co/functions/v1/ganlu-board';
  const BOARD_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndwZnFjenRieHhhcnNycnV1dWNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNjk3NzMsImV4cCI6MjEwNDk0NTc3M30.9PLp0P6PS59sANpxZ9OlOc6Iv444Uindg8CHGwrjZE4';
+ window.GANLU_BOARD_ANON=BOARD_ANON;
  const $=id=>document.getElementById(id);
  const escapeHtml=value=>String(value??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
  const makeToken=()=>{const bytes=new Uint8Array(32);crypto.getRandomValues(bytes);return Array.from(bytes,x=>x.toString(16).padStart(2,'0')).join('')};
@@ -1313,8 +1342,10 @@
  }
  function renderBoard(posts){
    currentPosts=Array.isArray(posts)?posts.slice(0,21):[];
+   if(boardPostsEl.contains(document.activeElement)&&document.activeElement.closest('.socialCommentComposer'))return;
    if(!currentPosts.length){
      boardPostsEl.innerHTML='<div class="boardEmpty">碎嘴阁刚开门，等你来递第一本折子。</div>';
+     window.GanluSocial?.onBoardRender();
      return;
    }
    boardPostsEl.innerHTML=currentPosts.map(post=>{
@@ -1324,10 +1355,13 @@
        <p class="boardPostText">${escapeHtml(post.body||'').replace(/\n/g,'<br>')}</p>
        <div class="boardPostFoot">
          <button type="button" data-board-action="react" data-id="${escapeHtml(post.id)}" class="${liked?'liked':''}" aria-pressed="${liked}">${liked?'♥ 已点赞':'♡ 赞一下'} · ${Number(post.like_count)||0}</button>
+         <button type="button" class="socialCommentToggle" data-social-open="${escapeHtml(post.id)}">💬 评论 <span data-social-count="${escapeHtml(post.id)}">0</span></button>
          ${post.mine===true?'<button type="button" class="withdraw" data-board-action="withdraw" data-id="'+escapeHtml(post.id)+'">撤回这本折子</button>':''}
        </div>
+       <div class="socialCommentMount" data-social-thread="${escapeHtml(post.id)}" hidden></div>
      </article>`;
    }).join('');
+   window.GanluSocial?.onBoardRender();
  }
  async function loadBoard(silent=false){
    if(boardLoading||document.hidden)return;
@@ -1442,5 +1476,6 @@
  $('resetQuiz')?.addEventListener('click',resetQuiz);
 })();
 </script>
+<script defer src="./ganlu-social-v1.js"></script>
 
 </body></html>
