@@ -31,7 +31,7 @@
   setStored(REPLIES_SEEN_KEY,tokens.repliesSeen);
   var currentTab='posts',openPost='',replyTarget=null;
   var feedBusy=false,threadBusy=false,sendBusy=false,commentBusy=false;
-  var chatSignature='',lastThreadSignature='',feedData={chat:[],notifications:[],counts:{}};
+  var chatSignature='',lastThreadSignature='',feedData={chat:[],notifications:[],mentions:[],counts:{}};
   var firstFeed=true,prevCounts={chat:0,replies:0};
   var seenChatIds=new Set(),seenReplyIds=new Set();
   var SOUND_KEY='ganlu-social-sound-v1';
@@ -39,6 +39,26 @@
   var audioCtx=null;
   var toastTimer=0;
   var toastTarget=null;
+  var MENTION_SEEN_KEY='ganlu-social-mentions-seen-v1';
+  var mentionSeen=getStored(MENTION_SEEN_KEY)||new Date().toISOString();
+  setStored(MENTION_SEEN_KEY,mentionSeen);
+  var seenMentionIds=new Set(),readAcked=new Set(),readBusy=false;
+  function bjDay(){
+    var parts=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());
+    var map={};parts.forEach(function(part){map[part.type]=part.value});
+    return map.year+'-'+map.month+'-'+map.day;
+  }
+  var currentBjDay=bjDay();
+  function handleDayChange(){
+    var day=bjDay();
+    if(day===currentBjDay)return;
+    currentBjDay=day;chatSignature='';readAcked.clear();
+    feedData.chat=[];feedData.mentions=[];
+    renderChat([]);
+    if($('socialChatStream'))$('socialChatStream').scrollTop=0;
+    msgText('socialLiveStatus','北京时间已过00:00，昨日聊天自动清空');
+    if(typeof loadFeed==='function')loadFeed();
+  }
   var h=function(s){return String(s===undefined||s===null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
   function readableTime(value){
     var d=new Date(value);
@@ -64,9 +84,11 @@
   function countUnread(){
     var chats=Array.isArray(feedData.chat)?feedData.chat:[];
     var notices=Array.isArray(feedData.notifications)?feedData.notifications:[];
+    var mentions=Array.isArray(feedData.mentions)?feedData.mentions:[];
     return {
       chat:chats.filter(function(c){return !c.mine&&c.created_at>tokens.chatSeen}).length,
-      replies:notices.filter(function(c){return c.created_at>tokens.repliesSeen}).length
+      replies:notices.filter(function(c){return c.created_at>tokens.repliesSeen}).length,
+      mentions:mentions.filter(function(c){return c.created_at>mentionSeen}).length
     };
   }
   function setBadge(id,num){
@@ -75,10 +97,10 @@
     el.textContent=num>99?'99+':String(num);
   }
   function updateBadges(){
-    var counts=countUnread(),total=counts.chat+counts.replies;
+    var counts=countUnread(),total=counts.chat+counts.replies+counts.mentions;
     setBadge('socialBellBadge',total);
     setBadge('socialChatBadge',counts.chat);
-    msgText('socialUnreadSummary',counts.chat+' 条未读聊天 · '+counts.replies+' 条未读回复');
+    msgText('socialUnreadSummary',counts.chat+' 条未读聊天 · '+counts.replies+' 条未读回复 · '+counts.mentions+' 条御前传话');
     document.title=(total?'('+total+') ':'')+originalTitle;
     return counts;
   }
@@ -90,6 +112,11 @@
   function markRepliesRead(){
     tokens.repliesSeen=new Date().toISOString();
     setStored(REPLIES_SEEN_KEY,tokens.repliesSeen);
+    updateBadges();
+  }
+  function markMentionsRead(){
+    mentionSeen=new Date().toISOString();
+    setStored(MENTION_SEEN_KEY,mentionSeen);
     updateBadges();
   }
   function syncSoundButton(){
@@ -133,7 +160,7 @@
     var box=$('socialSideToast');
     if(!box)return;
     toastTarget={kind:kind,postId:item.post_id||''};
-    var title=kind==='reply'?'有人回复了你的吐槽':'茶话会来了新消息';
+    var title=kind==='mention'?'📜 御前传话：有小主@你':kind==='reply'?'有人回复了你的心愿':'茶话会来了新消息';
     var preview=item.nickname?String(item.nickname)+'：'+String(item.body||''):'你收到新的互动消息';
     msgText('socialToastTitle',count>1?title+' · '+count+'条':title);
     msgText('socialToastPreview',preview.length>90?preview.slice(0,90)+'…':preview);
@@ -147,7 +174,7 @@
     if(!('Notification' in window)||Notification.permission!=='granted')return;
     if(!document.hidden&&document.hasFocus())return;
     try{
-      var title=kind==='reply'?'有人回复了你的吐槽':'碎嘴阁有新聊天消息';
+      var title=kind==='mention'?'有小主@你':kind==='reply'?'有人回复了你的心愿':'福气茶话会有新消息';
       var body=(count>1?'共'+count+'条 · ':'')+String(item.nickname||'匿名小主')+'：'+String(item.body||'').slice(0,60);
       var n=new Notification('甘露寺·'+title,{body:body,tag:'ganlu-social-'+kind,silent:true});
       n.onclick=function(){
@@ -158,8 +185,8 @@
     }catch(e){}
   }
   function noticeNewItems(){
-    var chats=feedData.chat||[],replies=feedData.notifications||[];
-    var newChats=[],newReplies=[];
+    var chats=feedData.chat||[],replies=feedData.notifications||[],mentions=feedData.mentions||[];
+    var newChats=[],newReplies=[],newMentions=[];
     chats.forEach(function(item){
       if(!item||!item.id)return;
       if(!firstFeed&&!seenChatIds.has(item.id)&&!item.mine)newChats.push(item);
@@ -170,8 +197,17 @@
       if(!firstFeed&&!seenReplyIds.has(item.id))newReplies.push(item);
       seenReplyIds.add(item.id);
     });
-    // Avoid repeated notifications from the same message on future polling cycles.
-    if(newReplies.length){
+    mentions.forEach(function(item){
+      if(!item||!item.id)return;
+      if(!firstFeed&&!seenMentionIds.has(item.id))newMentions.push(item);
+      seenMentionIds.add(item.id);
+    });
+    // Do not fire multiple popups for the same message; mentions take priority over generic chat.
+    if(newMentions.length){
+      var mentioned=newMentions[0];
+      showSideToast('mention',mentioned,newMentions.length);
+      promptDesktop('mention',mentioned,newMentions.length);
+    }else if(newReplies.length){
       var latest=newReplies[newReplies.length-1];
       showSideToast('reply',latest,newReplies.length);
       promptDesktop('reply',latest,newReplies.length);
@@ -185,7 +221,8 @@
     if(!target)return;
     dismissToast();
     $('complaintPanel')?.scrollIntoView({behavior:'smooth',block:'start'});
-    if(target.kind==='chat'){
+    if(target.kind==='chat'||target.kind==='mention'){
+      if(target.kind==='mention')markMentionsRead();
       setTab('chat');
       $('socialChatInput')?.focus({preventScroll:true});
       return;
@@ -208,15 +245,16 @@
   }
   function renderChat(items){
     if(!Array.isArray(items))items=[];
-    var signature=items.map(function(x){return x.id}).join('|');
+    var signature=items.map(function(x){return x.id+':'+(x.read_count||0)}).join('|');
     if(signature===chatSignature)return;
     var stream=$('socialChatStream');
     if(!stream)return;
     var bottom=stream.scrollHeight-stream.scrollTop-stream.clientHeight<80;
     stream.innerHTML=items.length?items.map(function(c){
-      return '<div class="socialChatBubble '+(c.mine?'mine':'')+'">'
+      return '<div class="socialChatBubble '+(c.mine?'mine':'')+'" data-social-chat-id="'+h(c.id)+'">'
         +'<div class="socialChatMeta"><strong>'+h(c.nickname)+'</strong><time>'+h(readableTime(c.created_at))+'</time></div>'
         +'<div class="socialChatMessage">'+h(c.body)+'</div>'
+        +'<div class="socialChatSeen">已读 '+Math.max(0,Number(c.read_count)||0)+' 人</div>'
         +(c.mine?'<button type="button" class="socialChatDelete" data-social-delete-chat="'+h(c.id)+'">撤回</button>':'')
         +'</div>';
     }).join(''):'<div class="socialThreadEmpty">茶话会还没人开口，你来聊第一句吧。</div>';
@@ -225,13 +263,49 @@
   }
   function renderNotices(items){
     var list=$('socialNoticeList');if(!list)return;
-    list.innerHTML=items.length?items.slice(0,15).map(function(c){
-      return '<button type="button" class="socialNoticeItem" data-social-notice-post="'+h(c.post_id)+'">'
-        +'<span><strong>'+h(c.nickname)+'</strong> 回复了'+(c.kind==='comment_reply'?'你的评论':'你的吐槽')+'：'+h(String(c.body).slice(0,65))+'</span>'
+    var mentions=Array.isArray(feedData.mentions)?feedData.mentions:[];
+    var notices=(Array.isArray(items)?items:[]).map(function(c){return {...c,kind:'reply'};})
+      .concat(mentions.map(function(c){return {...c,kind:'mention'};}))
+      .sort(function(a,b){return String(b.created_at).localeCompare(String(a.created_at))});
+    list.innerHTML=notices.length?notices.slice(0,20).map(function(c){
+      var isMention=c.kind==='mention',target=isMention?'data-social-notice-chat="'+h(c.id)+'"':'data-social-notice-post="'+h(c.post_id)+'"';
+      var label=isMention?'在茶话会@了你':(c.kind==='comment_reply'?'回复了你的评论':'回复了你的许愿');
+      return '<button type="button" class="socialNoticeItem" '+target+'>'
+        +'<span><strong>'+h(c.nickname)+'</strong> '+label+'：'+h(String(c.body).slice(0,65))+'</span>'
         +'<small>'+h(readableTime(c.created_at))+'</small></button>';
-    }).join(''):'<p class="socialNoticeEmpty">暂时没有收到针对你的回复。</p>';
+    }).join(''):'<p class="socialNoticeEmpty">暂时没有新的互动或传话。</p>';
   }
-  function applyCounts(){
+  async function acknowledgeRead(){
+    if(readBusy||currentTab!=='chat'||document.hidden||!document.hasFocus())return;
+    var batch=(feedData.chat||[]).filter(function(c){return !c.mine&&!readAcked.has(c.id)}).map(function(c){return c.id}).slice(0,80);
+    if(!batch.length)return;
+    readBusy=true;
+    try{
+      await call('read',{ids:batch});
+      batch.forEach(function(id){readAcked.add(id)});
+      // Refresh the visible read counts without waiting for the next user interaction.
+      setTimeout(function(){loadFeed();},300);
+    }catch(e){msgText('socialLiveStatus','暂时无法记录已读，稍后会自动重试');}
+    finally{readBusy=false;}
+  }
+  function mentionCandidates(){
+    var used=new Set();
+    return (feedData.chat||[]).slice().reverse().filter(function(c){
+      var name=String(c.nickname||'').trim();
+      if(!name||c.mine||used.has(name))return false;
+      used.add(name);return true;
+    }).map(function(c){return String(c.nickname).trim()}).slice(0,30);
+  }
+  function renderMentionSuggestions(){
+    var input=$('socialChatInput'),menu=$('socialMentionMenu');
+    if(!input||!menu)return;
+    var pos=input.selectionStart,part=input.value.slice(0,pos),match=part.match(/@([^@\s，,。；;！!？?]{0,16})$/);
+    if(!match){menu.hidden=true;menu.innerHTML='';return;}
+    var term=match[1],names=mentionCandidates().filter(function(n){return n.includes(term)}).slice(0,7);
+    menu.hidden=!names.length;
+    menu.innerHTML=names.map(function(name){return '<button type="button" data-social-mention-name="'+h(name)+'">@'+h(name)+'</button>'}).join('');
+  }
+    function applyCounts(){
     document.querySelectorAll('#boardPosts [data-social-count]').forEach(function(el){
       var key=el.getAttribute('data-social-count'),count=Number((feedData.counts||{})[key])||0;
       el.textContent=String(count);
@@ -244,9 +318,10 @@
       var data=await call('feed');
       if(!data||!Array.isArray(data.chat))throw new Error('消息格式暂不可用');
       var oldCount=countUnread();
-      feedData={chat:data.chat||[],notifications:data.notifications||[],counts:data.counts||{}};
+      feedData={chat:data.chat||[],notifications:data.notifications||[],mentions:data.mentions||[],counts:data.counts||{}};
       if(currentTab==='chat'&&!document.hidden&&document.hasFocus())markChatRead();
       renderChat(feedData.chat);
+      if(currentTab==='chat')acknowledgeRead();
       if(!$('socialNoticePanel').hidden)renderNotices(feedData.notifications);
       applyCounts();
       noticeNewItems();
@@ -267,7 +342,7 @@
     $('socialChatTab').classList.toggle('active',currentTab==='chat');
     $('socialPostsTab').setAttribute('aria-selected',String(currentTab==='posts'));
     $('socialChatTab').setAttribute('aria-selected',String(currentTab==='chat'));
-    if(currentTab==='chat'){markChatRead();loadFeed();}
+    if(currentTab==='chat'){markChatRead();markMentionsRead();loadFeed();acknowledgeRead();}
   }
   function onBoardRender(){
     applyCounts();
@@ -338,7 +413,7 @@
   $('socialBell').addEventListener('click',function(){
     var panel=$('socialNoticePanel');
     panel.hidden=!panel.hidden;
-    if(!panel.hidden){markRepliesRead();renderNotices(feedData.notifications||[])}
+    if(!panel.hidden){markRepliesRead();markMentionsRead();renderNotices(feedData.notifications||[])}
   });
   syncSoundButton();
   $('socialSoundBtn').addEventListener('click',async function(){
@@ -379,6 +454,14 @@
   });
   $('socialNoticeList').addEventListener('click',function(event){
     var item=event.target.closest('[data-social-notice-post]');if(!item)return;
+    var chatId=item.getAttribute('data-social-notice-chat');
+    if(chatId){
+      setTab('chat');
+      $('socialNoticePanel').hidden=true;
+      markMentionsRead();
+      setTimeout(function(){document.querySelector('[data-social-chat-id="'+chatId+'"]')?.scrollIntoView({behavior:'smooth',block:'center'});},120);
+      return;
+    }
     var postId=item.getAttribute('data-social-notice-post');
     setTab('posts');
     $('socialNoticePanel').hidden=true;
@@ -397,13 +480,27 @@
     sendBusy=true;$('socialSend').disabled=true;
     msgText('socialChatStatus','正在发送……');
     try{
-      await call('chat',{nickname:n,body:body});
+      var mentions=mentionCandidates().filter(function(name){return body.includes('@'+name)}).sort(function(a,b){return b.length-a.length}).slice(0,5);
+      await call('chat',{nickname:n,body:body,mentions:mentions});
       $('socialChatInput').value='';
       msgText('socialChatStatus','已发送，其他人约3秒内可看到。');
       await loadFeed();
       markChatRead();
     }catch(e){msgText('socialChatStatus',(e&&e.message)||'发送失败，草稿已保留。')}
     finally{sendBusy=false;$('socialSend').disabled=false;}
+  });
+  $('socialChatInput').addEventListener('input',renderMentionSuggestions);
+  $('socialChatInput').addEventListener('click',renderMentionSuggestions);
+  $('socialMentionMenu')?.addEventListener('click',function(event){
+    var btn=event.target.closest('[data-social-mention-name]');
+    if(!btn)return;
+    var name=btn.dataset.socialMentionName,input=$('socialChatInput');
+    var pos=input.selectionStart,part=input.value.slice(0,pos),match=part.match(/@([^@\s，,。；;！!？?]{0,16})$/);
+    if(!match)return;
+    var from=pos-match[0].length;
+    input.value=input.value.slice(0,from)+'@'+name+' '+input.value.slice(pos);
+    var next=from+name.length+2;input.focus();input.setSelectionRange(next,next);
+    $('socialMentionMenu').hidden=true;
   });
   $('socialChatInput').addEventListener('keydown',function(ev){
     if(ev.key==='Enter'&&!ev.shiftKey&&!ev.isComposing){ev.preventDefault();$('socialChatForm').requestSubmit();}
@@ -460,12 +557,14 @@
     }catch(e){status.textContent=(e&&e.message)||'评论失败，内容仍在输入框内。'}
     finally{commentBusy=false;button.disabled=false;}
   });
-  document.addEventListener('visibilitychange',function(){if(!document.hidden)loadFeed()});
+  document.addEventListener('visibilitychange',function(){if(!document.hidden){handleDayChange();loadFeed();acknowledgeRead()}});
+  window.addEventListener('focus',acknowledgeRead);
   window.addEventListener('storage',function(ev){
     if(ev.key===CHAT_SEEN_KEY){tokens.chatSeen=ev.newValue||tokens.chatSeen;updateBadges();}
     if(ev.key===REPLIES_SEEN_KEY){tokens.repliesSeen=ev.newValue||tokens.repliesSeen;updateBadges();}
+    if(ev.key===MENTION_SEEN_KEY){mentionSeen=ev.newValue||mentionSeen;updateBadges();}
   });
   window.GanluSocial={onBoardRender:onBoardRender,refresh:loadFeed};
   loadFeed();
-  setInterval(loadFeed,3000);
+  setInterval(function(){handleDayChange();loadFeed();},3000);
 })();
