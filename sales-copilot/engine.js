@@ -116,7 +116,7 @@ var searchable=positiveText(focus),scored=[];
 rules.filter(function(r){return r.id!=="general";}).forEach(function(rule){
 var score=0,matched=[];
 rule.cues.forEach(function(cue){var m=searchable.match(cue.rx);if(m){score+=cue.w;matched.push(m[0]);}});
-if(rule.id==="price"&&/价格不是问题|钱不是问题|预算充足/.test(focus)&&!/(?:超预算|超出预算|便宜|优惠|打折|降价|贵了|太贵|有点贵|比较贵|差.{0,8}(?:万|千|元|块))/.test(focus))score=0;
+if(rule.id==="price"&&(/价格不是问题|钱不是问题|预算充足/.test(focus)&&!/(?:超预算|超出预算|便宜|优惠|打折|降价|贵了|太贵|有点贵|比较贵|差.{0,8}(?:万|千|元|块))/.test(focus)||/(?:贵不贵|价格).{0,10}(?:都能接受|不是问题|不在意|无所谓)|(?:预算|费用).{0,8}(?:没问题|都可以|可以接受)/.test(focus)&&!/(?:超预算|超出预算|太贵|比较贵|有点贵|贵了|贵得|优惠|打折|降价|能不能便宜|差.{0,8}(?:万|千|元|块))/.test(focus)))score=0;
 if(rule.id==="seasick"&&/(?:不担心|不怕|不用担心).{0,5}(?:晕船|德雷克|海况)/.test(focus)&&!/(?:但|不过|可是|然而).{0,12}(?:晕船|德雷克|海况)/.test(focus))score=0;
 if(score>0)scored.push({rule:rule,score:score,matched:matched});
 });
