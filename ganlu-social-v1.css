@@ -95,3 +95,27 @@
 .socialMentionMenu button{border-radius:16px;padding:5px 10px;border:1px solid #dbc7a7;background:#fff8e9;color:#7d5c3e;font-size:11px;cursor:pointer}
 .socialMentionHint{font-size:11px;color:#957b62;line-height:1.5}
 .socialMentionHint b{color:#8d553c}
+
+/* Emoji selection and palace reaction packs, shared by chat and comments. */
+.socialEmojiWrap{position:relative;width:fit-content;max-width:100%;z-index:12;align-self:start;margin:0 0 3px}
+.socialEmojiToggle{display:inline-flex;align-items:center;gap:7px;border:1px solid #dac8ae;border-radius:999px;background:#fff9ed;color:#76583f;padding:7px 12px;min-height:34px;font:inherit;font-size:12px;font-weight:750;cursor:pointer}
+.socialEmojiToggle:hover,.socialEmojiToggle[aria-expanded="true"]{background:#f1e2ce;border-color:#bea07b}
+.socialEmojiPicker{position:absolute;z-index:20;top:calc(100% + 7px);left:0;width:min(365px,calc(100vw - 48px));max-height:350px;overflow-y:auto;border:1px solid #d6bd99;border-radius:16px;background:#fffdf8;padding:12px;box-shadow:0 14px 35px rgba(70,48,26,.19)}
+.socialEmojiPicker[hidden],.socialEmojiGrid[hidden]{display:none!important}
+.socialEmojiTabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
+.socialEmojiTabs button{padding:7px 5px;min-height:34px;border:1px solid #e0d3bf;border-radius:9px;background:#f8f0e4;color:#816a53;font:inherit;font-size:11px;cursor:pointer}
+.socialEmojiTabs button.active{background:#73553f;color:#fff9ec;border-color:#73553f;font-weight:750}
+.socialEmojiGrid{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:5px}
+.socialEmojiItem{display:flex;align-items:center;justify-content:center;width:100%;min-height:36px;border:1px solid transparent;border-radius:9px;background:#f7f0e6;font-size:22px;line-height:1.2;cursor:pointer;padding:4px 2px;transition:background .12s ease}
+.socialEmojiItem:hover,.socialEmojiItem:focus-visible{background:#ead8bf;border-color:#d6b891}
+.socialEmojiPhrase{grid-column:span 4;font-size:11px;text-align:left;justify-content:flex-start;padding:8px;min-height:36px;white-space:normal;overflow-wrap:anywhere;color:#6f533c}
+.socialEmojiTip{font-size:10px;color:#a08a73;line-height:1.5;margin:10px 0 0}
+.socialEmojiToggle:focus-visible,.socialEmojiTabs button:focus-visible{outline:2px solid #94704d;outline-offset:2px}
+.socialCommentComposer>.socialEmojiWrap{margin:1px 0 2px}
+@media(max-width:650px){
+ .socialEmojiPicker{position:relative;top:auto;left:auto;width:min(320px,calc(100vw - 45px));max-height:310px;box-shadow:0 6px 21px rgba(70,48,26,.10);margin-top:8px}
+ .socialEmojiGrid{grid-template-columns:repeat(7,minmax(0,1fr))}
+ .socialEmojiPhrase{grid-column:span 7}
+ .socialEmojiItem{min-height:37px}
+}
+@media(prefers-reduced-motion:reduce){.socialEmojiItem{transition:none}}
