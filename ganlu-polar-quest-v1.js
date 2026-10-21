@@ -48,11 +48,19 @@ function safeText(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<
 function stored(){
  let value;
  try{value=JSON.parse(localStorage.getItem(STORE)||'null');}catch(e){}
- if(!value||!Number.isInteger(value.index)||value.index<0||value.index>total||typeof value.wrong!=='number')return {index:0,wrong:0,pending:false};
- return {index:value.index,wrong:Math.max(0,Math.floor(value.wrong)),pending:!!value.pending};
+ if(!value||!Number.isInteger(value.index)||value.index<0||value.index>total||typeof value.wrong!=='number')return {index:0,wrong:0,pending:false,failed:false,failedChoice:null};
+ return {index:value.index,wrong:Math.max(0,Math.floor(value.wrong)),pending:!!value.pending,failed:!!value.failed,failedChoice:Number.isInteger(value.failedChoice)?value.failedChoice:null};
 }
 let state=stored();
-let questionCorrect=false,chosenWrong=new Set();
+let questionCorrect=false;
+let advanceTimer=null;
+function clearAdvance(){
+ if(advanceTimer!==null){clearTimeout(advanceTimer);advanceTimer=null;}
+}
+function advanceLater(action,delay){
+ clearAdvance();
+ advanceTimer=setTimeout(()=>{advanceTimer=null;action();},delay);
+}
 function save(){
  try{localStorage.setItem(STORE,JSON.stringify(state));}catch(e){}
 }
@@ -96,12 +104,12 @@ function renderQuestion(){
     '<button type="button" class="polarChoice" data-polar-answer="'+i+'"><span class="polarChoiceKey">'+String.fromCharCode(65+i)+'</span><span>'+safeText(answer)+'</span></button>'
  ).join('');
  el('polarQuestFeedback').hidden=true;
- el('polarQuestContinue').hidden=true;
-
+ el('polarQuestRetry').hidden=true;
  el('polarQuestQuestion').hidden=false;
  el('polarQuestReward').hidden=true;
  el('polarQuestFinish').hidden=true;
- questionCorrect=false;chosenWrong.clear();
+ questionCorrect=false;
+ if(state.failed)showFailure();
 }
 function renderReward(){
  const chapterIndex=Math.max(0,Math.floor((state.index-1)/chapterSize));
@@ -113,14 +121,15 @@ function renderReward(){
  el('polarRewardName').textContent=ch.reward+' · 图鉴解锁';
  el('polarRewardDescription').textContent=ch.desc;
  el('polarRewardRank').textContent=rank();
- el('polarRewardNext').textContent=state.index>=total?'领取通关证书 →':'进入下一关 →';
+ el('polarRewardNext').textContent=state.index>=total?'领取通关证书 →':'立即进入下一关 →';
+ advanceLater(nextChapter,2200);
 }
 function renderFinish(){
  el('polarQuestQuestion').hidden=true;
  el('polarQuestReward').hidden=true;
  el('polarQuestFinish').hidden=false;
  el('polarFinishRank').textContent=rank();
- el('polarFinishSummary').textContent='已掌握20个常见销售场景中的极地知识，累计修正 '+state.wrong+' 次答案。能准确解释航线，比背下价格和天数更重要。';
+ el('polarFinishSummary').textContent='20道题全部通关，5张极地图鉴已解锁。';
  el('polarFinishIcons').textContent=chapters.map(x=>x.icon).join(' ');
 }
 function render(){
@@ -129,48 +138,66 @@ function render(){
  if(state.index===total){renderFinish();return;}
  renderQuestion();
 }
-function answer(ix){
- if(questionCorrect||state.pending||state.index>=total||!Number.isInteger(ix)||ix<0||ix>3)return;
+function showFailure(){
  const q=qs[state.index];
- const choices=[...el('polarQuestChoices').querySelectorAll('[data-polar-answer]')];
- const button=choices[ix];
- if(!button||chosenWrong.has(ix))return;
+ if(!q)return;
+ const buttons=[...el('polarQuestChoices').querySelectorAll('[data-polar-answer]')];
+ buttons.forEach((b,ix)=>{
+  b.disabled=true;
+  if(ix===q.answer)b.classList.add('correct');
+  if(ix===state.failedChoice)b.classList.add('wrong');
+ });
+ feedback('wrong',q.wrong,'正确答案：'+q.options[q.answer]+'。'+q.why);
+ el('polarQuestRetry').hidden=false;
+}
+function answer(ix){
+ if(questionCorrect||state.failed||state.pending||state.index>=total||!Number.isInteger(ix)||ix<0||ix>3)return;
+ const q=qs[state.index];
+ const buttons=[...el('polarQuestChoices').querySelectorAll('[data-polar-answer]')];
+ const button=buttons[ix];
+ if(!button)return;
  if(ix===q.answer){
   questionCorrect=true;
   button.classList.add('correct');
-  choices.forEach(b=>b.disabled=true);
-  feedback('correct','答对啦！这位小主有点极地知识。','✅ '+q.why);
-  const finalInChapter=q.position===chapterSize-1;
-  el('polarQuestContinue').textContent=finalInChapter?'领取本关图鉴 →':'下一题 →';
-  el('polarQuestContinue').hidden=false;
+  buttons.forEach(b=>b.disabled=true);
+  feedback('correct','✅ 回答正确',q.position===chapterSize-1?'正在解锁本关图鉴…':'正在进入下一题…');
+  advanceLater(next,800);
  }else{
-  state.wrong++;save();chosenWrong.add(ix);
-  button.classList.add('wrong');button.disabled=true;
-  feedback('wrong',q.wrong,'正确答案：'+q.options[q.answer]+'。'+q.why+' 换个选项继续，答对才能通关。');
+  state.wrong++;
+  state.failed=true;
+  state.failedChoice=ix;
+  clearAdvance();
+  save();
+  showFailure();
  }
 }
 function next(){
  if(!questionCorrect)return;
+ clearAdvance();
  state.index=Math.min(total,state.index+1);
  state.pending=state.index%chapterSize===0;
+ state.failed=false;state.failedChoice=null;
  questionCorrect=false;save();render();
  root.scrollIntoView({behavior:'smooth',block:'start'});
 }
 function nextChapter(){
  if(!state.pending)return;
+ clearAdvance();
  state.pending=false;save();render();
  root.scrollIntoView({behavior:'smooth',block:'start'});
 }
 function restart(){
- if(!window.confirm('确定从第一关重新挑战吗？本浏览器保存的图鉴与闯关进度会清零。'))return;
- state={index:0,wrong:0,pending:false};save();render();
+ if(!state.failed&&!window.confirm('确定从第一关重新挑战吗？本浏览器保存的图鉴与闯关进度会清零。'))return;
+ clearAdvance();
+ state={index:0,wrong:0,pending:false,failed:false,failedChoice:null};
+ save();render();
  root.scrollIntoView({behavior:'smooth',block:'start'});
 }
 el('polarQuestChoices').addEventListener('click',e=>{
  const node=e.target.closest('[data-polar-answer]');
  if(node)answer(Number(node.getAttribute('data-polar-answer')));
 });
-el('polarQuestContinue').addEventListener('click',next);
+el('polarQuestRetry').addEventListener('click',restart);
 el('polarRewardNext').addEventListener('click',nextChapter);
 el('polarQuestRestart').addEventListener('click',restart);
 el('polarFinishRestart').addEventListener('click',restart);
