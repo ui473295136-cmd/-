@@ -88,3 +88,5 @@ input::placeholder,textarea::placeholder{color:#b5a797}
 .placeholder{background:#fffaf2;border-color:#ddc8a6;color:#9a846d}
 #toast{background:#574131;border:1px solid rgba(231,216,193,.35);box-shadow:0 14px 36px rgba(60,42,28,.2)}
 @media(max-width:700px){.sidebar{background:linear-gradient(180deg,#514033,#604a3b);box-shadow:0 7px 22px rgba(78,55,36,.12)}.sidebar nav{padding-bottom:1px}.right header:after{right:2%}.stats>div{background:#fffaf2}}
+
+.right header:before{z-index:0}.right header>*{position:relative;z-index:1}
