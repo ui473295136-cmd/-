@@ -148,6 +148,7 @@ function showFailure(){
   if(ix===state.failedChoice)b.classList.add('wrong');
  });
  feedback('wrong',q.wrong,'正确答案：'+q.options[q.answer]+'。'+q.why);
+ el('polarQuestRetry').textContent='↻ 重新挑战第'+(Math.floor(state.index/chapterSize)+1)+'关';
  el('polarQuestRetry').hidden=false;
 }
 function answer(ix){
@@ -186,8 +187,18 @@ function nextChapter(){
  state.pending=false;save();render();
  root.scrollIntoView({behavior:'smooth',block:'start'});
 }
+function retryChapter(){
+ if(!state.failed)return;
+ clearAdvance();
+ // Retry only the four questions of the failed chapter; keep all earlier rewards.
+ state.index=Math.floor(state.index/chapterSize)*chapterSize;
+ state.pending=false;state.failed=false;state.failedChoice=null;
+ questionCorrect=false;
+ save();render();
+ root.scrollIntoView({behavior:'smooth',block:'start'});
+}
 function restart(){
- if(!state.failed&&!window.confirm('确定从第一关重新挑战吗？本浏览器保存的图鉴与闯关进度会清零。'))return;
+ if(!window.confirm('确定从第一关重新挑战吗？本浏览器保存的图鉴与闯关进度会清零。'))return;
  clearAdvance();
  state={index:0,wrong:0,pending:false,failed:false,failedChoice:null};
  save();render();
@@ -197,7 +208,7 @@ el('polarQuestChoices').addEventListener('click',e=>{
  const node=e.target.closest('[data-polar-answer]');
  if(node)answer(Number(node.getAttribute('data-polar-answer')));
 });
-el('polarQuestRetry').addEventListener('click',restart);
+el('polarQuestRetry').addEventListener('click',retryChapter);
 el('polarRewardNext').addEventListener('click',nextChapter);
 el('polarQuestRestart').addEventListener('click',restart);
 el('polarFinishRestart').addEventListener('click',restart);
