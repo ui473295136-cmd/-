@@ -2,7 +2,7 @@
 'use strict';
 const root=document.getElementById('polarSpotter');
 if(!root)return;
-const $=id=>document.getElementById(id),KEY='ganlu-polar-spotter-v2';
+const $=id=>document.getElementById(id),KEY='ganlu-polar-spotter-v3';
 // Poster composition coordinates. The actual hotspots are positioned over photographic artwork.
 const layouts=[
  [{x:18,y:42},{x:73,y:39},{x:17,y:63},{x:76,y:63},{x:42,y:80},{x:75,y:83}],
@@ -75,6 +75,22 @@ const posters=[
   ],
   correct:[['🇦🇷 阿根廷往返',24,28],['🚢 船去船回',73,28],['🧭 深度探险计划',38,92]]}
 ];
+// Image-only challenges: six visual anomalies per scene, no text rendered on the picture.
+const sceneObjects=[
+ [['🐻‍❄️',16,62,96],['🌴',82,55,91],['✈️',24,23,87],['balloon',76,22,92],['🐪',45,80,82],['🦩',78,83,78]],
+ [['🐻‍❄️',17,59,88],['🌵',77,47,86],['🦒',35,77,77],['🦩',78,83,77],['🏖️',48,43,81],['🐪',59,81,82]],
+ [['🌴',16,61,85],['🐪',75,65,82],['balloon',25,22,89],['🐻‍❄️',83,38,90],['🦩',42,82,77],['🦒',77,82,77]],
+ [['🐧',17,67,81],['🦩',75,64,78],['🌴',44,72,90],['🐪',81,82,81],['🦒',73,30,83],['🪸',26,39,80]],
+ [['🐻‍❄️',17,61,86],['🌴',76,51,90],['🏖️',38,81,79],['🦩',78,81,78],['🐪',55,67,80],['balloon',28,23,82]]
+];
+const visualExplanations=[
+ ['南极半岛没有野生北极熊，北极熊生活在北极。','热带椰树不会生长在南极半岛的冰川海岸。','一般客运航班不能当成飞越德雷克的常规接驳方式；要看船司的特定极地航班安排。','乘坐热气球并不是南极探险航次的常规保证项目。','骆驼并不生活在南极。','火烈鸟不是南极半岛的野生鸟类。'],
+ ['南乔治亚岛没有野生北极熊，当地闻名的是王企鹅群落。','这里不是热带干旱区，不会出现这种沙漠仙人掌。','长颈鹿不是南乔治亚的野生动物。','火烈鸟并非南乔治亚的典型鸟类。','企鹅栖息地不是可随意布置休闲设施的海滨浴场。','骆驼并非南乔治亚岛的野生动物。'],
+ ['南极极地机场周边没有热带椰树。','骆驼并不生活在南极。','常见飞船旅行从智利蓬塔阿雷纳斯乘飞机飞越德雷克，不是坐热气球。','乔治王岛及周边南极地区没有野生北极熊。','火烈鸟不属于南极半岛野生鸟类。','长颈鹿不生活在南极。'],
+ ['北极没有自然分布的野生企鹅群落。','火烈鸟不是斯瓦尔巴高北极地区的常见野生鸟类。','斯瓦尔巴不会生长热带海滩的椰子树。','骆驼不栖息在北极海冰上。','长颈鹿不分布于北极。','热带珊瑚礁不会出现在斯瓦尔巴海岸的冰雪环境中。'],
+ ['南极半岛和南乔治亚都没有野生北极熊。','双岛与南极航线不是热带椰林度假区。','南极登陆须遵守野生动物及环境保护规则，不能把企鹅栖息地当沙滩浴场。','火烈鸟不是南极代表性野生鸟类。','骆驼并非双岛极地探险的当地动物。','双航次连走是邮轮探险路线，不含日常热气球观光项目。']
+];
+posters.forEach((p,i)=>{p.errors=visualExplanations[i].map((why,k)=>['画面中的异常物体'+(k+1),why]);});
 function escapeHTML(text){return String(text).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[c]));}
 function recover(){
  let s;try{s=JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){}
@@ -84,30 +100,48 @@ function recover(){
 }
 let state=recover(),active=false,wonTimer=0,lastBadTimer=0;
 function persist(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
-// Backgrounds are actual expedition photographs. CSS adds a documentary title and advertisement misprints.
-function safeCoordinate(n){return Math.min(95,Math.max(0,Number(n)||0));}
+// Only one photographic picture is displayed; the wrong objects are part of its composition.
 function posterMarkup(p,i){
- const found=state.found[i],photo=posterPhotography[i];
- const hotspots=p.errors.map((item,index)=>{
-  const pos=layouts[i][index],hit=found.includes(index);
-  return '<button type="button" class="spotterClue spotterClue'+index+(hit?' found':'')+'" style="--sx:'+safeCoordinate(pos.x)+'%;--sy:'+safeCoordinate(pos.y)+'%" data-spot-id="'+index+'" aria-label="'+escapeHTML(item[0])+'" aria-pressed="'+hit+'">'
-   +'<span class="spotterClueText">'+escapeHTML(item[0])+'</span><span class="spotterFoundMark" aria-hidden="true">'+(hit?'✓':'')+'</span>'
-   +'</button>';
+ const image=posterPhotography[i];
+ const art=sceneObjects[i].map(item=>{
+  const [glyph,xx,yy,size]=item,x=xx*10,y=yy*6.67;
+  if(glyph==='balloon')return '<g class="spotterVisualObject" transform="translate('+x+' '+y+')"><ellipse cy="-21" rx="'+size*.27+'" ry="'+size*.41+'" fill="#db7750" stroke="#fee4ba" stroke-width="2"/><path d="M0 -'+size*.6+'v'+size*.6+'" stroke="#f5ca80" stroke-width="12" opacity=".65"/><path d="M-'+size*.21+' 10L-'+size*.12+' 29M'+size*.21+' 10L'+size*.12+' 29" stroke="#ffe4b7" stroke-width="2"/><rect x="-'+size*.18+'" y="29" width="'+size*.36+'" height="'+size*.2+'" fill="#866140" rx="2"/></g>';
+  return '<text class="spotterVisualObject" x="'+x+'" y="'+y+'" text-anchor="middle" dominant-baseline="central" font-size="'+size+'" font-family="Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,sans-serif">'+glyph+'</text>';
  }).join('');
- const honest=p.correct.map(([label,x,y],index)=>{
-  const pos=[{x:47,y:34},{x:49,y:62},{x:25,y:91}][index]||{x,y};
-  return '<button type="button" class="spotterClue spotterClueTrue spotterDecoy'+index+'" style="--sx:'+safeCoordinate(pos.x)+'%;--sy:'+safeCoordinate(pos.y)+'%" data-spot-true="'+index+'" aria-label="'+escapeHTML(label)+'">'
-  +escapeHTML(label)+'</button>';
+ const saved=state.found[i].map(k=>{
+  const pt=sceneObjects[i][k];
+  return '<span class="spotterFoundPin" style="left:'+pt[1]+'%;top:'+pt[2]+'%">✓</span>';
  }).join('');
- return '<div class="spotterPoster spotterPhotoScene spotterTheme-'+p.theme+'" id="spotterPosterCanvas" role="group" aria-label="'+escapeHTML(p.name)+'。在海报上点击找出6处不合理的细节">'
-  +'<div class="spotterPosterArt"><img class="spotterPhoto" loading="eager" decoding="async" src="'+photo.src+'" alt=""/><div class="spotterPhotoFallback"></div></div>'
-  +'<div class="spotterPhotoGrain" aria-hidden="true"></div>'
-  +'<div class="spotterPosterTop"><div class="spotterPosterBrand">CHUANKE <span>EXPEDITION FILES</span></div>'
-  +'<div class="spotterPosterSerial">FIELD NOTES / 0'+(i+1)+'</div>'
-  +'<div class="spotterPosterDeck">'+escapeHTML(p.deck)+'</div><h3>'+escapeHTML(p.headline)+'</h3>'
-  +'<div class="spotterPosterSubtitle">'+p.highlights.map(x=>'<span>'+escapeHTML(x)+'</span>').join('<i>—</i>')+'</div></div>'
-  +'<div class="spotterStampLayer">'+hotspots+honest+'</div>'
-  +'<div class="spotterPosterBottom"><span>船客 · 极地旅行创意海报</span><span>资料视觉：'+escapeHTML(photo.credit)+'</span></div></div>';
+ return '<div class="spotterPicture" id="spotterPosterCanvas" role="img" aria-label="极地图片找茬画面，点击你认为有错误的物体">'
+  +'<img class="spotterPicturePhoto" src="'+image.src+'" alt="" decoding="async" loading="eager" draggable="false">'
+  +'<svg class="spotterPictureObjects" viewBox="0 0 1000 667" preserveAspectRatio="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">'+art+'</svg>'
+  +'<div class="spotterPicturePins" aria-hidden="true">'+saved+'</div></div>';
+}
+function targetFromClick(event){
+ const image=$('spotterPosterCanvas');
+ if(!image||!Number.isFinite(event.clientX)||!Number.isFinite(event.clientY))return null;
+ const rect=image.getBoundingClientRect();
+ if(!rect||!rect.width||!rect.height)return null;
+ const x=(event.clientX-rect.left)*100/rect.width,y=(event.clientY-rect.top)*100/rect.height;
+ return x>=0&&x<=100&&y>=0&&y<=100?{x,y}:null;
+}
+function matchPoint(scene,point,mobile){
+ let best=-1,score=Infinity;
+ scene.forEach((obj,i)=>{
+  const dx=(point.x-obj[1])/(mobile?10.7:8.6),dy=(point.y-obj[2])/(mobile?13.5:11.8);
+  const d=dx*dx+dy*dy;
+  if(d<=1&&d<score){best=i;score=d;}
+ });
+ return best;
+}
+function addFeedbackPin(point,good){
+ const image=$('spotterPosterCanvas');if(!image)return;
+ const pin=document.createElement('span');
+ pin.className=good?'spotterFoundPin':'spotterMissPin';
+ pin.textContent=good?'✓':'×';
+ pin.style.left=point.x+'%';pin.style.top=point.y+'%';
+ (good?image.querySelector('.spotterPicturePins'):image).appendChild(pin);
+ if(!good)setTimeout(()=>pin.remove(),700);
 }
 function showFeedback(message,kind){
  const el=$('spotterFeedback');el.textContent=message;el.className='spotterFeedback '+(kind||'');el.hidden=false;
@@ -157,30 +191,29 @@ function next(){
  else{state.complete=true;state.stage=5;persist();display();award();}
 }
 function spot(event){
- const error=event.target.closest('[data-spot-id]'),truth=event.target.closest('[data-spot-true]');
- if(!error&&!truth){showFeedback('这处没发现问题，换个地方看看。','neutral');return;}
- if(truth){
-  showFeedback('这处没错：'+truth.textContent.trim()+'。再找找。','neutral');
-  truth.classList.add('spotterMistake');
-  clearTimeout(lastBadTimer);
-  lastBadTimer=setTimeout(()=>truth.classList.remove('spotterMistake'),650);
+ if(state.complete||state.stage>=5)return;
+ const click=targetFromClick(event);if(!click)return;
+ const index=matchPoint(sceneObjects[state.stage],click,window.innerWidth<650);
+ if(index===-1){
+  showFeedback('这处没有发现异常，再找找。','neutral');
+  addFeedbackPin(click,false);
   return;
  }
- const id=Number(error.getAttribute('data-spot-id'));
- if(state.complete||id<0||id>=6||state.found[state.stage].includes(id))return;
- state.found[state.stage].push(id);
+ if(state.found[state.stage].includes(index)){
+  showFeedback('这一处已经找过了。','neutral');return;
+ }
+ state.found[state.stage].push(index);
  persist();
- const item=posters[state.stage].errors[id];
- error.classList.add('found');error.setAttribute('aria-pressed','true');
- error.querySelector('.spotterFoundMark').textContent='✓';
+ const obj=sceneObjects[state.stage][index];
+ addFeedbackPin({x:obj[1],y:obj[2]},true);
  updateProgress();
- showFeedback('找到了！'+item[1],'good');
+ showFeedback('找到了！'+posters[state.stage].errors[index][1],'good');
+ $('spotterRetry').disabled=false;
  if(state.found[state.stage].length===6){
   $('spotterNext').hidden=false;
-  $('spotterRetry').disabled=false;
-  showFeedback(state.stage===4?'30处错误全部找到了，准备领取金色认证。':'本张6处错误全部找到，可以进入下一张。','good');
-  if(state.stage===4){clearTimeout(wonTimer);wonTimer=setTimeout(next,1100);}
- }else $('spotterRetry').disabled=false;
+  showFeedback('本张6处错误全部找到！','good');
+  if(state.stage===4){clearTimeout(wonTimer);wonTimer=setTimeout(next,1300);}
+ }
 }
 function restartPoster(){
  if(state.complete){if(!window.confirm('从第一张海报重新挑战？'))return;state={stage:0,found:[[],[],[],[],[]],complete:false};}
@@ -233,7 +266,7 @@ function downloadCard(){
 document.querySelectorAll('[data-spotter-open]').forEach(btn=>btn.addEventListener('click',open));
 $('spotterPosterMount').addEventListener('click',e=>{
  if(e.target.closest('#spotterShowMedal')){award();return;}
- spot(e);
+ if(e.target.closest('#spotterPosterCanvas'))spot(e);
 });
 $('spotterNext').addEventListener('click',next);
 $('spotterRetry').addEventListener('click',restartPoster);
