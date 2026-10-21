@@ -1160,7 +1160,7 @@
      if(n%3!==0)warnings.push('当前人数不足整间三人，本次按每位价格报价；该房型需三人同报。');
    }else if(stay==='double'){
      assumptions.push('按双人拼住价计算，不含单房差。');
-   }else if(stay==='triple'){
+   }else if(stay==='triple'&&!isAnniversaryUpgrade){
      if(!hasThirdBed(r,c))return fail('该舱型没有明确的第三人价格，请选择双人拼住或单人住。');
      if(atlas){
        if(n<3)return fail('Atlas三/四人同舱至少需要3位旅客；1—2位请选择双人拼住或单人住。');
@@ -1233,6 +1233,7 @@
        warnings.push('文件未明确单房差与优惠的叠加口径，本次按可确定的常规独住价报价。');
      }
    }
+   if(haishen&&isLatest5o&&stay==='single')q.singleTotal=price*n*.92+q.singleSupplement;
    let groupRate=0;
    const groupCount=atlas&&(stay==='triple'||atlasPromo==='gaokao')?q.regularPeople:n;
    if(allowBenefits&&!ponant&&groupCount>=4){
