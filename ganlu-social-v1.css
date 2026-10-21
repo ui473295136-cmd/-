@@ -85,3 +85,13 @@
   #socialSoundStatus{flex-basis:100%;max-width:none}
   .socialSideToast{top:max(66px,calc(env(safe-area-inset-top) + 56px));right:9px;width:calc(100vw - 18px);padding:12px}
 }
+
+/* @小主 mention autocomplete, read count & daily chat reset */
+.socialChatSeen{font-size:10px;color:#998373;text-align:right;margin-top:6px}
+.socialChatBubble.mine .socialChatSeen{color:#718469}
+.socialChatExpiry{font-size:11px;color:#886f55;line-height:1.7;padding:10px 12px;border:1px solid #e8d9be;background:#fff8e9;border-radius:11px;margin-bottom:9px}
+.socialMentionMenu{display:flex;align-items:center;flex-wrap:wrap;gap:6px;padding:8px 0}
+.socialMentionMenu[hidden]{display:none!important}
+.socialMentionMenu button{border-radius:16px;padding:5px 10px;border:1px solid #dbc7a7;background:#fff8e9;color:#7d5c3e;font-size:11px;cursor:pointer}
+.socialMentionHint{font-size:11px;color:#957b62;line-height:1.5}
+.socialMentionHint b{color:#8d553c}
