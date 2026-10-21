@@ -47,7 +47,7 @@
 @media(max-width:340px){.quoteGrid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.quote{padding:13px 9px}.quote .amount{font-size:20px}.quote .head{font-size:11px}.quote .person{font-size:10px}}
 
 
-/* V7.7：Atlas专项报价 + 碎嘴阁 + 甄学考试 */
+/* V7.7：Atlas专项报价 + 福气许愿池 + 甄学考试 */
 
 .atlasDeductionChoices{display:grid;gap:8px;margin-top:8px}
 .atlasDeductionChoices label{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 11px;border:1px solid #e5d6c2;border-radius:12px;background:#fffdf8;color:#715a45;font-size:12px}
@@ -110,13 +110,19 @@
  .quizEmoji{font-size:20px}
 }
 
-</style><link rel="stylesheet" href="./ganlu-social-v1.css?v=20261021-chat3"></head><body>
+</style><link rel="stylesheet" href="./ganlu-social-v1.css?v=20261021-v8c"><link rel="stylesheet" href="./ganlu-edicts-v8.css?v=20261021-v8c"></head><body>
 <header class="mast"><div class="petals" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <svg class="roofArt" viewBox="0 0 400 220" aria-hidden="true"><g fill="none" stroke="#e7d2ad" stroke-linecap="round" stroke-linejoin="round"><path d="M26 128 Q122 120 193 70 Q253 115 369 115" stroke-width="5"/><path d="M42 142 Q125 132 193 88 Q251 127 354 127" stroke-width="2"/><path d="M76 143 L76 220 M326 133 L326 220 M111 137 L111 220 M291 134 L291 220" stroke-width="6"/><path d="M74 164 H329 M99 183 H302 M154 165 V220 M247 166 V220" stroke-width="2"/><path d="M20 132 Q47 140 66 130 M351 125 Q373 135 392 125" stroke-width="2"/><path d="M164 86 Q193 40 218 82 M165 85 Q195 69 218 83" stroke-width="3"/></g><g fill="#e1c69d" opacity=".18"><path d="M55 141 L195 81 L350 135 L350 220 L55 220Z"/></g></svg>
 <div class="wrap mastInner"><div><h1>甘露寺·财务部</h1>
 <div class="countdownBox"><div class="countdown"><div class="days" id="palaceDays" aria-hidden="true">37</div><div class="txt"><b id="palaceCountdown">你已经来甘露寺 37 天</b><span class="ganluAside">今日也在认真修行，努力回宫。</span></div><svg class="cryFace" viewBox="0 0 64 64" role="img" aria-label="委屈巴巴的小哭脸"><circle cx="32" cy="32" r="29" fill="#ffdfa6" stroke="#e8bb7b" stroke-width="2"/><ellipse cx="18" cy="37" rx="7" ry="4" fill="#efa7a1" opacity=".65"/><ellipse cx="46" cy="37" rx="7" ry="4" fill="#efa7a1" opacity=".65"/><path d="M17 21q4 3 8 0M39 21q4 3 8 0" fill="none" stroke="#7c5a42" stroke-width="2.5" stroke-linecap="round"/><ellipse cx="22" cy="30" rx="3.4" ry="4.5" fill="#6b4c3b"/><ellipse cx="42" cy="30" rx="3.4" ry="4.5" fill="#6b4c3b"/><circle cx="23" cy="28.5" r="1.2" fill="white"/><circle cx="43" cy="28.5" r="1.2" fill="white"/><path d="M26 45q6-6 12 0" fill="none" stroke="#92614a" stroke-width="2.5" stroke-linecap="round"/><path d="M18 34c-7 10-6 15-1 15s7-5 1-15M47 34c-6 10-5 15 0 15s7-5 0-15" fill="#91cee3" stroke="#78b8d1" stroke-width=".8"/></svg></div><div class="palaceLine" id="today">北京时间</div></div>
 </div></div></header>
 <main class="wrap main">
+<section class="edictDaily" id="edictDaily" aria-label="今日趣味圣旨">
+  <div class="edictDailyTop"><strong class="edictDailyLabel">📜 今日圣旨</strong><span class="edictDailyDate" id="edictDailyDate">北京时间</span></div>
+  <p class="edictDailyContent" id="edictDailyContent">奉天承运，皇帝诏曰：愿你今日顺遂，出单如意。钦此。</p>
+  <span class="edictDailySeal">甘露赐福</span>
+  <div class="edictDailyFoot">每日北京时间零点换新 · 趣味互动内容，不代表正式业务通知或政策承诺</div>
+</section>
 <div class="layout"><section class="panel leftPanel"><h2>选择报价条件</h2>
 <div class="form">
 <div class="field"><label for="route">① 选择航次</label><select id="route"></select></div>
@@ -151,7 +157,7 @@
 <div class="quoteGrid"><div class="quote primary"><div class="head"><span id="offerLabel">优惠价格</span> <span class="pill" id="offerBadge">计算中</span></div><div class="amount" id="discountTotal">—</div><div class="person" id="discountAvg">—</div><div class="context" id="offerCaveat">按文件政策测算</div></div>
 <div class="quote secondary"><div class="head" id="normalLabel">原价</div><div class="amount" id="normalTotal">—</div><div class="person" id="normalAvg">—</div><div class="context" id="normalContext">基于行程册原价及能确认的入住附加费</div></div></div>
 <div id="groupBanner" class="statusLine hidden"></div>
-<div class="copygrid"><button type="button" class="copy primary" id="copyCustomer">复制客户版报价</button></div>
+<div class="copygrid"><button type="button" class="copy primary" id="copyCustomer">复制客户版报价</button><button type="button" class="quoteEdictBtn" id="openQuoteEdict">📜 生成报价圣旨</button></div>
 <div class="how"><h3>报价计算明细</h3><div class="formula" id="explanation">—</div><div class="detailedTitle" id="standardTitle">原价计算</div><div class="stdExplain" id="standardFormula">—</div></div>
 <div id="issues" class="issues"></div>
 </section></div>
@@ -161,7 +167,7 @@
 
 <section class="panel funPanel" id="complaintPanel" aria-labelledby="boardHeading">
   <div class="funTop">
-    <div><h2 id="boardHeading">碎嘴阁 · 吐槽专区</h2><p>有话直说，别憋在心里。这里不问你是哪宫的，只管把话说清楚。</p></div>
+    <div><h2 id="boardHeading">福气许愿池 · 正能量专区</h2><p>许一个小心愿、分享今天的好消息，或者夸夸帮过你的同事。把福气传下去。</p></div>
     <span class="livePill">多人互动 · 聊天约3秒同步</span>
   </div>
 <div class="socialControls">
@@ -172,34 +178,37 @@
   <small id="socialDesktopStatus" style="font-size:11px;color:#968371">站内红点始终可用；桌面通知需要浏览器授权</small>
 </div>
 <div class="socialNotifyBox" id="socialNoticePanel" hidden>
-  <h3>碎嘴阁 · 消息匣</h3>
+  <h3>福气许愿池 · 消息匣</h3>
   <p id="socialUnreadSummary">暂无未读消息</p>
   <div class="socialNoticeItems" id="socialNoticeList"><p class="socialNoticeEmpty">暂时还没有收到回复。</p></div>
 </div>
-<div class="socialTabs" role="tablist" aria-label="吐槽与聊天">
-  <button type="button" id="socialPostsTab" class="active" role="tab" aria-selected="true" aria-controls="socialPostsArea">✎ 吐槽广场 · 评论</button>
-  <button type="button" id="socialChatTab" role="tab" aria-selected="false" aria-controls="socialChatArea">☕ 实时茶话会 <span class="socialBadge" id="socialChatBadge" hidden>0</span></button>
+<div class="socialTabs" role="tablist" aria-label="心愿与聊天">
+  <button type="button" id="socialPostsTab" class="active" role="tab" aria-selected="true" aria-controls="socialPostsArea">✎ 心愿广场 · 评论</button>
+  <button type="button" id="socialChatTab" role="tab" aria-selected="false" aria-controls="socialChatArea">☕ 福气茶话会 <span class="socialBadge" id="socialChatBadge" hidden>0</span></button>
 </div>
 <div id="socialPostsArea" role="tabpanel" aria-labelledby="socialPostsTab">
   <form id="boardForm" class="boardForm">
     <div class="boardFormRow">
       <div class="field"><label for="boardNickname">你的宫中称号</label><input id="boardNickname" name="nickname" maxlength="16" value="匿名小主" required autocomplete="nickname" placeholder="例如：碎玉轩熬夜人"></div>
-      <div class="field"><label for="boardBody">今日想吐槽什么？</label><textarea id="boardBody" name="body" maxlength="300" required placeholder="工作、生活、报价、后宫……都可以说两句。最多300字。"></textarea></div>
+      <div class="field"><label for="boardBody">今天有什么心愿或好消息？</label><textarea id="boardBody" name="body" maxlength="300" required placeholder="比如：许愿今天出单顺利！也可以分享好消息、感谢同事、送上祝福。最多300字。"></textarea></div>
     </div>
-    <div class="boardFormFoot"><span>昵称最多16字，内容最多300字。请勿发布手机号、身份证等个人隐私。</span><button id="boardSubmit" type="submit">递折子</button></div>
+    <div class="boardFormFoot"><span>昵称最多16字，内容最多300字。请勿发布手机号、身份证等个人隐私。</span><button id="boardSubmit" type="submit">送出心愿</button></div>
   </form>
   <div class="boardStatus" id="boardStatus" role="status" aria-live="polite">正在召集各宫小主……</div>
-  <div class="boardPosts" id="boardPosts" aria-live="polite"><div class="boardEmpty">碎嘴阁刚开门，等你来递第一本折子。</div></div>
+  <div class="boardPosts" id="boardPosts" aria-live="polite"><div class="boardEmpty">许愿池刚开张，来写下第一份心愿吧。</div></div>
 </div>
 <div class="socialChatArea" id="socialChatArea" role="tabpanel" aria-labelledby="socialChatTab" hidden>
   <div class="socialChatHead"><strong>茶话会 · 大家都在聊</strong><small id="socialLiveStatus" role="status">正在连接聊天……</small></div>
+  <div class="socialChatExpiry">⏰ 茶话会每天北京时间 00:00 自动清空聊天记录，许愿和评论会继续保留。每条消息显示已读人数，按打开聊天区的独立浏览器统计（并非实名员工数）。</div>
   <div class="socialChatStream" id="socialChatStream" role="log" aria-label="公共聊天记录" aria-live="off"><div class="socialThreadEmpty">聊天加载中……</div></div>
   <form class="socialChatForm" id="socialChatForm">
     <div class="socialChatFields">
       <label for="socialNick">我的宫中称号<input id="socialNick" name="nickname" maxlength="16" placeholder="例如：碎玉轩吃瓜人" value="匿名小主" required></label>
       <label for="socialChatInput">说点什么<textarea id="socialChatInput" name="body" maxlength="240" required placeholder="大家都可以看到，最多240字。按 Enter 发送，Shift+Enter 换行。"></textarea></label>
     </div>
-    <div class="socialChatFormFoot"><small>公共聊天 · 尊重彼此，不要发布手机号和隐私信息。</small><button class="socialSend" id="socialSend" type="submit">发送消息</button></div>
+    <div class="socialMentionHint">📜 <b>御前传话：</b>输入 @小主昵称，可从当天聊天过的人里选择，给对方发送专属弹窗和提示音。昵称相同的浏览器可能同时收到。</div>
+    <div class="socialMentionMenu" id="socialMentionMenu" aria-label="选择@的聊天成员" hidden></div>
+    <div class="socialChatFormFoot"><small>公共聊天 · 每日北京时间零点清空。不要发布个人隐私。</small><button class="socialSend" id="socialSend" type="submit">发送消息</button></div>
     <div class="socialStatus" id="socialChatStatus" role="status" aria-live="polite"></div>
   </form>
 </div>
@@ -218,10 +227,23 @@
 
 </main>
 <aside id="socialSideToast" class="socialSideToast" aria-live="polite" aria-label="新消息侧边弹窗" hidden>
-  <div class="socialToastHead"><strong id="socialToastTitle">碎嘴阁有新消息</strong><button class="socialToastClose" id="socialToastClose" type="button" aria-label="关闭消息提示">×</button></div>
+  <div class="socialToastHead"><strong id="socialToastTitle">福气许愿池有新消息</strong><button class="socialToastClose" id="socialToastClose" type="button" aria-label="关闭消息提示">×</button></div>
   <p class="socialToastPreview" id="socialToastPreview"></p>
   <button class="socialToastOpen" id="socialToastOpen" type="button">查看消息 →</button>
 </aside>
+<dialog class="quoteEdictDialog" id="quoteEdictDialog" aria-labelledby="quoteEdictDialogTitle">
+  <h2 class="quoteEdictTitle" id="quoteEdictDialogTitle">📜 船客 · 御前报价圣旨</h2>
+  <p class="quoteEdictHelp">根据当前价格实时生成客户报价卡片；已过期优惠会在图片上醒目标注。图片为报价试算，不代表保留舱位。</p>
+  <canvas id="quoteEdictCanvas" width="1080" height="1480" role="img" aria-label="船客旅行当前航次报价圣旨"></canvas>
+  <div class="quoteEdictActions">
+    <button type="button" class="edictPrimary" id="downloadQuoteEdict">保存图片</button>
+    <button type="button" id="copyImageQuoteEdict">复制图片</button>
+    <button type="button" id="shareQuoteEdict">发送给客户</button>
+    <button type="button" id="copyTextQuoteEdict">复制报价文字</button>
+    <button type="button" id="closeQuoteEdict">关闭</button>
+  </div>
+  <div class="quoteEdictStatus" role="status" id="quoteEdictStatus" aria-live="polite"></div>
+</dialog>
 <div class="mobileBar"><span>本次报价合计<strong id="miniPrice">—</strong></span><button id="jumpPrice" type="button">查看明细 ›</button></div><div id="toast" class="toast hide" role="status"></div>
 <dialog class="copyDialog" id="copyDialog" aria-labelledby="copyDialogTitle"><h3 id="copyDialogTitle">复制客户报价</h3><p>浏览器未允许自动复制。文字已选中，电脑按 Ctrl/Cmd+C；手机长按复制。</p><textarea id="manualCopy" readonly aria-label="客户版报价"></textarea><button type="button" id="closeCopy">关闭</button></dialog><script type="application/json" id="data">[
   {
@@ -1346,7 +1368,7 @@
      body:JSON.stringify({...payload,action,client_token:clientToken})
    });
    let result={};try{result=await response.json()}catch{}
-   if(!response.ok)throw new Error(result.message||'碎嘴阁暂时忙碌，请稍后再试。');
+   if(!response.ok)throw new Error(result.message||'福气许愿池暂时忙碌，请稍后再试。');
    return result;
  }
  function formatTime(value){
@@ -1358,7 +1380,7 @@
    currentPosts=Array.isArray(posts)?posts.slice(0,21):[];
    if(boardPostsEl.contains(document.activeElement)&&document.activeElement.closest('.socialCommentComposer'))return;
    if(!currentPosts.length){
-     boardPostsEl.innerHTML='<div class="boardEmpty">碎嘴阁刚开门，等你来递第一本折子。</div>';
+     boardPostsEl.innerHTML='<div class="boardEmpty">许愿池刚开张，来写下第一份心愿吧。</div>';
      window.GanluSocial?.onBoardRender();
      return;
    }
@@ -1368,9 +1390,9 @@
        <div class="boardPostHead"><strong>${escapeHtml(post.nickname||'匿名小主')}</strong><time>${escapeHtml(formatTime(post.created_at))}</time></div>
        <p class="boardPostText">${escapeHtml(post.body||'').replace(/\n/g,'<br>')}</p>
        <div class="boardPostFoot">
-         <button type="button" data-board-action="react" data-id="${escapeHtml(post.id)}" class="${liked?'liked':''}" aria-pressed="${liked}">${liked?'♥ 已点赞':'♡ 赞一下'} · ${Number(post.like_count)||0}</button>
+         <button type="button" data-board-action="react" data-id="${escapeHtml(post.id)}" class="${liked?'liked':''}" aria-pressed="${liked}">${liked?'♥ 已送福':'♡ 送个福'} · ${Number(post.like_count)||0}</button>
          <button type="button" class="socialCommentToggle" data-social-open="${escapeHtml(post.id)}">💬 评论 <span data-social-count="${escapeHtml(post.id)}">0</span></button>
-         ${post.mine===true?'<button type="button" class="withdraw" data-board-action="withdraw" data-id="'+escapeHtml(post.id)+'">撤回这本折子</button>':''}
+         ${post.mine===true?'<button type="button" class="withdraw" data-board-action="withdraw" data-id="'+escapeHtml(post.id)+'">撤回这份心愿</button>':''}
        </div>
        <div class="socialCommentMount" data-social-thread="${escapeHtml(post.id)}" hidden></div>
      </article>`;
@@ -1383,9 +1405,9 @@
    try{
      const result=await boardCall('list');
      renderBoard(result.posts||[]);
-     boardStatus.textContent='已连接碎嘴阁 · 自动同步中（约5秒刷新一次）';
+     boardStatus.textContent='已连接福气许愿池 · 自动同步中（约5秒刷新一次）';
    }catch(error){
-     if(!silent)boardStatus.textContent=(error&&error.message)||'暂时连不上碎嘴阁，请稍后刷新。';
+     if(!silent)boardStatus.textContent=(error&&error.message)||'暂时连不上福气许愿池，请稍后刷新。';
    }finally{boardLoading=false;}
  }
  if(boardForm){
@@ -1394,14 +1416,14 @@
      if(boardBusy)return;
      const nickname=$('boardNickname').value.trim(),body=$('boardBody').value.trim();
      if(!nickname||![...nickname].length||[...nickname].length>16){boardStatus.textContent='给自己起个1—16字的宫中称号。';return;}
-     if(!body||[...body].length>300){boardStatus.textContent='吐槽写1—300字就好。';return;}
+     if(!body||[...body].length>300){boardStatus.textContent='心愿写1—300字就好。';return;}
      boardBusy=true;boardSubmit.disabled=true;
      try{
        await boardCall('post',{nickname,body,request_id:makeUuid()});
        $('boardBody').value='';
        await loadBoard(true);
-       boardStatus.textContent='折子已递上！其他人通常会在5秒内看到。';
-     }catch(error){boardStatus.textContent=(error&&error.message)||'递折子失败了，文字还在输入框里，可以稍后重试。';}
+       boardStatus.textContent='心愿已送出！其他人通常会在5秒内看到。';
+     }catch(error){boardStatus.textContent=(error&&error.message)||'送出心愿失败，文字还在输入框里，可以稍后重试。';}
      finally{boardBusy=false;boardSubmit.disabled=false;}
    });
  }
@@ -1418,7 +1440,7 @@
        if(action==='react')await boardCall('react',{post_id:id,liked:post.liked!==true});
        else if(action==='withdraw')await boardCall('withdraw',{post_id:id});
        await loadBoard(true);
-       boardStatus.textContent=action==='withdraw'?'折子已撤回。':'点赞已更新。';
+       boardStatus.textContent=action==='withdraw'?'心愿已撤回。':'点赞已更新。';
      }catch(error){boardStatus.textContent=(error&&error.message)||'操作失败，请稍后重试。';}
      finally{boardBusy=false;button.disabled=false;}
    });
@@ -1490,6 +1512,6 @@
  $('resetQuiz')?.addEventListener('click',resetQuiz);
 })();
 </script>
-<script defer src="./ganlu-social-v1.js?v=20261021-chat3"></script>
+<script defer src="./ganlu-social-v1.js?v=20261021-v8c"></script><script defer src="./ganlu-edicts-v8.js?v=20261021-v8c"></script>
 
 </body></html>
