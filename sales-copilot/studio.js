@@ -149,6 +149,11 @@ catch(err){$("fileChip").textContent=file.name;$("parseStatus").textContent=err.
 });
 $("itineraryText").addEventListener("input",()=>{$("charCount").textContent=$("itineraryText").value.length+" 字";state.draft=null;state.draftGenerated=false;});
 $("extractBtn").addEventListener("click",summarize);
+$("demoBtn").addEventListener("click",()=>{
+$("itineraryText").value="【演示资料，仅用于测试，不对应真实航次】\n产品：南极半岛探险之旅（演示）\n目的地：南极半岛、德雷克海峡、乌斯怀亚\n行程安排（示例，须以正式航次为准）：\nDay 1：抵达南美中转城市\nDay 2：前往乌斯怀亚并办理登船\nDay 3-4：海上航行，穿越德雷克海峡（如适用）\nDay 5-9：探索南极半岛，具体登陆与冲锋舟活动受天气和船司安排影响\nDay 10-11：返航航行\nDay 12：离船，结束行程\n航期、船名、价格、费用包含项目及实际天数均未核实，请勿用于客户报价或正式宣传。";
+$("projectName").value="南极半岛探险之旅（演示）";$("mainTitle").value="";$("subtitle").value="";$("highlights").value="南极半岛的冰川与海湾景观\n在天气与船司安排允许时开展登陆或冲锋舟巡游\n出发前先核实航期、船舶与活动安排";$("priceInfo").value="";$("fileChip").hidden=true;$("charCount").textContent=$("itineraryText").value.length+" 字";state.draft=null;state.draftGenerated=false;summarize();updateOutputs();toast("已载入演示内容；请勿将示例信息直接用于销售");
+});
+
 $("dropzone").addEventListener("dragover",e=>{e.preventDefault();$("dropzone").classList.add("dragover");});
 $("dropzone").addEventListener("dragleave",()=> $("dropzone").classList.remove("dragover"));
 $("dropzone").addEventListener("drop",e=>{e.preventDefault();$("dropzone").classList.remove("dragover");const file=e.dataTransfer.files&&e.dataTransfer.files[0];if(file){const dt=new DataTransfer();dt.items.add(file);$("itineraryFile").files=dt.files;$("itineraryFile").dispatchEvent(new Event("change"));}});
