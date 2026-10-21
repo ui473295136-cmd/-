@@ -353,10 +353,10 @@
   });
   // Browsers can suspend WebAudio until a user gesture. Resume it on later interactions.
   document.addEventListener('pointerdown',function(event){
-    if(soundOn&&audioCtx&&audioCtx.state==='suspended')unlockAudio();
+    if(soundOn&&(!audioCtx||audioCtx.state!=='running'))unlockAudio();
   },{capture:true});
   document.addEventListener('keydown',function(event){
-    if(soundOn&&audioCtx&&audioCtx.state==='suspended')unlockAudio();
+    if(soundOn&&(!audioCtx||audioCtx.state!=='running'))unlockAudio();
   },{capture:true});
   $('socialToastClose').addEventListener('click',dismissToast);
   $('socialToastOpen').addEventListener('click',function(){
