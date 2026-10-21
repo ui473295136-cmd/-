@@ -110,7 +110,7 @@
  .quizEmoji{font-size:20px}
 }
 
-</style><link rel="stylesheet" href="./ganlu-social-v1.css?v=20261021-emoji1"><link rel="stylesheet" href="./ganlu-edicts-v8.css?v=20261021-v8c"></head><body>
+</style><link rel="stylesheet" href="./ganlu-policy-desk-v9.css?v=20261021-v9a"><link rel="stylesheet" href="./ganlu-social-v1.css?v=20261021-emoji1"><link rel="stylesheet" href="./ganlu-edicts-v8.css?v=20261021-v8c"></head><body>
 <header class="mast"><div class="petals" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <svg class="roofArt" viewBox="0 0 400 220" aria-hidden="true"><g fill="none" stroke="#e7d2ad" stroke-linecap="round" stroke-linejoin="round"><path d="M26 128 Q122 120 193 70 Q253 115 369 115" stroke-width="5"/><path d="M42 142 Q125 132 193 88 Q251 127 354 127" stroke-width="2"/><path d="M76 143 L76 220 M326 133 L326 220 M111 137 L111 220 M291 134 L291 220" stroke-width="6"/><path d="M74 164 H329 M99 183 H302 M154 165 V220 M247 166 V220" stroke-width="2"/><path d="M20 132 Q47 140 66 130 M351 125 Q373 135 392 125" stroke-width="2"/><path d="M164 86 Q193 40 218 82 M165 85 Q195 69 218 83" stroke-width="3"/></g><g fill="#e1c69d" opacity=".18"><path d="M55 141 L195 81 L350 135 L350 220 L55 220Z"/></g></svg>
 <div class="wrap mastInner"><div><h1>甘露寺·财务部</h1>
@@ -123,10 +123,58 @@
   <span class="edictDailySeal">甘露赐福</span>
   
 </section>
+
+<section class="policyDesk" id="policyDesk" aria-labelledby="policyDeskHeading">
+ <div class="policyDeskHead">
+  <div><h2 id="policyDeskHeading">📋 销售政策速查 · 最新群通知</h2>
+    <p>点航次看对应政策；“已报名专属”请使用下方独立计算器，不要叠加进普通报价。</p></div>
+  <span class="policyDeskVersion">重点航次：1122 / 1204 / 0118 / 0130</span>
+ </div>
+ <div class="policyDeskTabs" id="policyDeskTabs" aria-label="选择要查看的政策航次"></div>
+ <div id="policyDeskEmpty" class="policyDeskCaution" hidden>当前航次暂无这条群通知的新增专项政策。请选择上方四条重点航次查看。</div>
+ <div id="policyDeskDetail" hidden>
+  <div><strong class="policyDeskName" id="policyDeskName"></strong><span class="policyDeskKind" id="policyDeskKind"></span></div>
+  <p class="policyDeskHeadline" id="policyDeskHeadline"></p>
+  <div class="policyDeskRows" id="policyDeskRows"></div>
+  <div class="policyDeskCaution" id="policyDeskCaution"></div>
+  <div class="policyDeskCalc" id="policyDeskJoin" hidden>
+    <h3 class="policyDeskCalcTitle">🛳 已报名客户 · 两期大满贯连走测算</h3>
+    <p class="policyDeskCalcDesc">原合同价和新增费用分开，避免把两个航次折扣叠加。仅供销售向项目组核价使用。</p>
+    <div class="policyDeskInputs">
+      <label for="policyJoinBase">原合同单人价格（元）<input type="number" id="policyJoinBase" inputmode="numeric" min="1" step="1" placeholder="填写合同上实际单人价"></label>
+      <label for="policyJoinCount">实际连走人数（限10）<input type="number" id="policyJoinCount" inputmode="numeric" min="1" max="10" value="1" step="1"></label>
+    </div>
+    <div class="policyDeskResult" id="policyJoinResult"></div>
+    <div class="policyDeskButtons"><span id="policyJoinExtra"></span><button type="button" id="policyCopyJoin">复制连走测算</button></div>
+  </div>
+  <div class="policyDeskCalc" id="policyDeskInvite" hidden>
+    <h3 class="policyDeskCalcTitle">🤝 已报名客户 · 邀约／升舱权益速算</h3>
+    <p class="policyDeskCalcDesc">仅0118/0130已报名客户。计算原客户尾款可退差额；受邀人自身价格须按其房型和合同另核。</p>
+    <div class="policyDeskInputs three">
+     <label for="policyInviteOriginal">原已报名人数<input id="policyInviteOriginal" type="number" min="1" max="50" step="1" value="1"></label>
+     <label for="policyInviteNew">成功邀约人数<input id="policyInviteNew" type="number" min="1" max="50" step="1" value="1"></label>
+     <label for="policyInviteRate">当前合同折后比例（%）<input id="policyInviteRate" type="number" min="90" max="100" step="0.1" value="94" placeholder="如94代表原价94%"></label>
+     <label for="policyInviteBase">当前舱位原价（元/人）<input id="policyInviteBase" type="number" min="1" step="1" inputmode="numeric" placeholder="如149900"></label>
+    </div>
+    <div class="policyDeskInputs" style="margin-top:10px">
+      <label for="policyInviteMode">想用哪种邀约权益？
+      <select id="policyInviteMode"><option value="cash">现金减免：9折封顶，尾款退差额</option><option value="upgrade">免费升舱：已报名4层海景升5层（与现金二选一）</option></select>
+      </label>
+    </div>
+    <div class="policyDeskResult" id="policyInviteResult"></div>
+    <div class="policyDeskButtons"><span>9折是优惠下限；优惠叠加、名额以项目组核定为准。</span><button type="button" id="policyCopyInvite">复制邀约方案</button></div>
+  </div>
+  <div class="policyDeskStatus" id="policyDeskStatus" role="status" aria-live="polite"></div>
+ </div>
+</section>
 <div class="layout"><section class="panel leftPanel"><h2>选择报价条件</h2>
 <div class="form">
 <div class="field"><label for="route">① 选择航次</label><select id="route"></select></div>
 <div class="field"><label for="cabin">② 楼层 · 房型</label><select id="cabin"></select></div>
+<div class="field hide polarBowUpgradeWrap" id="polarBowUpgradeWrap">
+  <label><input id="polarBowUpgrade" type="checkbox">选择3层舷窗原价报名，免费升5层船头海景</label>
+  <small>仅0118、0130适用。此项与普通优惠独立；升舱后实际房号须由产品部确认。</small>
+</div>
 <div class="field hide" id="atlasPromoWrap"><label for="atlasPromo">Atlas 优惠方案（仅该航次）</label><select id="atlasPromo">
 <option value="earlybird">早鸟93折</option>
 <option value="upgrade1">免费升舱：5层法式阳台 → 6层阳台（约92.69折）</option>
@@ -268,7 +316,8 @@
       "老客户本人及直系亲属在有效直客政策基础上，每人再减5000元。",
       "4层三人房要求三人同报，同舱第三人同价。常规全程单房差为原价的70%。",
       "5层海景限时25%单房差仅限邮轮段，陆地单房差未给定，本工具不自动套用该不完整方案。",
-      "1122与1204连走：1122客户在原合同价格基础上加5万元；连走与延长线另算。"
+      "客服群新增：1122已报名客户连走1204后段，原合同基础增加5万元（金额是否按每人计尚待项目组确认）。两期大满贯：船去船回、阿根廷往返，目前计划除长城站外登陆点不同；限合计10人，可换房。群通知称仅需阿根廷签证，转机条件另核。",
+      "1122/1204释放少量4层海景升5层海景权益，先到先得；权益是否免费、差价与适用资格未明确，不自动改价。"
     ],
     "cabins": [
       {
@@ -342,7 +391,8 @@
       "老客户本人及直系亲属在有效直客政策基础上，每人再减5000元。",
       "4层三人房要求三人同报，同舱第三人同价。常规全程单房差为原价的70%。",
       "5层海景25%限时单房差仅含邮轮段，陆地费用未给定，未自动套用。7月15日截止的原呼朋唤友升舱方案未自动套用。",
-      "1204客户连走前一个双岛航次：原合同价加8万元；连走与延长线另算。"
+      "客服群新增：1204已报名客户连走1122前一双岛航次，原合同基础增加8万元（是否为每位费用待确认）。连走船去船回、阿根廷往返；仅长城站计划重复，合计最多10人，可能中途换房。签证与转机须核实。",
+      "1122/1204释放少量4层海景升级5层海景权益，先到先得；是否免费及房间差价尚未明确，不自动计算。"
     ],
     "cabins": [
       {
@@ -413,9 +463,10 @@
     "hasPolicy": true,
     "notes": [
       "直客优惠截止2026年9月30日。普通94折不包含5层海景；4–7人额外2%，8人且至少4间房额外3%。",
-      "5层非船头海景新客周年庆92折，与原4层客人加2500元升舱的方案二选一。按该文件有效期执行，不假定活动延期。",
-      "老客户本人及直系亲属在有效直客政策基础上，每人再减5000元。",
-      "3层舷窗减2000元升级5层船头、3人给2间房及邀约政策需按具体报名方案另算。",
+      "客服群新增：5层非船头海景单独92折，已报名客户可退差价，限额先到先得；不自动叠加其他老客/多人优惠，实际合同资格须确认。",
+      "3层舷窗按原价报名可免费升级5层船头海景房；报价时勾选专属升舱方案。旧版减2000元升舱规则已由最新群通知替代。",
+      "仅0118/0130已报名客户：邀约1位亲友双方减免1个百分点，已报名2人邀约1位时原2人各减0.5个百分点；最低9折，尾款退差价；或已报名4层海景房免费升5层海景（二选一，库存待确认）。",
+      "老客户本人及直系亲属的原减5000元政策保留，但与新增单独92折、邀约等权益能否同享未经确认，独立专项不自动叠加。",
       "4层三人房三人同报，同舱第三人同价。常规全程单房差为原价的70%；未明确折扣与房差叠加时按常规单住价出价。"
     ],
     "cabins": [
@@ -488,9 +539,10 @@
     "hasPolicy": true,
     "notes": [
       "直客优惠截止2026年9月30日。普通94折；4–7人额外2%，8人且至少4间房额外3%。",
-      "5层海景房最新优惠9折；新政策的截止日期及与其他优惠叠加规则尚未提供，报名请确认。",
-      "老客户本人及直系亲属在有效直客政策基础上，每人再减5000元。",
-      "3层原价升5层船头、3人给2间房及邀约政策，需按具体报名方案另算。",
+      "客服群新增：5层非船头海景单独9折，已报名客户可退差价，限额先到先得；该单独优惠不自动叠加其他减免。",
+      "3层舷窗原价报名，免费升级5层船头海景房；报价区主动勾选该独立方案。",
+      "仅0118/0130已报名客户：成功邀约亲友，已报名客户享对应减免，原有2人邀约1人则两人各减0.5个百分点；最低9折，尾款退差价。或原已报名4层海景房可免费升级5层海景，二选一。",
+      "原老客减5000元政策保留，叠加新增单独9折/邀约等权益尚不明确，不自动叠加。",
       "4层三人房三人同报，同舱第三人同价。常规全程单房差为原价的70%；未明确折扣与房差叠加时按常规单住价出价。"
     ],
     "cabins": [
@@ -977,8 +1029,11 @@
  const isFixedTriple=c=>c?.id==='4t';
  const hasThirdBed=(r,c)=>r?.id==='b0202'||(r?.id==='d1110'&&c?.capacity>=3)||(r?.id==='c0708'&&c?.capacity>=3);
  const stayName=s=>({double:'双人拼住',single:'每人单独住一间',triple:'三人同舱'}[s]||s);
- function plan(r,c,n,customer='new',stay='double',priceOverride=null,today=bjToday(),atlasPromo='earlybird',gaokaoCount=1,atlasOptions={},ponantLandSingle=true){
-   const errors=[],warnings=[],steps=[],standardSteps=[],assumptions=[],policy=r?.id==='b0130'&&c?.id==='5o'?{code:'latest_unconfirmed',valid:false,label:'5层海景9折 · 截止日期待确认'}:policyState(r,today);
+ function plan(r,c,n,customer='new',stay='double',priceOverride=null,today=bjToday(),atlasPromo='earlybird',gaokaoCount=1,atlasOptions={},ponantLandSingle=true,polarBowUpgrade=false){
+   const errors=[],warnings=[],steps=[],standardSteps=[],assumptions=[];
+   const isLatest5o=['b0118','b0130'].includes(r?.id)&&c?.id==='5o';
+   const isPolarBowUpgrade=['b0118','b0130'].includes(r?.id)&&c?.id==='3p'&&polarBowUpgrade===true;
+   const policy=(isLatest5o||isPolarBowUpgrade)?{code:'latest_unconfirmed',valid:false,label:'最新专项政策 · 截止日期待确认'}:policyState(r,today);
    const usePolicy=Boolean(r?.hasPolicy); // 优惠金额不因为超出文件有效期而改为原价；仍显示须确认的过期警示。
    const price=priceOverride===null||priceOverride===undefined?c?.price:Number(priceOverride);
    const q={route:r,cabin:c,people:n,customer,stay,deadline:r?.deadline||null,today,policy,price,standard:null,offer:null,status:'manual',statusReason:'',errors,warnings,steps,standardSteps,assumptions,baseRate:1,groupRate:0,groupSaving:0,loyalDeduction:0,postAdd:0,bonusDeduction:0,copyOffer:false,offerValid:false,conditional:false,manualGroup:false,policyName:'',singleSupplement:null,singleTotal:null,thirdPeople:0,regularPeople:n,atlasPromo,gaokaoCount:atlasPromo==='gaokao'?gaokaoCount:null,upgradeTarget:null,atlasChild:false,atlasOptions,atlasDeduction:0,atlasDeductionItems:[]};
@@ -1003,7 +1058,8 @@
    standardSteps.push(`舱型原价：${money(price)}/人 × ${n}人 = ${money(q.standard)}`);
    if(stay==='single')standardSteps.push('右侧为舱型基础原价；独住房差在左侧报价中单独计算。');
    if(r.date<=today)warnings.push('该航次已到出发日期，本次为历史试算。');
-   if(policy.code==='latest_unconfirmed')warnings.push('5层海景房按最新9折试算，优惠截止日期和叠加规则请与产品部确认。');
+   if(isLatest5o)warnings.push('5层非船头海景单独享受专项折扣（0118为92折、0130为9折），额满即止；不默认叠加老客、多人、邀约减免，报名及退款须与项目组确认。');
+   if(isPolarBowUpgrade)warnings.push('3层舷窗原价报名，免费升5层船头海景；实际房号、舱位供应须经项目组确认，本报价仍采用3层原价。');
    if(policy.code==='expired')warnings.push(`政策已于${dateCN(r.deadline)}截止。左侧仍按原优惠条款测算，能否按此价格报名须经产品部确认，不视为自动延期。`);
    if(policy.code==='upcoming')warnings.push(`优惠自${dateCN(r.validFrom)}起生效；左侧为提前试算价，报名时须确认是否适用。`);
    if(policy.code==='unknown')warnings.push('文件优惠有效期不完整，左侧仅为按已知优惠条款的试算价；报名须确认。');
@@ -1057,13 +1113,16 @@
        }
        else if(n>=4&&rooms>=2){ratePercent=91;name='4人同行满2间房 · 91折';}
        else {ratePercent=93;name='市场早鸟93折';}
-     }else if(r.id==='b0130'&&c.id==='5o'){
-       ratePercent=90;name='5层海景房最新9折';
-     }else if(r.id==='b0118'&&c.id==='5o'&&customer==='new'){
-       ratePercent=92;name='5层非船头海景 · 新客周年庆92折';
-       assumptions.push('周年庆92折按5层非船头房计算，与加价升舱活动二选一。');
-     }else if(r.id==='b0118'&&c.id==='5o'){
-       name='5层海景不参加94折';
+     }else if(isPolarBowUpgrade){
+       ratePercent=100;allowBenefits=false;
+       name='3层舷窗原价报名 · 免费升级5层船头海景';
+       q.upgradeTarget='5层船头海景房';
+       assumptions.push('独立原价免费升舱权益，不与普通94折和其他减免叠加；房号须向产品部确认。');
+     }else if(isLatest5o){
+       ratePercent=r.id==='b0118'?92:90;
+       allowBenefits=false;
+       name=r.id==='b0118'?'5层非船头海景 · 单独92折':'5层非船头海景 · 单独9折';
+       assumptions.push('5层非船头海景专项优惠独立计算，不默认叠加老客和多人优惠；已报名客户退差价，限额。');
      }else {ratePercent=Math.round(r.rate*100);name=`${r.id==='c0719'?'早鸟':'市场优惠'}${ratePercent}折`;}
    }
    if(stay==='single'){
@@ -1250,10 +1309,10 @@
    ['atlasSelfSchengen','atlasSelfGreenland','atlasSelfFlight','atlasSelfInsurance'].forEach(id=>$(id).checked=false);
    $('cabin').innerHTML=r.cabins.slice().sort((a,b)=>(a.deck||99)-(b.deck||99)).map(c=>`<option value="${esc(c.id)}">${esc(P.nameCabin(c))}</option>`).join('');
    const first=r.cabins.find(c=>c.id===previous)||r.cabins.find(c=>c.id==='4o')||r.cabins.find(c=>c.id==='4pb')||r.cabins.find(c=>c.id==='5v')||r.cabins.find(c=>c.price)||r.cabins[0];
-   $('cabin').value=first.id;$('newPrice').value='';updateStay();updateAtlasPromoUI();render();
+   $('cabin').value=first.id;$('polarBowUpgrade').checked=false;$('newPrice').value='';updateStay();updateAtlasPromoUI();render();
  }
  function onCabin(){
-   $('newPrice').value='';
+   $('polarBowUpgrade').checked=false;$('newPrice').value='';
    if(route().id==='c0708'&&atlasUpgradeSources[atlasPromo]&&$('cabin').value!==atlasUpgradeSources[atlasPromo]){
      atlasPromo='earlybird';$('atlasPromo').value='earlybird';
    }
@@ -1272,13 +1331,16 @@
  function render(){
    today=P.bjToday();
    updateAtlasPromoUI();
-   const q=P.plan(route(),cabin(),num(),customer,stay,priceOverride(),today,atlasPromo,Number($('gaokaoCount').value||1),getAtlasOptions(),$('ponantLandSingle').checked),r=q.route,c=q.cabin;last=q;
+   const eligibleBow=['b0118','b0130'].includes(route().id)&&cabin().id==='3p';
+   $('polarBowUpgradeWrap').classList.toggle('hide',!eligibleBow);
+   if(!eligibleBow)$('polarBowUpgrade').checked=false;
+   const q=P.plan(route(),cabin(),num(),customer,stay,priceOverride(),today,atlasPromo,Number($('gaokaoCount').value||1),getAtlasOptions(),$('ponantLandSingle').checked,$('polarBowUpgrade').checked),r=q.route,c=q.cabin;last=q;
    closeCopy();
    $('today').textContent='北京时间 · '+P.dateCN(today);
    const offDay=P.weekendCountdown(today);
    $('palaceDays').textContent=offDay.badge;
    $('palaceCountdown').textContent=offDay.title;
-   $('deadline').textContent=q.policy.code==='latest_unconfirmed'?'9折政策截止日期待确认':P.dateCN(r.deadline)+'（含当日）';
+   $('deadline').textContent=q.policy.code==='latest_unconfirmed'?'专项优惠截止日期待确认':P.dateCN(r.deadline)+'（含当日）';
    const flag=$('policyFlag');flag.textContent=q.policy.label;flag.classList.toggle('valid',q.policy.valid);flag.classList.toggle('invalid',!q.policy.valid);
    const cabinSummary=q.upgradeTarget?`${P.nameCabin(c)} · 免费升舱至${q.upgradeTarget}`:P.nameCabin(c);
    const staySummary=r.id==='c0708'&&q.stay==='triple'?'三/四人同舱':P.stayName(q.stay);
@@ -1294,7 +1356,7 @@
    $('offerLabel').textContent='优惠价格';
    $('discountTotal').textContent=ready?P.money(q.offer):'金额待确认';
    $('discountAvg').textContent=ready?`平均约 ${P.money(q.offer/q.people)}/人`:'补齐价格依据后自动出价';
-   $('offerBadge').textContent=!ready?'待核价':q.policy.code==='expired'?'政策过期 · 待确认':q.policy.code==='upcoming'?'未生效 · 试算':q.policy.code==='unknown'?'日期待确认':q.policy.code==='latest_unconfirmed'?'9折 · 日期待确认':q.route.hasPolicy?'优惠试算':'常规价格';
+   $('offerBadge').textContent=!ready?'待核价':q.policy.code==='expired'?'政策过期 · 待确认':q.policy.code==='upcoming'?'未生效 · 试算':q.policy.code==='unknown'?'日期待确认':q.policy.code==='latest_unconfirmed'?'专项优惠 · 日期待确认':q.route.hasPolicy?'优惠试算':'常规价格';
    $('offerBadge').classList.toggle('wait',!ready||!q.policy.valid);
    $('offerCaveat').textContent=ready?(q.policy.code==='expired'?'按原优惠试算，报名价须确认':q.policyName):'请查看下方说明';
    $('miniPrice').textContent=ready?P.money(q.offer):'金额待确认';
@@ -1334,6 +1396,7 @@
    $('route').innerHTML=data.map(r=>`<option value="${esc(r.id)}">${esc(r.date.replaceAll('-','.'))} · ${esc(r.name)}</option>`).join('');$('route').value='a1204';
    $('route').addEventListener('change',onRoute);$('cabin').addEventListener('change',onCabin);$('people').addEventListener('input',render);
    $('ponantLandSingle').addEventListener('change',render);
+   $('polarBowUpgrade').addEventListener('change',render);
    $('atlasPromo').addEventListener('change',onAtlasPromoChange);$('gaokaoCount').addEventListener('input',render);document.querySelectorAll('#atlasDeductionsWrap input[type=checkbox]').forEach(el=>el.addEventListener('change',render));
    $('minus').addEventListener('click',()=>{$('people').value=Math.max(1,(num()||2)-1);render()});$('plus').addEventListener('click',()=>{$('people').value=Math.min(100,(num()||1)+1);render()});
    document.querySelectorAll('button[data-people]').forEach(b=>b.addEventListener('click',()=>{$('people').value=b.dataset.people;render()}));
@@ -1521,6 +1584,6 @@
  $('resetQuiz')?.addEventListener('click',resetQuiz);
 })();
 </script>
-<script defer src="./ganlu-social-v1.js?v=20261021-emoji1"></script><script defer src="./ganlu-edicts-v8.js?v=20261021-v8-edictclean"></script>
+<script defer src="./ganlu-policy-desk-v9.js?v=20261021-v9a"></script><script defer src="./ganlu-social-v1.js?v=20261021-emoji1"></script><script defer src="./ganlu-edicts-v8.js?v=20261021-v8-edictclean"></script>
 
 </body></html>
