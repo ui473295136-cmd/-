@@ -167,6 +167,8 @@
 <div class="socialControls">
   <button class="socialBell" id="socialBell" type="button">🔔 消息提醒 <span class="socialBadge" id="socialBellBadge" hidden>0</span></button>
   <button class="socialDesktopBtn" id="socialDesktopBtn" type="button">开启桌面通知</button>
+  <button class="socialSoundBtn" id="socialSoundBtn" type="button" aria-pressed="false">🔊 开启提示音</button>
+  <small id="socialSoundStatus">点击开启消息提示音</small>
   <small id="socialDesktopStatus" style="font-size:11px;color:#968371">站内红点始终可用；桌面通知需要浏览器授权</small>
 </div>
 <div class="socialNotifyBox" id="socialNoticePanel" hidden>
@@ -214,7 +216,13 @@
   <p class="quizFoot">友情提示：标点和空格不影响判分；部分台词接受常见异体写法。</p>
 </section>
 
-</main><div class="mobileBar"><span>本次报价合计<strong id="miniPrice">—</strong></span><button id="jumpPrice" type="button">查看明细 ›</button></div><div id="toast" class="toast hide" role="status"></div>
+</main>
+<aside id="socialSideToast" class="socialSideToast" aria-live="polite" aria-label="新消息侧边弹窗" hidden>
+  <div class="socialToastHead"><strong id="socialToastTitle">碎嘴阁有新消息</strong><button class="socialToastClose" id="socialToastClose" type="button" aria-label="关闭消息提示">×</button></div>
+  <p class="socialToastPreview" id="socialToastPreview"></p>
+  <button class="socialToastOpen" id="socialToastOpen" type="button">查看消息 →</button>
+</aside>
+<div class="mobileBar"><span>本次报价合计<strong id="miniPrice">—</strong></span><button id="jumpPrice" type="button">查看明细 ›</button></div><div id="toast" class="toast hide" role="status"></div>
 <dialog class="copyDialog" id="copyDialog" aria-labelledby="copyDialogTitle"><h3 id="copyDialogTitle">复制客户报价</h3><p>浏览器未允许自动复制。文字已选中，电脑按 Ctrl/Cmd+C；手机长按复制。</p><textarea id="manualCopy" readonly aria-label="客户版报价"></textarea><button type="button" id="closeCopy">关闭</button></dialog><script type="application/json" id="data">[
   {
     "id": "a1122",
