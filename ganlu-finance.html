@@ -137,8 +137,7 @@
   <p class="policyDeskHeadline" id="policyDeskHeadline"></p>
   <div class="policyDeskRows" id="policyDeskRows"></div>
   <div class="policyDeskCaution" id="policyDeskCaution"></div>
-  <div class="policyDeskCalc" id="policyDeskJoin" hidden>
-    <h3 class="policyDeskCalcTitle">🛳 已报名客户 · 两期大满贯连走测算</h3>
+  <details class="policyDeskCalc" id="policyDeskJoin" hidden><summary class="policyDeskCalcTitle">🛳 已报名客户 · 两期大满贯连走测算（点击展开）</summary>
     <p class="policyDeskCalcDesc">原合同价和新增费用分开，避免把两个航次折扣叠加。仅供销售向项目组核价使用。</p>
     <div class="policyDeskInputs">
       <label for="policyJoinBase">原合同单人价格（元）<input type="number" id="policyJoinBase" inputmode="numeric" min="1" step="1" placeholder="填写合同上实际单人价"></label>
@@ -146,9 +145,8 @@
     </div>
     <div class="policyDeskResult" id="policyJoinResult"></div>
     <div class="policyDeskButtons"><span id="policyJoinExtra"></span><button type="button" id="policyCopyJoin">复制连走测算</button></div>
-  </div>
-  <div class="policyDeskCalc" id="policyDeskInvite" hidden>
-    <h3 class="policyDeskCalcTitle">🤝 已报名客户 · 邀约／升舱权益速算</h3>
+  </details>
+  <details class="policyDeskCalc" id="policyDeskInvite" hidden><summary class="policyDeskCalcTitle">🤝 已报名客户 · 邀约／升舱权益速算（点击展开）</summary>
     <p class="policyDeskCalcDesc">仅0118/0130已报名客户。计算原客户尾款可退差额；受邀人自身价格须按其房型和合同另核。</p>
     <div class="policyDeskInputs three">
      <label for="policyInviteOriginal">原已报名人数<input id="policyInviteOriginal" type="number" min="1" max="50" step="1" value="1"></label>
@@ -163,7 +161,7 @@
     </div>
     <div class="policyDeskResult" id="policyInviteResult"></div>
     <div class="policyDeskButtons"><span>9折是优惠下限；优惠叠加、名额以项目组核定为准。</span><button type="button" id="policyCopyInvite">复制邀约方案</button></div>
-  </div>
+  </details>
   <div class="policyDeskStatus" id="policyDeskStatus" role="status" aria-live="polite"></div>
  </div>
 </section>
