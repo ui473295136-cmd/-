@@ -1,0 +1,97 @@
+
+/* Ganlu Polar Knowledge Academy: expedition editorial style, distinct from finance. */
+.polarQuest{position:relative;isolation:isolate;overflow:hidden;border-radius:23px;margin:22px 0 4px;background:linear-gradient(140deg,#0d2a46 0%,#173c58 48%,#0c293f 100%);border:1px solid #7c9aaa;color:#eff6f8;padding:24px 25px 21px;box-shadow:0 14px 34px rgba(27,52,64,.14)}
+.polarQuest:before{content:"";position:absolute;z-index:-1;pointer-events:none;inset:-10% -15% auto auto;width:75%;height:420px;opacity:.5;background:radial-gradient(ellipse at 72% 22%,rgba(147,209,221,.30),transparent 52%),radial-gradient(ellipse at 28% 80%,rgba(129,195,204,.22),transparent 62%);filter:blur(3px)}
+.polarQuest:after{content:"";position:absolute;z-index:-1;pointer-events:none;right:-65px;bottom:-130px;width:300px;height:300px;transform:rotate(30deg);border:1px solid rgba(183,227,238,.12);border-radius:34px;box-shadow:0 0 0 28px rgba(150,207,219,.035),0 0 0 57px rgba(150,207,219,.025)}
+.polarQuestHeader{display:flex;gap:22px;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;margin-bottom:18px}
+.polarQuestEyebrow{font-size:11px;letter-spacing:.2em;font-weight:800;color:#9bc9d1;text-transform:uppercase}
+.polarQuestHeader h2{font:800 clamp(24px,4vw,36px)/1.2 "STSong","Songti SC","Noto Serif CJK SC",serif;letter-spacing:.03em;color:#f9f7f0;margin:9px 0}
+.polarQuestHeader p{font-size:12px;line-height:1.85;color:#c4dce1;max-width:610px;margin:0}
+.polarQuestPill{display:flex;flex-direction:column;gap:6px;text-align:center;border:1px solid rgba(171,210,216,.3);border-radius:13px;padding:11px 16px;background:rgba(223,248,250,.085);min-width:160px}
+.polarQuestPill small{font-size:10px;letter-spacing:.07em;color:#b5d8db}
+.polarQuestPill strong{font-size:15px;color:#fff8d9;font-weight:800}
+.polarQuestMeta{display:flex;gap:13px;align-items:center;justify-content:space-between;font-size:11px;color:#b9d4d9;margin-bottom:8px}
+.polarQuestMeta strong{color:#f4f1de}
+.polarProgressTrack{width:100%;height:8px;border-radius:999px;background:rgba(193,230,234,.18);overflow:hidden;box-shadow:inset 0 1px 4px rgba(0,0,0,.15)}
+.polarProgressFill{height:100%;width:0;background:linear-gradient(90deg,#65c1c2,#b9e6cb,#f3dca1);border-radius:inherit;transition:width .35s ease}
+.polarChapterNav{display:flex;gap:8px;align-items:center;justify-content:space-between;margin:15px 0 21px}
+.polarChapterTick{flex:1;position:relative;display:flex;align-items:center;justify-content:center;text-align:center;max-width:170px;min-height:33px;border-radius:8px;background:rgba(223,244,246,.09);border:1px solid rgba(192,221,225,.23);color:#b3c7cf;font-size:12px;font-weight:850}
+.polarChapterTick.done{background:#e3eecb;color:#365c53;border-color:#e3eecb}
+.polarChapterTick.active{border-color:#e3dbaf;background:rgba(233,229,194,.18);color:#ffefba;box-shadow:0 0 0 2px rgba(230,233,191,.11)}
+.polarStageCard{background:linear-gradient(145deg,rgba(250,252,249,.98),rgba(228,240,240,.96));border:1px solid #d6e5e0;border-radius:19px;padding:22px 23px 19px;color:#1b3d4f;box-shadow:0 9px 20px rgba(0,0,0,.06)}
+.polarStageTop{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.polarStageBadge{display:inline-flex;padding:6px 11px;border-radius:999px;background:#dbe9e8;color:#3a6e6b;font-size:11px;font-weight:800}
+.polarStageIndex{font-size:11px;color:#63868c;font-weight:700}
+.polarStageCard h3{font:800 20px "STSong","Songti SC",serif;margin:7px 0;color:#1a4355}
+.polarQuestIntro{color:#66828a;line-height:1.7;font-size:11px;margin:0 0 15px}
+.polarPrompt{font-size:clamp(15px,2.25vw,20px);line-height:1.65;color:#194257;font-weight:800;margin:0 0 17px;letter-spacing:.01em}
+.polarChoices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.polarChoice{display:flex;align-items:center;gap:11px;min-height:62px;text-align:left;border:1px solid #cfdedc;background:#fff;border-radius:12px;padding:11px 12px;cursor:pointer;color:#294c58;font:inherit;font-size:12px;font-weight:650;line-height:1.6;transition:background .15s,border-color .15s,transform .15s}
+.polarChoice:not(:disabled):hover{transform:translateY(-1px);background:#f0f8f5;border-color:#6ba5a1}
+.polarChoice:focus-visible{outline:3px solid #599da6;outline-offset:2px}
+.polarChoice:disabled{cursor:default}
+.polarChoiceKey{width:27px;height:27px;flex:0 0 27px;display:grid;place-items:center;background:#edf5f4;color:#527d80;border-radius:9px;font-size:11px;font-weight:900}
+.polarChoice.wrong{background:#fff0ec;color:#924d41;border-color:#e6b6a9;opacity:.75}
+.polarChoice.correct{background:#e9f6e9;color:#386d48;border-color:#97c9a1;box-shadow:0 0 0 1px #bddac4}
+.polarChoice.wrong .polarChoiceKey{color:#a55f52;background:#f7dcd7}
+.polarChoice.correct .polarChoiceKey{color:#3b7c4b;background:#cfeacc}
+.polarAnswerFeedback{border-radius:12px;padding:12px 14px;margin-top:16px;line-height:1.75;font-size:12px}
+.polarAnswerFeedback[hidden]{display:none!important}
+.polarAnswerFeedback.correct{background:#eaf5e8;color:#386044;border:1px solid #bcdab7}
+.polarAnswerFeedback.wrong{background:#fff0e7;color:#815541;border:1px solid #e5c5a4}
+.polarAnswerFeedback strong{display:block;font-size:13px;margin-bottom:3px}
+.polarAnswerFeedback p{margin:0;line-height:1.8}
+.polarPrimaryBtn,.polarSecondaryBtn{display:inline-flex;justify-content:center;align-items:center;gap:7px;min-height:42px;border-radius:11px;padding:9px 17px;font:inherit;font-size:12px;font-weight:800;cursor:pointer}
+.polarPrimaryBtn{border:1px solid #287e81;background:linear-gradient(135deg,#176f7d,#285d74);color:#fff}
+.polarPrimaryBtn:hover{filter:brightness(1.1)}
+.polarSecondaryBtn{border:1px solid #b2c6ce;background:rgba(237,249,249,.12);color:#eff9fa}
+.polarPrimaryBtn[hidden],.polarSecondaryBtn[hidden]{display:none!important}
+#polarQuestContinue{margin-top:14px}
+.polarAwardPanel{text-align:center;padding:8px 0}
+.polarAwardPanel[hidden],.polarStageCard[hidden],.polarFinishPanel[hidden]{display:none!important}
+.polarAwardEmoji{display:grid;place-items:center;font-size:76px;width:132px;height:132px;border-radius:30px;margin:0 auto 18px;background:radial-gradient(circle at 35% 25%,#f5ffff,#d7f0eb 70%,#bfdddc);box-shadow:0 8px 26px rgba(20,82,99,.17)}
+.polarAwardEyebrow{font-size:11px;color:#57929a;font-weight:850;letter-spacing:.1em}
+.polarAwardPanel h3,.polarFinishPanel h3{font:800 27px "STSong","Songti SC",serif;color:#195268;margin:7px 0 8px}
+.polarAwardPanel p,.polarFinishPanel p{line-height:1.8;color:#5c7f88;font-size:12px;max-width:420px;margin:7px auto 14px}
+.polarNewRank{display:inline-flex;gap:6px;border-radius:999px;padding:7px 14px;background:#fff2d9;color:#885f32;font-weight:800;font-size:12px;margin:5px 0 16px}
+.polarFinishEmojis{font-size:38px;letter-spacing:.09em;margin:10px auto}
+.polarAtlas{margin-top:23px}
+.polarAtlasHeader{display:flex;justify-content:space-between;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:11px}
+.polarAtlasHeader h3{font:750 18px "STSong","Songti SC",serif;color:#e6f5f4;margin:0}
+.polarAtlasHeader small{color:#a7cfd3;font-size:10px}
+.polarBookGrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}
+.polarBookCard{min-width:0;border-radius:13px;padding:14px 8px 11px;text-align:center;border:1px solid rgba(188,224,225,.26);background:rgba(215,236,236,.07);transition:background .2s}
+.polarBookCard.unlocked{background:linear-gradient(145deg,rgba(218,246,238,.2),rgba(212,242,232,.08));border-color:rgba(179,234,212,.65)}
+.polarBookCard.locked{opacity:.66}
+.polarBookIcon{font-size:40px;line-height:1.4;filter:saturate(1.2)}
+.polarBookCard.locked .polarBookIcon{filter:grayscale(.8)}
+.polarBookName{font-size:12px;color:#eef5ef;font-weight:850;margin:4px 0}
+.polarBookHint{font-size:10px;color:#a7c9cc;line-height:1.5}
+.polarQuestFoot{display:flex;align-items:start;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-top:17px;color:#aac7cf;font-size:10px;line-height:1.7}
+.polarQuestFoot p{margin:0;max-width:800px}
+.polarQuestFoot a{color:#b8e7de;text-underline-offset:3px}
+.polarQuest [hidden]{display:none!important}
+@media(max-width:760px){
+ .polarQuest{padding:18px 16px;border-radius:18px}
+ .polarStageCard{padding:17px 15px}
+ .polarQuestPill{min-width:130px}
+ .polarBookGrid{grid-template-columns:repeat(5,minmax(0,1fr));gap:5px}
+ .polarBookCard{padding:12px 4px 9px}
+ .polarBookIcon{font-size:30px}
+ .polarBookName{font-size:11px}
+ .polarBookHint{font-size:9px}
+}
+@media(max-width:570px){
+ .polarQuestHeader{gap:12px}
+ .polarQuestPill{min-width:auto;flex-direction:row;justify-content:space-between;width:100%;align-items:center;padding:9px 11px;text-align:left}
+ .polarChoices{grid-template-columns:1fr;gap:8px}
+ .polarChoice{min-height:51px}
+ .polarBookGrid{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+ .polarBookIcon{font-size:33px}
+ .polarQuestHeader h2{font-size:26px}
+ .polarStageCard h3{font-size:19px}
+ .polarQuestPrompt{font-size:17px}
+ .polarAtlasHeader h3{font-size:16px}
+ .polarAwardEmoji{font-size:63px;width:115px;height:115px}
+}
+@media(prefers-reduced-motion:reduce){.polarChoice,.polarProgressFill,.polarBookCard{transition:none}}
