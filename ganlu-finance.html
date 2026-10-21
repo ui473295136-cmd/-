@@ -1127,31 +1127,17 @@
  function customerText(q){
    if(!q||q.status!=='ready'||!Number.isFinite(q.offer))return '';
    const {route:r,cabin:c,people:n}=q;
-   const usePolicy=Boolean(r?.hasPolicy);
-   const yuan=v=>v.toLocaleString('zh-CN',{useGrouping:false,maximumFractionDigits:2})+'元';
-   const lines=['【船客旅行 · 航次报价】',`航次：${r.date} ${r.name}`,`舱型：${nameCabin(c)}`,`人数：${n}人｜入住：${r.id==='c0708'&&q.stay==='triple'?'三/四人同舱':stayName(q.stay)}`,`舱型原价：${yuan(q.price)}/人，${n}人共${yuan(q.standard)}`];
-   if(usePolicy){
-     lines.push(`报价方案：${q.policyName}`);
-     if(q.groupSaving)lines.push(r.id==='c0708'?`多人优惠：符合人数条件的正常价旅客，在基础折后价上再减${q.groupRate*100}%`:`多人优惠：在基础折后价上再减${q.groupRate*100}%`);
-     if(q.loyalDeduction)lines.push(`老客户减免：${yuan(q.loyalDeduction)}`);
-     if(q.bonusDeduction)lines.push(`报名红包：减${yuan(q.bonusDeduction)}`);
-     lines.push(`政策有效期：截至${dateCN(r.deadline)}（北京时间，含当日）`);
-     if(q.policy.code==='expired')lines.push('【重要】原优惠政策已过期：报价按原优惠条款试算，最终能否以此价格报名须经产品部/旅行顾问核实，不代表优惠自动延期。');
-     if(q.policy.code==='upcoming')lines.push('【提醒】优惠尚未开始，当前为提前试算价，报名价格须确认。');
-     if(q.policy.code==='unknown')lines.push('【提醒】优惠有效期不完整，报名价格须确认。');
-   }else lines.push(q.policy.code==='expired'?`限时优惠已于${dateCN(r.deadline)}截止，本次按常规价格。`:q.policy.code==='upcoming'?`限时优惠尚未生效，本次按常规价格。`:'当前无已确认有效的限时优惠，按常规价格。');
-   if(q.atlasDeductionItems?.length)for(const item of q.atlasDeductionItems)lines.push(`${item.label}减免：${yuan(item.perPerson)}/人 × ${n}人 = −${yuan(item.perPerson*n)}`);
-   if(q.thirdPeople)lines.push(r.id==='c0708'?`同舱第3/4人${q.thirdPeople}位，按全款50%计价；不计入多人优惠人数。${q.loyalDeduction?'老客户减免按每位旅客计算。':''}`:`含同舱第三人${q.thirdPeople}位，按原价${r.id==='d1110'?50:60}%计费，不叠加优惠。`);
-   if(q.upgradeTarget)lines.push(`免费升舱方案：${q.policyName}（数量有限，需确认舱位）。`);
-   if(q.atlasChild&&usePolicy)lines.push('1大1小专属方案：成人早鸟93折，孩子8折；孩子未满18岁。');
-   if(q.gaokaoCount&&usePolicy)lines.push(`应届高考生${q.gaokaoCount}位按8折（需提供证明），其他同行人按早鸟93折。`);
-   if(q.postAdd)lines.push(`${r.id==='d1110'&&usePolicy&&q.stay==='single'?'陆地酒店单住费':'单房差'}：${yuan(q.postAdd)}`);
-   lines.push(`报价合计：${yuan(q.offer)}（平均约${yuan(q.offer/n)}/人）`);
-   if(isFixedTriple(c))lines.push('三人间须满足三人同报条件，同舱第三人同价。');
-   if(q.stay==='double')lines.push('按双人拼住计价，不含单房差。');
-   if(r.date<=q.today)lines.push('此航次已到出发日期，以上为历史试算。');
-   lines.push(`报价日期：${dateCN(q.today)}`);
-   return lines.join('\n');
+   const amount=v=>v.toLocaleString('zh-CN',{useGrouping:false,maximumFractionDigits:2});
+   return [
+     '【船客旅行 · 航次报价】',
+     `航次：${r.date} ${r.name}`,
+     `舱型：${nameCabin(c)}`,
+     `人数：${n}人`,
+     `原价：${amount(q.price)}元/人`,
+     `优惠方案：${q.policyName||'暂无优惠方案'}`,
+     '',
+     `最终价格：${amount(q.offer)}元`
+   ].join('\n');
  }
  const signs=[
    ['熹妃回宫','上上签','今日这笔账算得清，回宫的路便近一程。','宜：利落报价；忌：反复心算。'],
