@@ -1099,7 +1099,7 @@
    const isLatest5o=anniversaryRoute&&c?.id==='5o'&&anniversaryOption==='new92';
    const isAnniversaryUpgrade=anniversaryRoute&&c?.id==='4o'&&anniversaryOption==='upgrade2500';
    const isPolarBowUpgrade=anniversaryRoute&&c?.id==='3p'&&polarBowUpgrade===true;
-   const policy=(isLatest5o||isAnniversaryUpgrade||isPolarBowUpgrade)?{code:'anniversary',valid:false,label:'周年庆专项 · 名额有限'}:policyState(r,today);
+   const policy=(isLatest5o||isAnniversaryUpgrade||isPolarBowUpgrade)?{code:'anniversary',valid:true,label:'周年庆专项 · 名额有限，额满即止'}:policyState(r,today);
    const usePolicy=Boolean(r?.hasPolicy); // 优惠金额不因为超出文件有效期而改为原价；仍显示须确认的过期警示。
    const price=priceOverride===null||priceOverride===undefined?c?.price:Number(priceOverride);
    const q={route:r,cabin:c,people:n,customer,stay,deadline:r?.deadline||null,today,policy,price,standard:null,offer:null,status:'manual',statusReason:'',errors,warnings,steps,standardSteps,assumptions,baseRate:1,groupRate:0,groupSaving:0,loyalDeduction:0,postAdd:0,bonusDeduction:0,copyOffer:false,offerValid:false,conditional:false,manualGroup:false,policyName:'',singleSupplement:null,singleTotal:null,thirdPeople:0,regularPeople:n,atlasPromo,gaokaoCount:atlasPromo==='gaokao'?gaokaoCount:null,upgradeTarget:null,atlasChild:false,atlasOptions,anniversaryOption,anniversaryUpgradeOnly:false,atlasDeduction:0,atlasDeductionItems:[]};
