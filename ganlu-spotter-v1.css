@@ -196,5 +196,7 @@
 .spotterPicture:hover{box-shadow:0 15px 34px rgba(20,52,63,.24),0 0 0 1px rgba(125,201,191,.35)}
 @keyframes spotterPinAppear{0%{opacity:0;transform:translate(-50%,-50%) scale(.25)}60%{opacity:1;transform:translate(-50%,-50%) scale(1.22)}100%{transform:translate(-50%,-50%) scale(1)}}
 @keyframes spotterMissPulse{0%{opacity:1;transform:translate(-50%,-50%) scale(.6)}70%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}100%{opacity:0;transform:translate(-50%,-50%) scale(1)}}
-@media(max-width:700px){.spotterPicture{aspect-ratio:3 / 3.1}.spotterFoundPin{width:39px;height:39px;font-size:16px;border-width:2px}.spotterMissPin{width:30px;height:30px;font-size:19px}}
+@media(max-width:700px){.spotterPicture{aspect-ratio:4 / 3}.spotterFoundPin{width:39px;height:39px;font-size:16px;border-width:2px}.spotterMissPin{width:30px;height:30px;font-size:19px}}
 @media(prefers-reduced-motion:reduce){.spotterFoundPin,.spotterMissPin{animation:none}}
+
+.spotterPicturePhoto[hidden]{display:none!important}
