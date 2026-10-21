@@ -71,7 +71,7 @@
 .boardForm textarea{min-height:80px;line-height:1.7}
 .boardFormFoot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
 .boardFormFoot span{font-size:11px;color:#8a7968}
-.boardFormFoot button,.quizActions button{border:1px solid #6d5140;border-radius:12px;background:linear-gradient(135deg,#80634d,#654b3b);color:#fff8ef;font-weight:750;padding:10px 18px;min-height:42px}
+.boardFormFoot button{border:1px solid #6d5140;border-radius:12px;background:linear-gradient(135deg,#80634d,#654b3b);color:#fff8ef;font-weight:750;padding:10px 18px;min-height:42px}
 .boardStatus{font-size:11px;color:#8b7867;padding:10px 2px}
 .boardPosts{display:grid;gap:10px}
 .boardPost{border:1px solid #eadbc7;border-radius:15px;background:#fffdf8;padding:14px 15px;min-width:0}
@@ -84,32 +84,30 @@
 .boardPostFoot button.liked{background:#fae8e2;border-color:#e7c3b8;color:#a65349}
 .boardPostFoot button.withdraw{margin-left:auto;background:#fff;border-color:#e6d8c7;color:#978576}
 .boardEmpty{border:1px dashed #dfceb6;border-radius:14px;padding:24px 12px;text-align:center;color:#9b8975;font-size:12px;background:#fffdf8}
-.quizInfo{padding:11px 13px;border-radius:13px;background:#f8f0e2;border:1px solid #e8d8bf;color:#78614b;font-size:12px;line-height:1.8;margin-bottom:13px}
-.quizQuestions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.quizQuestion{border:1px solid #eadbc7;border-radius:15px;background:#fffdf8;padding:13px;min-width:0}
-.quizQuestionTop{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
-.quizQuestionTop span:first-child{font-size:10px;color:#9b8977;letter-spacing:.08em}
-.quizEmoji{font-size:22px;line-height:1.5;overflow-wrap:anywhere;min-height:40px}
-.quizQuote{margin:8px 0 10px;min-height:42px;color:#594538;font-size:13px;font-weight:650;line-height:1.8;overflow-wrap:anywhere}
-.quizQuestion input{width:100%;min-height:42px;border:1px solid #dfcfb8;border-radius:11px;background:#fff;padding:9px 10px;color:#4c392f;font-size:12px}
-.quizQuestion.correct{border-color:#b6cba7;background:#f5f8ef}
-.quizQuestion.wrong{border-color:#e8c5ba;background:#fff7f3}
-.quizQuestion .answerMark{font-size:11px;color:#789366}
-.quizQuestion.wrong .answerMark{color:#b86a5a}
-.quizActions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
-.quizActions button.secondary{background:#fffdf8;color:#765b46;border-color:#d9c7ae}
-.quizResult{margin-top:14px;padding:15px 16px;border:1px solid #ddc59f;border-radius:15px;background:linear-gradient(135deg,#fff5df,#fffaf1);color:#6a4d32;line-height:1.8}
-.quizResult strong{font-size:17px;color:#855e31}
-.quizResult .quizScore{font-size:26px;font-weight:900;margin:0 0 4px}
-.quizFoot{font-size:10px;color:#9a8977;margin-top:10px}
 @media(max-width:650px){
  .funTop{flex-direction:column}.livePill{white-space:normal}
  .boardFormRow{grid-template-columns:1fr}
- .quizQuestions{grid-template-columns:1fr}
- .quizQuestion{padding:12px}
- .quizEmoji{font-size:20px}
 }
 
+
+.voyagePolicyCard{min-width:0;border:1px solid #cbd9d3;border-radius:13px;padding:11px 12px;background:linear-gradient(145deg,#f8fcfa,#f1f6f4);margin:0 0 8px;color:#426458}
+.voyagePolicyTop{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:7px}
+.voyagePolicyTop strong{font-size:13px;color:#345f55;font-weight:800}
+.voyagePolicyCount{border-radius:20px;background:#e5efe8;padding:4px 8px;font-size:10px;color:#477765}
+.voyagePolicyPreview{display:grid;gap:5px;margin:5px 0 8px}
+.voyagePolicyPreview p{line-height:1.65;color:#60776c;font-size:11px;margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.voyagePolicyDetails{min-width:0;border-top:1px solid #d3e2d8;padding-top:7px}
+.voyagePolicyDetails>summary{min-height:33px;display:flex;align-items:center;gap:8px;justify-content:space-between;cursor:pointer;color:#3d725f;font-size:12px;font-weight:750;list-style:none}
+.voyagePolicyDetails>summary::-webkit-details-marker{display:none}
+.voyagePolicyArrow{color:#527d70;font-size:11px;border:1px solid #c1d7cd;border-radius:8px;background:#fff;padding:5px 9px;white-space:nowrap}
+.voyagePolicyDetails[open]>summary{margin-bottom:8px}
+.voyagePolicyDetails .policynotes{margin:0;padding:3px 4px 7px 23px;color:#53675d;line-height:1.8}
+.voyagePolicyDetails .policynotes li{font-size:11px;padding:6px 1px;border-bottom:1px solid #dfeae2;overflow-wrap:anywhere}
+.voyagePolicySource{color:#83968b;font-size:10px;line-height:1.7;margin:9px 0}
+.voyageCabinPrices{border:1px solid #c7dacb;background:#fcfdf9;border-radius:10px;padding:10px;margin:10px 0 2px}
+.voyageCabinPrices summary{cursor:pointer;font-size:11px;font-weight:700;color:#4e7a62}
+.voyageCabinPrices #priceList{padding-top:8px}
+@media(max-width:650px){.voyagePolicyCard{padding:10px}.voyagePolicyPreview p{font-size:11px}}
 </style><link rel="stylesheet" href="./ganlu-policy-desk-v9.css?v=20261021-ponant1021"><link rel="stylesheet" href="./ganlu-social-v1.css?v=20261021-emoji1"><link rel="stylesheet" href="./ganlu-edicts-v8.css?v=20261021-v8c"></head><body>
 <header class="mast"><div class="petals" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <svg class="roofArt" viewBox="0 0 400 220" aria-hidden="true"><g fill="none" stroke="#e7d2ad" stroke-linecap="round" stroke-linejoin="round"><path d="M26 128 Q122 120 193 70 Q253 115 369 115" stroke-width="5"/><path d="M42 142 Q125 132 193 88 Q251 127 354 127" stroke-width="2"/><path d="M76 143 L76 220 M326 133 L326 220 M111 137 L111 220 M291 134 L291 220" stroke-width="6"/><path d="M74 164 H329 M99 183 H302 M154 165 V220 M247 166 V220" stroke-width="2"/><path d="M20 132 Q47 140 66 130 M351 125 Q373 135 392 125" stroke-width="2"/><path d="M164 86 Q193 40 218 82 M165 85 Q195 69 218 83" stroke-width="3"/></g><g fill="#e1c69d" opacity=".18"><path d="M55 141 L195 81 L350 135 L350 220 L55 220Z"/></g></svg>
@@ -127,6 +125,15 @@
 <div class="layout"><section class="panel leftPanel"><h2>选择报价条件</h2>
 <div class="form">
 <div class="field"><label for="route">① 选择航次</label><select id="route"></select></div>
+<section class="voyagePolicyCard" aria-labelledby="voyagePolicyHeading">
+ <div class="voyagePolicyTop"><strong id="voyagePolicyHeading">📖 当前航次 · 政策明细</strong><span id="voyagePolicyCount" class="voyagePolicyCount">自动匹配所选航次</span></div>
+ <div id="voyagePolicyPreview" class="voyagePolicyPreview" aria-live="polite"></div>
+ <details id="voyagePolicyDetails" class="voyagePolicyDetails"><summary>查看全部政策细则 <span class="voyagePolicyArrow">展开查看 ↓</span></summary>
+  <ul class="policynotes" id="notes"></ul>
+  <p class="voyagePolicySource" id="voyagePolicySource"></p>
+  <details class="voyageCabinPrices"><summary>查看本航次全部房型原价</summary><div id="priceList"></div></details>
+ </details>
+</section>
 <div class="field"><label for="cabin">② 楼层 · 房型</label><select id="cabin"></select></div>
 <div class="field hide polarBowUpgradeWrap" id="polarBowUpgradeWrap">
   <label><input id="polarBowUpgrade" type="checkbox">选择3层舷窗原价报名，免费升5层船头海景</label>
@@ -169,7 +176,7 @@
 </details></div>
 </div><div class="deadline">优惠截止日期：<strong id="deadline">—</strong><small>按北京时间判断</small></div>
 <details class="policyDesk" id="policyDesk" aria-labelledby="policyDeskHeading">
- <summary class="policyDeskSummary" id="policyDeskHeading">📋 销售政策速查 <span>点击展开 · 连走／邀约专项</span></summary>
+ <summary class="policyDeskSummary" id="policyDeskHeading"><span class="policyDeskSummaryIcon" aria-hidden="true">📋</span><span class="policyDeskSummaryTitle">专项政策速查<strong>连走 · 邀约 · 升舱</strong></span><span class="policyDeskSummaryAction">点击展开 <span aria-hidden="true">⌄</span></span></summary>
  <div class="policyDeskInside"><p class="policyDeskIntro">普通航次价格请直接在上方计算。本区仅用于1122／1204连走和0118／0130已报名邀约权益。</p>
  <div class="policyDeskTabs" id="policyDeskTabs" aria-label="选择要查看的政策航次"></div>
  <div id="policyDeskEmpty" class="policyDeskCaution" hidden>当前航次暂无这条群通知的新增专项政策。请选择上方四条重点航次查看。</div>
@@ -218,10 +225,6 @@
 <div class="how"><h3>报价计算明细</h3><div class="formula" id="explanation">—</div><div class="detailedTitle" id="standardTitle">原价计算</div><div class="stdExplain" id="standardFormula">—</div></div>
 <div id="issues" class="issues"></div>
 </section></div>
-<details class="resource"><summary>查看该航次全部舱型原价与特殊政策</summary><div class="body"><div id="priceList"></div><div class="detailsTitle">来源文件特别提示</div><ul class="policynotes" id="notes"></ul></div></details>
-<details class="resource"><summary>产品部维护（默认收起，不影响销售报价）</summary><div class="body"><p>已确认的舱位原价可在本机更新；不同客服电脑不会自动同步。多人2%/3%按“基础折后价继续减免”自动计算，销售无需另行设置。</p><div class="detailedTitle">维护当前舱型的已确认原价</div><div class="settingsRow"><input id="newPrice" type="number" min="1" inputmode="numeric" placeholder="新原价（元/人）"><div class="adminButtons"><button id="savePrice" type="button">保存本机新价</button><button id="resetPrice" type="button">恢复行程册原价</button></div></div><p class="storageStatus" id="storageStatus" role="status"></p><p class="smallinfo">有效期内的多人现金优惠：4–7人额外2%，8人及以上符合房间条件额外3%。在对应早鸟等基础折扣之后，再乘以98%或97%；庞洛按本航次专项规则计算。优惠到期后自动停止应用。</p></div></details>
-
-
 <section class="panel funPanel" id="complaintPanel" aria-labelledby="boardHeading">
   <div class="funTop">
     <div><h2 id="boardHeading">福气许愿池 · 正能量专区</h2><p>许一个小心愿、分享今天的好消息，或者夸夸帮过你的同事。把福气传下去。</p></div>
@@ -269,17 +272,6 @@
     <div class="socialStatus" id="socialChatStatus" role="status" aria-live="polite"></div>
   </form>
 </div>
-</section>
-<section class="panel funPanel" id="quizPanel" aria-labelledby="quizHeading">
-  <div class="funTop">
-    <div><h2 id="quizHeading">甄学考试 · 猜谜专区</h2><p>看表情猜台词，别急着交卷，先证明你是真的熟读宫规。</p></div>
-    <span class="livePill">共19题 · 自动判分</span>
-  </div>
-  <div class="quizInfo">根据每题的 emoji 线索，填入对应的《甄嬛传》经典台词。提交后会公布得分，并给你颁发一个后宫段位称号。</div>
-  <div class="quizQuestions" id="quizQuestions"></div>
-  <div class="quizActions"><button id="checkQuiz" type="button">交卷，看看本宫几斤几两</button><button id="resetQuiz" class="secondary" type="button">重新答题</button></div>
-  <div id="quizResult" class="quizResult" role="status" aria-live="polite" hidden></div>
-  <p class="quizFoot">友情提示：标点和空格不影响判分；部分台词接受常见异体写法。</p>
 </section>
 
 </main>
@@ -1268,20 +1260,14 @@
  const P=window.ChuankePricing,$=id=>document.getElementById(id);
  const data=JSON.parse($('data').textContent);
  const esc=s=>String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
- const STORE='chuanke-price-v7-overrides',SIGN_STORE='chuanke-ganlu-daily-sign-v1';
+ const SIGN_STORE='chuanke-ganlu-daily-sign-v1';
  const load=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
- function cleanOverrides(value){
-   const result=Object.create(null);
-   if(!value||typeof value!=='object'||Array.isArray(value))return result;
-   for(const r of data)for(const c of r.cabins){const key=r.id+'::'+c.id,v=value[key];if(v&&Number.isInteger(v.value)&&v.value>0&&v.value<10000000)result[key]={value:v.value,updated:typeof v.updated==='string'?v.updated:''};}
-   return result;
- }
- let overrides=cleanOverrides(load(STORE,{})),customer='new',stay='double',today=P.bjToday(),last=null,toastTimer=0,atlasPromo='earlybird';
+ let customer='new',stay='double',today=P.bjToday(),last=null,toastTimer=0,atlasPromo='earlybird';
  let drawnDay='',savedSign=load(SIGN_STORE,null);
  if(savedSign&&typeof savedSign==='object'&&savedSign.drawn===true&&typeof savedSign.day==='string')drawnDay=savedSign.day;
  const route=()=>data.find(r=>r.id===$('route').value)||data[0];
  const cabin=()=>route().cabins.find(c=>c.id===$('cabin').value)||route().cabins[0];
- const priceOverride=()=>overrides[route().id+'::'+cabin().id]?.value??null;
+ const priceOverride=()=>null;
  const num=()=>{const v=$('people').value.trim();if(!/^\d+$/.test(v))return NaN;const n=Number(v);return Number.isSafeInteger(n)&&n>=1&&n<=100?n:NaN};
  function persist(key,value){try{localStorage.setItem(key,JSON.stringify(value));return true}catch{return false}}
  function toast(s){$('toast').textContent=s;$('toast').classList.remove('hide');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.add('hide'),3000)}
@@ -1335,10 +1321,10 @@
    ['atlasSelfSchengen','atlasSelfGreenland','atlasSelfFlight','atlasSelfInsurance'].forEach(id=>$(id).checked=false);
    $('cabin').innerHTML=r.cabins.slice().sort((a,b)=>(a.deck||99)-(b.deck||99)).map(c=>`<option value="${esc(c.id)}">${esc(P.nameCabin(c))}</option>`).join('');
    const first=r.cabins.find(c=>c.id===previous)||r.cabins.find(c=>c.id==='4o')||r.cabins.find(c=>c.id==='4pb')||r.cabins.find(c=>c.id==='5v')||r.cabins.find(c=>c.price)||r.cabins[0];
-   $('cabin').value=first.id;$('polarBowUpgrade').checked=false;$('newPrice').value='';updateStay();updateAtlasPromoUI();render();
+   $('cabin').value=first.id;$('polarBowUpgrade').checked=false;updateStay();updateAtlasPromoUI();render();
  }
  function onCabin(){
-   $('polarBowUpgrade').checked=false;$('newPrice').value='';
+   $('polarBowUpgrade').checked=false;
    if(route().id==='c0708'&&atlasUpgradeSources[atlasPromo]&&$('cabin').value!==atlasUpgradeSources[atlasPromo]){
      atlasPromo='earlybird';$('atlasPromo').value='earlybird';
    }
@@ -1378,7 +1364,7 @@
    $('normalLabel').textContent='原价';
    $('normalTotal').textContent=q.standard!==null?P.money(q.standard):Number.isFinite(q.price)?'人数待确认':'原价待补充';
    $('normalAvg').textContent=Number.isFinite(q.price)?`${P.money(q.price)}/人`:'未提供明确原价';
-   $('normalContext').textContent=(priceOverride()!==null?'使用本机已确认原价':'行程册舱型基础原价')+' · 未打折'+(q.stay==='single'?'，未含单房差':'');
+   $('normalContext').textContent='行程册舱型基础原价 · 未打折'+(q.stay==='single'?'，未含单房差':'');
    $('offerLabel').textContent='优惠价格';
    $('discountTotal').textContent=ready?P.money(q.offer):'金额待确认';
    $('discountAvg').textContent=ready?`平均约 ${P.money(q.offer/q.people)}/人`:'补齐价格依据后自动出价';
@@ -1394,9 +1380,12 @@
    $('copyCustomer').disabled=!ready;
    for(const b of document.querySelectorAll('button[data-people]')){const active=Number(b.dataset.people)===q.people;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));}
    $('minus').disabled=q.people===1;$('plus').disabled=q.people===100;
-   $('priceList').innerHTML=r.cabins.slice().sort((a,b)=>(a.deck||99)-(b.deck||99)).map(c0=>{const value=overrides[r.id+'::'+c0.id]?.value??c0.price;return `<div class="priceLine"><span>${esc(P.nameCabin(c0))}</span><strong>${Number.isFinite(value)?P.money(value):'待补充原价'}</strong></div>`}).join('');
-   $('notes').innerHTML=r.notes.map(s=>`<li>${esc(s)}</li>`).join('')+`<li>政策来源：${esc(r.policySource)}</li>`;
-   $('newPrice').placeholder=Number.isFinite(q.price)?'当前原价 '+P.money(q.price):'请输入经确认的舱型原价';
+   $('priceList').innerHTML=r.cabins.slice().sort((a,b)=>(a.deck||99)-(b.deck||99)).map(c0=>`<div class="priceLine"><span>${esc(P.nameCabin(c0))}</span><strong>${Number.isFinite(c0.price)?P.money(c0.price):'价格待确认'}</strong></div>`).join('');
+   $('notes').innerHTML=r.notes.map(s=>`<li>${esc(s)}</li>`).join('');
+   $('voyagePolicyCount').textContent=r.notes.length+'条政策 · '+P.dateCN(r.deadline)+'截止';
+   $('voyagePolicyPreview').innerHTML=r.notes.slice(0,2).map(s=>`<p>${esc(s)}</p>`).join('');
+   $('voyagePolicySource').textContent='资料来源：'+r.policySource;
+   $('voyagePolicyDetails').querySelector('.voyagePolicyArrow').textContent=$('voyagePolicyDetails').open?'收起 ↑':'展开全部 '+r.notes.length+' 条 ↓';
    renderSign();
  }
  function refreshDate(){if(P.bjToday()!==today)render()}
@@ -1409,18 +1398,10 @@
    return ok;
  }
  function manualCopy(s){const d=$('copyDialog');$('manualCopy').value=s;if(typeof d.showModal==='function')d.showModal();else d.setAttribute('open','');$('manualCopy').focus();$('manualCopy').select();$('manualCopy').setSelectionRange(0,s.length)}
- function savePrice(){
-   const value=Number($('newPrice').value);
-   if(!Number.isInteger(value)||value<=0||value>=10000000){toast('请输入1—9,999,999之间的原价整数');return}
-   if(!confirm('确认这是产品部已确认的舱位原价？仅更新当前浏览器。'))return;
-   overrides[route().id+'::'+cabin().id]={value,updated:P.bjToday()};
-   const saved=persist(STORE,overrides);$('newPrice').value='';render();
-   $('storageStatus').textContent=saved?'原价已保存在当前浏览器。':'浏览器未允许保存：本次改价仅在当前页面有效，刷新会丢失。';
-   toast(saved?'本机原价已保存':'已临时改价；浏览器未允许保存');
- }
  function init(){
    $('route').innerHTML=data.map(r=>`<option value="${esc(r.id)}">${esc(r.date.replaceAll('-','.'))} · ${esc(r.name)}</option>`).join('');$('route').value='a1204';
    $('route').addEventListener('change',onRoute);$('cabin').addEventListener('change',onCabin);$('people').addEventListener('input',render);
+   $('voyagePolicyDetails').addEventListener('toggle',()=>{$('voyagePolicyDetails').querySelector('.voyagePolicyArrow').textContent=$('voyagePolicyDetails').open?'收起 ↑':'展开全部 '+route().notes.length+' 条 ↓';});
    ['ponantSelfFlight','ponantSelfInsurance'].forEach(id=>$(id).addEventListener('change',render));
    $('ponantVisaType').addEventListener('change',render);
    $('polarBowUpgrade').addEventListener('change',render);
@@ -1432,11 +1413,9 @@
    $('copyCustomer').addEventListener('click',async()=>{const quotation=copyText();if(!quotation){toast(last.statusReason||'金额待确认');return}if(await copy(quotation))toast('客户版报价已复制');else manualCopy(copyText()||quotation)});
    $('closeCopy').addEventListener('click',closeCopy);
    $('jumpPrice').addEventListener('click',()=>$('resultPanel').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'}));
-   $('savePrice').addEventListener('click',savePrice);
-   $('resetPrice').addEventListener('click',()=>{const key=route().id+'::'+cabin().id;if(!Object.prototype.hasOwnProperty.call(overrides,key)){toast('当前已是行程册原价');return}if(!confirm('恢复该舱型的行程册原价？'))return;delete overrides[key];const saved=persist(STORE,overrides);$('newPrice').value='';render();$('storageStatus').textContent=saved?'已恢复并保存行程册原价。':'本页已恢复；浏览器未允许保存，刷新可能恢复为之前的维护价。';toast(saved?'已恢复原价':'本页已恢复；浏览器未允许保存')});
    $('drawSign').addEventListener('click',()=>{refreshDate();if(drawnDay===today)return;drawnDay=today;persist(SIGN_STORE,{day:today,drawn:true});renderSign();$('signResult').classList.remove('signReveal');void $('signResult').offsetWidth;$('signResult').classList.add('signReveal')});
    document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshDate()});window.addEventListener('focus',refreshDate);window.addEventListener('pageshow',refreshDate);
-   window.addEventListener('storage',e=>{if(e.key===STORE||e.key===null){overrides=cleanOverrides(load(STORE,{}));render()}if(e.key===SIGN_STORE||e.key===null){const s=load(SIGN_STORE,null);drawnDay=s&&s.drawn===true&&typeof s.day==='string'?s.day:'';refreshDate();renderSign()}});
+   window.addEventListener('storage',e=>{if(e.key===SIGN_STORE||e.key===null){const s=load(SIGN_STORE,null);drawnDay=s&&s.drawn===true&&typeof s.day==='string'?s.day:'';refreshDate();renderSign()}});
    setInterval(refreshDate,15000);onRoute();
  }
  window.ChuankeApp={getResult:()=>last,getData:()=>data,copyText,rerender:render};
@@ -1548,67 +1527,6 @@
  setInterval(()=>loadBoard(true),5000);
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)loadBoard(true);});
 
- const riddles=[
-  {emoji:'🌸 🦵 🐚 🧀 🏅 ❓ 📺',quote:'粉色____你如今几岁了？',answers:['娇嫩']},
-  {emoji:'❌ 👩 🦁 👩 🦁 👩 1️⃣2️⃣3️⃣4️⃣',quote:'不容本宫____也放肆多回了。',answers:['放肆']},
-  {emoji:'👑 ❓ ❓ 👱 ❤️ 😱 ❌ 😱',quote:'皇上你听听臣妾的心还____不慌。',answers:['慌']},
-  {emoji:'👑 🦇 👩 👨‍👩‍👧‍👦 👨‍👩‍👧‍👦 😡',quote:'王府的女人真多啊，多得让人____。',answers:['生气']},
-  {emoji:'🏙️ 🍺 ❌ 👨 😍 ❤️',quote:'那夜的酒并不足以让我____。',answers:['动情']},
-  {emoji:'🔪 👩 🍺 ☁️ 🦵 💏',quote:'贱人就是____。',answers:['矫情']},
-  {emoji:'👩 👩 ✅ 🤰 ❓ 👩 ❌ 👶',quote:'人人都能生，为什么就本宫____？',answers:['生不了']},
-  {emoji:'🌸 🌧️ 💋 🍏 🍄 👑',quote:'那年杏花微雨，你说你是____。',answers:['果郡王']},
-  {emoji:'3️⃣ 👦 ⬆️',quote:'三阿哥又____了。',answers:['长高']},
-  {emoji:'👑 👴',quote:'皇阿玛他____。',answers:['老了']},
-  {emoji:'👄 👄 💧 👄',quote:'____类卿。',answers:['莞莞','完完']},
-  {emoji:'🍁 ❌ 🔴',quote:'今年的枫叶好像不够____啊。',answers:['红']},
-  {emoji:'👶 🐦 🤫 😫',quote:'宝娟，我的____。',answers:['嗓子']},
-  {emoji:'👲 🔪 👲',quote:'皇后杀了____。',answers:['皇后']},
-  {emoji:'👆 ❓ 🐌 💏 ❤️ 🌧️ ☁️ 💡 🍺 📋 4️⃣ ❌ 🦇',quote:'这几年的情爱与时光，究竟是____了。',answers:['错付']},
-  {emoji:'🍊 🔪 🧍‍♀️ 👩 ⬅️ 😫',quote:'臣妾____啊！',answers:['做不到']},
-  {emoji:'👆 🦇 💧 🦵 🐚 💊 👩‍🦱 💊 😫',quote:'这____给你，要不要啊？',answers:['福气']},
-  {emoji:'🐴 🧀 👀 👩 😫 🐚 👩 👩 😀',quote:'颂芝，你看本宫吐了，你不为本宫____吗？',answers:['高兴']},
-  {emoji:'🙏 👩 👩‍⚕️ 🐸',quote:'信女愿一生____。',answers:['吃素']}
- ];
- const normalizeAnswer=value=>String(value??'').toLowerCase().replace(/[，。！？、,.!?：:；;“”"'‘’（）()【】\[\]…·\s]/g,'');
- function renderRiddles(){
-   $('quizQuestions').innerHTML=riddles.map((r,index)=>`<div class="quizQuestion" data-question="${index}">
-     <div class="quizQuestionTop"><span>第${String(index+1).padStart(2,'0')}题</span><span class="answerMark" aria-live="polite"></span></div>
-     <div class="quizEmoji" aria-label="emoji谜面">${r.emoji}</div>
-     <div class="quizQuote">${escapeHtml(r.quote)}</div>
-     <input type="text" data-answer="${index}" maxlength="20" autocomplete="off" placeholder="填入关键字" aria-label="第${index+1}题答案">
-   </div>`).join('');
- }
-
- function submitQuiz(){
-   let score=0;
-   riddles.forEach((r,index)=>{
-     const card=$('quizQuestions').querySelector(`[data-question="${index}"]`);
-     const input=card.querySelector('input');
-     const answer=normalizeAnswer(input.value);
-     const correct=r.answers.some(item=>normalizeAnswer(item)===answer);
-     card.classList.toggle('correct',correct);card.classList.toggle('wrong',!correct);
-     card.querySelector('.answerMark').textContent=correct?'✓ 答对了':'✗ 再接再厉';
-     if(correct)score++;
-   });
-   let rank,comment;
-   if(score<=3){rank='路过的宫女选手';comment='刚进宫门，台词还没背熟，先去吃口瓜。';}
-   else if(score<=7){rank='后宫吃瓜群众选手';comment='有几句你听过，但离熟读宫规还差几集。';}
-   else if(score<=11){rank='熟读宫规的嫔妃选手';comment='有点东西，已经能接住大半宫斗暗号。';}
-   else if(score<=15){rank='资深甄学家选手';comment='台词张口就来，后宫消息你基本没错过。';}
-   else if(score<=18){rank='钮祜禄·甄嬛选手';comment='这宫里已经没几个人能难住你了。';}
-   else {rank='甄学博士·本宫亲自认证';comment='十九题全中，恭喜你把后宫台词刻进DNA。';}
-   $('quizResult').hidden=false;
-   $('quizResult').innerHTML=`<p class="quizScore">${score} / ${riddles.length} 题</p><div>恭喜你属于：<strong>${escapeHtml(rank)}</strong></div><div>${escapeHtml(comment)}</div>`;
-   $('quizResult').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});
- }
- function resetQuiz(){
-   $('quizQuestions').querySelectorAll('input').forEach(input=>input.value='');
-   $('quizQuestions').querySelectorAll('.quizQuestion').forEach(card=>{card.classList.remove('correct','wrong');card.querySelector('.answerMark').textContent='';});
-   $('quizResult').hidden=true;$('quizResult').textContent='';
- }
- if($('quizQuestions'))renderRiddles();
- $('checkQuiz')?.addEventListener('click',submitQuiz);
- $('resetQuiz')?.addEventListener('click',resetQuiz);
 })();
 </script>
 <script defer src="./ganlu-policy-desk-v9.js?v=20261021-ponant1021"></script><script defer src="./ganlu-social-v1.js?v=20261021-emoji1"></script><script defer src="./ganlu-edicts-v8.js?v=20261021-v8-edictclean"></script>
