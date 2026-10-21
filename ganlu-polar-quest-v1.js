@@ -66,25 +66,86 @@ function save(){
 }
 function rank(){return state.index>=total?'极地百科全书':state.index>=16?'极地资深顾问':state.index>=12?'极地探险向导':state.index>=8?'极地航线助手':state.index>=4?'极地路线学徒':'极地实习生';}
 function unlockedCount(){return Math.floor(state.index/chapterSize);}
+const atlasStyles=['compass','vessel','penguin','iceberg','bear'];
+const atlasDescriptions=[
+ '辨认南美登船港口与极地飞行路线。',
+ '分清飞去船回、船去飞回与德雷克海峡。',
+ '认识南乔治亚与王企鹅的栖息环境。',
+ '理解南极登陆安全及生态保护规则。',
+ '看懂北极生态与适合客户的旅行方式。'
+];
+// Hand-crafted vector emblems: crisp at mobile and desktop sizes, no fonts or external images.
+function atlasArtwork(i){
+ const wrap=path=>'<svg viewBox="0 0 144 144" xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true"><circle cx="72" cy="72" r="58" stroke="currentColor" opacity=".24" stroke-width=".7"/><circle cx="72" cy="72" r="47" stroke="currentColor" opacity=".24" stroke-dasharray="3 8"/>'+path+'</svg>';
+ if(i===0)return wrap('<circle cx="72" cy="72" r="37" stroke="currentColor" stroke-width="2.4"/><path d="M72 25v13M72 106v13M25 72h13M106 72h13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M72 41L80 64 103 72 80 80 72 103 64 80 41 72 64 64z" fill="currentColor" fill-opacity=".84"/><path d="M72 41v62L64 80 41 72z" fill="#eefbf6" fill-opacity=".92"/><circle cx="72" cy="72" r="5.5" fill="#254a60" stroke="currentColor" stroke-width="2"/><path d="M49 49l-5-5M95 49l5-5M49 95l-5 5M95 95l5 5" stroke="currentColor" opacity=".56"/>');
+ if(i===1)return wrap('<path d="M22 86h100l-15 24H40z" fill="currentColor" fill-opacity=".83"/><path d="M37 65h70v21H37z" fill="#e7f7f3" fill-opacity=".94"/><path d="M48 49h46v16H48z" fill="currentColor" fill-opacity=".92"/><path d="M59 38h25v11H59z" fill="#e7f7f3"/><path d="M73 24v14" stroke="currentColor" stroke-width="3"/><path d="M53 57h8m10 0h8m10 0h7" stroke="#173e51" stroke-width="4" stroke-linecap="round"/><path d="M22 115q12-8 24 0t24 0 24 0 28 0" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M27 122q12-6 24 0t24 0 24 0 22 0" stroke="currentColor" stroke-opacity=".45" stroke-width="2"/>');
+ if(i===2)return wrap('<path d="M53 30q19-9 36 4 12 16 9 45-2 35-26 43-27-4-31-39-5-35 12-53Z" fill="#192d3d" stroke="currentColor" stroke-width="2.2"/><path d="M60 51q-12 17-9 43 6 19 21 25 16-9 18-27 1-26-10-39-8 9-20-2Z" fill="#fbf7e6"/><path d="M56 42q14 7 30 0l-6 20-16 4Z" fill="#e7b770"/><path d="M86 46l15 8-14 5Z" fill="currentColor"/><circle cx="78" cy="43" r="2.7" fill="#f3f0df"/><path d="M49 94l-13 15 17-3M90 94l15 15-18-3" stroke="currentColor" stroke-width="4" stroke-linecap="round"/><path d="M55 119l-5 12m4-5h-14m37-7 5 12m-4-5h15" stroke="#e3bb7b" stroke-width="3" stroke-linecap="round"/>');
+ if(i===3)return wrap('<path d="M16 113 49 64l17 21L90 28l39 85Z" fill="currentColor" fill-opacity=".8"/><path d="m49 64 17 21 24-57 17 44-19-13-15 30-18-9Z" fill="#f2fffd"/><path d="M17 113h112" stroke="#e7f8f4" stroke-width="2"/><path d="m34 117 12 7 16-5 12 7 16-7 12 7 13-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" opacity=".65"/><path d="m38 80-8 16M94 46l7 15M76 104l12 9" stroke="#e2f9f7" opacity=".55" stroke-width="2"/>');
+ return wrap('<path d="M32 85q4-24 24-27l9-18 14-2 12 16q21 4 24 24l-8 24H83l-4 16H65l-5-14H43l-3 14H27l1-17-12-10 5-16Z" fill="#f4f8f0" stroke="currentColor" stroke-width="2.2"/><path d="M91 59q9-18 22-11 5 12-5 21" fill="#f5faf2" stroke="currentColor" stroke-width="2"/><path d="M41 60q-5-18 6-21 12 5 14 18" fill="#f5faf2" stroke="currentColor" stroke-width="2"/><circle cx="101" cy="76" r="3" fill="#183448"/><path d="m116 87-7 3-4-4" stroke="#304659" stroke-width="2" stroke-linecap="round"/><path d="M39 120h18m26 0h22" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>');
+}
+let justUnlocked=-1;
+let lastCollectionComplete=false;
+let lastModalFocus=null;
 function bookHTML(){
  return chapters.map((ch,i)=>{
-  const unlocked=i<unlockedCount();
-  return '<div class="polarBookCard '+(unlocked?'unlocked':'locked')+'" title="'+safeText(ch.reward)+'">'
-     +'<div class="polarBookIcon" aria-hidden="true">'+(unlocked?ch.icon:'❔')+'</div>'
-     +'<div class="polarBookName">'+(unlocked?safeText(ch.reward):'尚未解锁')+'</div>'
-     +'<div class="polarBookHint">'+(unlocked?'已收入极地图鉴':'通关第'+(i+1)+'关解锁')+'</div></div>';
+  const unlocked=i<unlockedCount(),fresh=unlocked&&justUnlocked===i;
+  if(!unlocked)return '<div class="polarAtlasCard locked" aria-label="第'+(i+1)+'关图鉴尚未解锁"><div class="polarAtlasInner"><div class="polarAtlasSeal">FIELD CARD · 0'+(i+1)+'</div><div class="polarAtlasLock" aria-hidden="true">?</div><div class="polarAtlasName">尚未解锁</div><div class="polarAtlasSub">第'+(i+1)+'关</div></div></div>';
+  const stars=[0,1,2,3,4,5].map(k=>'<i class="polarAtlasStar" aria-hidden="true" style="--star-x:'+(11+((k*29+i*11)%76))+'%;--star-y:'+(9+((k*21+i*13)%78))+'%;--star-delay:'+(k*.38)+'s"></i>').join('');
+  return '<button type="button" class="polarAtlasCard unlocked theme-'+atlasStyles[i]+(fresh?' just-unlocked':'')+'" data-polar-atlas="'+i+'" aria-label="打开'+safeText(ch.reward)+'图鉴">'
+  +'<span class="polarAtlasAura" aria-hidden="true"></span><span class="polarAtlasSparkles" aria-hidden="true">'+stars+'</span><span class="polarAtlasShine" aria-hidden="true"></span>'
+  +'<span class="polarAtlasInner"><span class="polarAtlasSeal">CHUANKE · 0'+(i+1)+'</span><span class="polarAtlasBadge">已解锁</span>'
+  +'<span class="polarAtlasArtwork">'+atlasArtwork(i)+'</span><span class="polarAtlasName">'+safeText(ch.reward)+'</span>'
+  +'<span class="polarAtlasSub">POLAR COLLECTION</span></span></button>';
  }).join('');
 }
 function updateSummary(){
+ const count=unlockedCount();
  el('polarQuestCount').textContent=state.index+' / '+total;
  el('polarQuestBar').style.width=(state.index/total*100)+'%';
  el('polarQuestBar').setAttribute('aria-valuenow',String(state.index));
  el('polarQuestRank').textContent=rank();
  el('polarQuestBook').innerHTML=bookHTML();
+ const complete=count===chapters.length;
+ const album=el('polarAtlas');
+ if(album){album.classList.toggle('all-unlocked',complete);}
+ const completeLabel=el('polarAtlasComplete');
+ if(completeLabel){completeLabel.hidden=!complete;}
+ if(complete&&!lastCollectionComplete){
+  const grid=el('polarQuestBook');
+  grid.classList.remove('polarAtlasCollectionFlash');
+  // Force a fresh full-collection celebration only on the unlocking transition.
+  void grid.offsetWidth;
+  grid.classList.add('polarAtlasCollectionFlash');
+ }
+ lastCollectionComplete=complete;
  el('polarQuestChapterNav').innerHTML=chapters.map((ch,i)=>{
-  const complete=i<unlockedCount(),active=state.index<total&&Math.floor(state.index/chapterSize)===i&&!state.pending;
-  return '<span class="polarChapterTick '+(complete?'done':active?'active':'waiting')+'" title="'+safeText(ch.title)+'">'+(complete?'✓':i+1)+'</span>';
+  const done=i<count,active=state.index<total&&Math.floor(state.index/chapterSize)===i&&!state.pending;
+  return '<span class="polarChapterTick '+(done?'done':active?'active':'waiting')+'" title="'+safeText(ch.title)+'">'+(done?'✓':i+1)+'</span>';
  }).join('');
+}
+function openAtlasPreview(index){
+ if(!Number.isInteger(index)||index<0||index>=unlockedCount())return;
+ const modal=el('polarAtlasPreview'),ch=chapters[index];
+ lastModalFocus=document.activeElement;
+ el('polarAtlasPreviewArt').innerHTML=atlasArtwork(index);
+ el('polarAtlasPreviewArt').className='polarAtlasPreviewArtwork theme-'+atlasStyles[index];
+ el('polarAtlasPreviewName').textContent=ch.reward;
+ el('polarAtlasPreviewChapter').textContent='第'+(index+1)+'关 · '+ch.title;
+ el('polarAtlasPreviewDesc').textContent=atlasDescriptions[index];
+ modal.hidden=false;
+ // Restart entrance animation for repeated card openings.
+ modal.classList.remove('show');
+ void modal.offsetWidth;
+ modal.classList.add('show');
+ el('polarAtlasPreviewClose').focus();
+}
+function closeAtlasPreview(){
+ const modal=el('polarAtlasPreview');
+ if(modal.hidden)return;
+ modal.classList.remove('show');
+ modal.hidden=true;
+ if(lastModalFocus&&typeof lastModalFocus.focus==='function')lastModalFocus.focus();
+ lastModalFocus=null;
 }
 function feedback(kind,heading,details){
  const item=el('polarQuestFeedback');
@@ -117,7 +178,10 @@ function renderReward(){
  el('polarQuestQuestion').hidden=true;
  el('polarQuestFinish').hidden=true;
  el('polarQuestReward').hidden=false;
- el('polarRewardIcon').textContent=ch.icon;
+ el('polarRewardIcon').innerHTML=atlasArtwork(chapterIndex);
+ el('polarRewardIcon').className='polarAwardEmoji atlasRewardEmblem theme-'+atlasStyles[chapterIndex];
+ justUnlocked=chapterIndex;
+ updateSummary();
  el('polarRewardName').textContent=ch.reward+' · 图鉴解锁';
  el('polarRewardDescription').textContent=ch.desc;
  el('polarRewardRank').textContent=rank();
@@ -176,6 +240,7 @@ function next(){
  if(!questionCorrect)return;
  clearAdvance();
  state.index=Math.min(total,state.index+1);
+ if(state.index%chapterSize!==0)justUnlocked=-1;
  state.pending=state.index%chapterSize===0;
  state.failed=false;state.failedChoice=null;
  questionCorrect=false;save();render();
@@ -184,7 +249,7 @@ function next(){
 function nextChapter(){
  if(!state.pending)return;
  clearAdvance();
- state.pending=false;save();render();
+ state.pending=false;justUnlocked=-1;save();render();
  root.scrollIntoView({behavior:'smooth',block:'start'});
 }
 function retryChapter(){
@@ -192,6 +257,7 @@ function retryChapter(){
  clearAdvance();
  // Retry only the four questions of the failed chapter; keep all earlier rewards.
  state.index=Math.floor(state.index/chapterSize)*chapterSize;
+ justUnlocked=-1;
  state.pending=false;state.failed=false;state.failedChoice=null;
  questionCorrect=false;
  save();render();
@@ -199,7 +265,7 @@ function retryChapter(){
 }
 function restart(){
  if(!window.confirm('确定从第一关重新挑战吗？本浏览器保存的图鉴与闯关进度会清零。'))return;
- clearAdvance();
+ clearAdvance();closeAtlasPreview();justUnlocked=-1;
  state={index:0,wrong:0,pending:false,failed:false,failedChoice:null};
  save();render();
  root.scrollIntoView({behavior:'smooth',block:'start'});
@@ -212,6 +278,17 @@ el('polarQuestRetry').addEventListener('click',retryChapter);
 el('polarRewardNext').addEventListener('click',nextChapter);
 el('polarQuestRestart').addEventListener('click',restart);
 el('polarFinishRestart').addEventListener('click',restart);
+el('polarQuestBook').addEventListener('click',event=>{
+ const card=event.target.closest('[data-polar-atlas]');
+ if(card)openAtlasPreview(Number(card.getAttribute('data-polar-atlas')));
+});
+el('polarAtlasPreviewClose').addEventListener('click',closeAtlasPreview);
+el('polarAtlasPreview').addEventListener('click',event=>{
+ if(event.target===el('polarAtlasPreview'))closeAtlasPreview();
+});
+document.addEventListener('keydown',event=>{
+ if(event.key==='Escape'&&!el('polarAtlasPreview').hidden)closeAtlasPreview();
+});
 render();
 // All answers and content are local; no scores, nicknames or public rankings are transmitted.
 window.GanluPolarQuest={chapters,total,rank,unlockedCount,getProgress:()=>({...state})};
