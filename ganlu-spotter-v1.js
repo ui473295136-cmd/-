@@ -156,7 +156,7 @@ function next(){
 }
 function spot(event){
  const error=event.target.closest('[data-spot-id]'),truth=event.target.closest('[data-spot-true]');
- if(!error&&!truth){showFeedback('点击海报上的可疑文字或图标。','neutral');return;}
+ if(!error&&!truth){showFeedback('这处没发现问题，换个地方看看。','neutral');return;}
  if(truth){
   showFeedback('这处没错：'+truth.textContent.trim()+'。再找找。','neutral');
   truth.classList.add('spotterMistake');
@@ -170,7 +170,7 @@ function spot(event){
  persist();
  const item=posters[state.stage].errors[id];
  error.classList.add('found');error.setAttribute('aria-pressed','true');
- error.querySelector('.spotterStampHit').textContent='✓';
+ error.querySelector('.spotterFoundMark').textContent='✓';
  updateProgress();
  showFeedback('找到了！'+item[1],'good');
  if(state.found[state.stage].length===6){
