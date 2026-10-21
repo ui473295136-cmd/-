@@ -170,3 +170,164 @@
 @media(max-width:550px){.polarBookGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.polarAtlasCard{height:190px}.polarAtlasSeal{top:15px;left:12px;font-size:8px}.polarAtlasBadge{top:13px;right:9px}.polarAtlasArtwork{width:90px;height:90px}.polarAtlasName{font-size:14px}.polarAtlasPreviewCard{min-height:450px}.polarAtlasPreviewArtwork{width:170px;height:170px}}
 @media(hover:none){.polarAtlasCard.unlocked:hover{transform:none}}
 @media(prefers-reduced-motion:reduce){.polarAtlasCard,.polarAtlasShine,.polarAtlasAura,.polarAtlasStar,.polarAtlasComplete,.polarAtlasPreviewArtwork,.polarAtlasPreviewCard,.polarAtlasPreviewCard:after,.polarAtlas.all-unlocked:before,.polarAtlasCollectionFlash .polarAtlasCard.unlocked,.polarAtlasCard.just-unlocked{animation:none!important;transition:none!important;transform:none!important;filter:none!important}.polarAtlasPreview.show .polarAtlasPreviewCard{opacity:1}}
+
+
+/* POLAR ATLAS MEDALLION V3 */
+/* The stage-clear medal and collectible use exactly the same SVG artwork and themed metals. */
+.polarAwardEmoji.atlasRewardEmblem{
+ position:relative;display:grid;place-items:center;isolation:isolate;
+ width:190px;height:190px;min-width:190px;min-height:190px;max-width:none;
+ margin:2px auto 20px;padding:0;overflow:visible;
+ border:0;border-radius:50%;background:transparent;box-shadow:none;
+ perspective:1100px;transform-style:preserve-3d;
+ --medal-1:#315a71;--medal-2:#112e46;--medal-metal:#ecd4a3;
+ --medal-light:rgba(247,222,159,.3);
+ color:var(--medal-metal);
+}
+.atlasRewardEmblem.theme-compass{--medal-1:#315a71;--medal-2:#112c43;--medal-metal:#ebd3a3;--medal-light:rgba(227,188,120,.40)}
+.atlasRewardEmblem.theme-vessel{--medal-1:#256e81;--medal-2:#10354e;--medal-metal:#c9eef0;--medal-light:rgba(141,213,229,.38)}
+.atlasRewardEmblem.theme-penguin{--medal-1:#3b6a65;--medal-2:#10333e;--medal-metal:#edce93;--medal-light:rgba(229,196,127,.40)}
+.atlasRewardEmblem.theme-iceberg{--medal-1:#438da5;--medal-2:#164560;--medal-metal:#c6f3fc;--medal-light:rgba(144,226,244,.44)}
+.atlasRewardEmblem.theme-bear{--medal-1:#687687;--medal-2:#1d3a50;--medal-metal:#f5e4b9;--medal-light:rgba(241,217,158,.40)}
+.atlasRewardEmblem .atlasRewardCoin{
+ position:relative;z-index:3;display:block;width:142px;height:142px;
+ border-radius:50%;transform-style:preserve-3d;will-change:transform;
+ filter:drop-shadow(0 13px 18px rgba(7,37,48,.23));
+}
+.atlasRewardEmblem .atlasRewardCoinFace{
+ position:absolute;inset:0;border-radius:50%;
+ display:grid;place-items:center;box-sizing:border-box;
+ border:5px double var(--medal-metal);
+ background:
+  radial-gradient(circle at 25% 18%,rgba(255,255,255,.23),transparent 34%),
+  radial-gradient(circle at 74% 83%,rgba(0,11,27,.35),transparent 52%),
+  linear-gradient(145deg,var(--medal-1),var(--medal-2) 78%);
+ box-shadow:
+  inset 0 2px 2px rgba(255,255,255,.45),
+  inset 0 -12px 19px rgba(0,12,28,.27),
+  inset 0 0 0 6px rgba(220,227,203,.10),
+  0 0 24px var(--medal-light);
+ backface-visibility:hidden;-webkit-backface-visibility:hidden;
+ overflow:hidden;
+}
+.atlasRewardEmblem .atlasRewardCoinFace:before{
+ content:"";position:absolute;inset:9px;border-radius:50%;
+ border:1px solid rgba(238,228,185,.48);
+ background:conic-gradient(from 45deg,transparent,rgba(255,252,223,.14),transparent 42%,rgba(255,251,223,.07),transparent 78%);
+ pointer-events:none;
+}
+.atlasRewardEmblem .atlasRewardCoinFace:after{
+ content:"";position:absolute;inset:3px;border-radius:50%;
+ border:1px dashed rgba(241,227,184,.28);pointer-events:none;
+}
+.atlasRewardEmblem .atlasRewardCoinFront{transform:rotateY(0deg) translateZ(5px)}
+.atlasRewardEmblem .atlasRewardCoinBack{transform:rotateY(180deg) translateZ(5px)}
+.atlasRewardEmblem .atlasRewardCoinFace svg{
+ display:block;width:107px;height:107px;
+ color:var(--medal-metal);
+ filter:drop-shadow(0 4px 2px rgba(1,24,40,.3)) drop-shadow(0 0 13px var(--medal-light));
+ transform:translateZ(19px);transform-style:preserve-3d;
+}
+.atlasRewardEmblem .atlasRewardOrbit{
+ position:absolute;inset:2px;z-index:1;border-radius:50%;pointer-events:none;
+ border:1px solid rgba(232,193,119,.45);
+ box-shadow:0 0 0 9px rgba(234,208,157,.055),0 0 21px var(--medal-light);
+ animation:atlasMedalOrbit 16s linear infinite;
+}
+.atlasRewardEmblem .atlasRewardOrbit:before,
+.atlasRewardEmblem .atlasRewardOrbit:after{
+ content:"✦";position:absolute;left:50%;top:-13px;
+ color:var(--medal-metal);font-size:19px;text-shadow:0 0 11px var(--medal-light);
+ transform:translateX(-50%);
+}
+.atlasRewardEmblem .atlasRewardOrbit:after{top:auto;bottom:-15px}
+.atlasRewardEmblem .atlasRewardSpark{
+ position:absolute;z-index:4;width:5px;height:5px;border-radius:50%;
+ background:#fff5d2;box-shadow:0 0 9px 3px var(--medal-light);
+ animation:atlasMedalSpark 3.1s ease-in-out infinite;pointer-events:none;
+}
+.atlasRewardSpark1{top:19%;left:7%}
+.atlasRewardSpark2{top:31%;right:5%;animation-delay:.8s!important}
+.atlasRewardSpark3{bottom:10%;right:24%;animation-delay:1.4s!important}
+.atlasRewardEmblem.rewardSpin3D .atlasRewardCoin{
+ animation:atlasMedalFlip360 1.65s cubic-bezier(.15,.70,.16,1.08) both,
+           atlasMedalFloat 4.0s ease-in-out 1.65s infinite;
+}
+.atlasRewardEmblem.rewardSpin3D .atlasRewardCoinFace{
+ animation:atlasMedalLuster 1.65s ease-in-out both;
+}
+.atlasRewardEmblem.rewardSpin3D .atlasRewardCoinFace svg{
+ animation:atlasMedalIconLuster 1.65s ease-in-out both;
+}
+/* Card artwork keeps the identical icon, raised-metal highlights, and synchronized unlock spin. */
+.polarAtlasCard.unlocked .polarAtlasArtwork{
+ transform-style:preserve-3d;perspective:800px;
+ filter:drop-shadow(0 7px 10px rgba(0,12,27,.24));
+ animation:atlasCardIconFloat 5.2s ease-in-out infinite;
+}
+.polarAtlasCard.unlocked .polarAtlasArtwork svg{
+ transform:translateZ(12px);transform-style:preserve-3d;
+ filter:drop-shadow(0 7px 5px rgba(0,15,27,.30))
+        drop-shadow(0 0 13px var(--atlas-glow,rgba(236,205,142,.28)));
+ transition:transform .45s ease,filter .45s ease;
+}
+.polarAtlasCard.just-unlocked .polarAtlasArtwork{
+ animation:atlasCardIconFlip360 1.65s cubic-bezier(.15,.70,.16,1.08) both,
+           atlasCardIconFloat 5.2s ease-in-out 1.65s infinite;
+}
+.polarAtlasCard.unlocked:hover .polarAtlasArtwork svg{
+ transform:translateZ(20px) rotateY(-13deg) rotateX(5deg);
+ filter:drop-shadow(0 11px 7px rgba(0,15,27,.35))
+        drop-shadow(0 0 18px var(--atlas-glow,rgba(236,205,142,.4)));
+}
+.atlasRewardEmblem.rewardSpin3D::after{
+ content:"";position:absolute;z-index:6;pointer-events:none;
+ width:53px;height:170px;top:10px;left:-93px;
+ transform:rotate(24deg);
+ background:linear-gradient(90deg,transparent,rgba(255,252,235,.04),
+ rgba(255,243,183,.55),rgba(255,255,246,.08),transparent);
+ animation:atlasMedalSweep 2.6s ease-in-out .28s infinite;
+}
+@keyframes atlasMedalFlip360{
+ 0%{opacity:.3;transform:rotateY(-65deg) rotateX(14deg) scale(.64)}
+ 24%{opacity:1;transform:rotateY(45deg) rotateX(4deg) scale(1.06)}
+ 52%{transform:rotateY(170deg) rotateX(-7deg) scale(.98)}
+ 79%{transform:rotateY(296deg) rotateX(3deg) scale(1.07)}
+ 100%{opacity:1;transform:rotateY(360deg) rotateX(0) scale(1)}
+}
+@keyframes atlasCardIconFlip360{
+ 0%{opacity:.3;transform:rotateY(-65deg) rotateX(13deg) scale(.63)}
+ 28%{opacity:1;transform:rotateY(51deg) rotateX(5deg) scale(1.07)}
+ 56%{transform:rotateY(190deg) rotateX(-6deg) scale(.96)}
+ 82%{transform:rotateY(304deg) rotateX(3deg) scale(1.06)}
+ 100%{opacity:1;transform:rotateY(360deg) rotateX(0) scale(1)}
+}
+@keyframes atlasMedalFloat{0%,100%{transform:translateY(0) rotateY(360deg)}50%{transform:translateY(-5px) rotateY(360deg)}}
+@keyframes atlasCardIconFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+@keyframes atlasMedalOrbit{to{transform:rotate(360deg)}}
+@keyframes atlasMedalSpark{0%,100%{opacity:.2;transform:scale(.55)}50%{opacity:1;transform:scale(1.8)}}
+@keyframes atlasMedalLuster{0%,100%{filter:brightness(1)}50%{filter:brightness(1.22)}}
+@keyframes atlasMedalIconLuster{0%,100%{opacity:1}50%{opacity:.76}}
+@keyframes atlasMedalSweep{0%,14%{left:-90px;opacity:0}40%{opacity:1}68%,100%{left:calc(100% + 35px);opacity:0}}
+@media(max-width:570px){
+ .polarAwardEmoji.atlasRewardEmblem{width:158px;height:158px;min-width:158px;min-height:158px;margin-bottom:13px}
+ .atlasRewardEmblem .atlasRewardCoin{width:122px;height:122px}
+ .atlasRewardEmblem .atlasRewardCoinFace svg{width:92px;height:92px}
+ .atlasRewardEmblem.rewardSpin3D::after{height:145px}
+}
+/* Keep navigation/interaction usable for motion-sensitive visitors. */
+@media(prefers-reduced-motion:reduce){
+ .atlasRewardEmblem .atlasRewardCoin,
+ .atlasRewardEmblem .atlasRewardCoinFace,
+ .atlasRewardEmblem .atlasRewardCoinFace svg,
+ .atlasRewardEmblem .atlasRewardOrbit,
+ .atlasRewardEmblem .atlasRewardSpark,
+ .atlasRewardEmblem.rewardSpin3D::after,
+ .polarAtlasCard.unlocked .polarAtlasArtwork,
+ .polarAtlasCard.just-unlocked .polarAtlasArtwork,
+ .polarAtlasCard.unlocked .polarAtlasArtwork svg{
+  animation:none!important;transition:none!important;transform:none!important;filter:none!important;
+ }
+ .atlasRewardEmblem .atlasRewardCoinBack{transform:rotateY(180deg)!important}
+ .atlasRewardEmblem .atlasRewardCoinFront{transform:translateZ(5px)!important}
+}
