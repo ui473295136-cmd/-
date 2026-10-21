@@ -33,6 +33,12 @@
   var feedBusy=false,threadBusy=false,sendBusy=false,commentBusy=false;
   var chatSignature='',lastThreadSignature='',feedData={chat:[],notifications:[],counts:{}};
   var firstFeed=true,prevCounts={chat:0,replies:0};
+  var seenChatIds=new Set(),seenReplyIds=new Set();
+  var SOUND_KEY='ganlu-social-sound-v1';
+  var soundOn=getStored(SOUND_KEY)==='on';
+  var audioCtx=null;
+  var toastTimer=0;
+  var toastTarget=null;
   var h=function(s){return String(s===undefined||s===null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
   function readableTime(value){
     var d=new Date(value);
@@ -86,16 +92,112 @@
     setStored(REPLIES_SEEN_KEY,tokens.repliesSeen);
     updateBadges();
   }
-  function promptDesktop(oldC,newC){
-    if(firstFeed||(!newC.chat&&!newC.replies))return;
-    if(newC.chat<=oldC.chat&&newC.replies<=oldC.replies)return;
+  function syncSoundButton(){
+    var btn=$('socialSoundBtn');
+    if(!btn)return;
+    btn.textContent=soundOn?'🔇 关闭提示音':'🔊 开启提示音';
+    btn.setAttribute('aria-pressed',String(soundOn));
+    msgText('socialSoundStatus',soundOn?'提示音已开启（网页保持打开时生效）':'提示音已关闭，可随时开启');
+  }
+  async function unlockAudio(){
+    var Context=window.AudioContext||window.webkitAudioContext;
+    if(!Context)return false;
+    try{
+      if(!audioCtx)audioCtx=new Context();
+      if(audioCtx.state==='suspended')await audioCtx.resume();
+      return audioCtx.state==='running';
+    }catch(e){return false;}
+  }
+  function ping(){
+    if(!soundOn||!audioCtx||audioCtx.state!=='running')return;
+    try{
+      var now=audioCtx.currentTime;
+      [0,.12].forEach(function(delay,index){
+        var oscillator=audioCtx.createOscillator(),gain=audioCtx.createGain(),t=now+delay;
+        oscillator.type='sine';
+        oscillator.frequency.setValueAtTime(index?1030:740,t);
+        gain.gain.setValueAtTime(.0001,t);
+        gain.gain.exponentialRampToValueAtTime(.065,t+.015);
+        gain.gain.exponentialRampToValueAtTime(.0001,t+.11);
+        oscillator.connect(gain);gain.connect(audioCtx.destination);
+        oscillator.start(t);oscillator.stop(t+.13);
+      });
+    }catch(e){}
+  }
+  function dismissToast(){
+    if(toastTimer){clearTimeout(toastTimer);toastTimer=0;}
+    var el=$('socialSideToast');
+    if(el)el.hidden=true;
+  }
+  function showSideToast(kind,item,count){
+    var box=$('socialSideToast');
+    if(!box)return;
+    toastTarget={kind:kind,postId:item.post_id||''};
+    var title=kind==='reply'?'有人回复了你的吐槽':'茶话会来了新消息';
+    var preview=item.nickname?String(item.nickname)+'：'+String(item.body||''):'你收到新的互动消息';
+    msgText('socialToastTitle',count>1?title+' · '+count+'条':title);
+    msgText('socialToastPreview',preview.length>90?preview.slice(0,90)+'…':preview);
+    msgText('socialToastOpen',kind==='reply'?'查看回复 →':'进入聊天 →');
+    box.hidden=false;
+    if(toastTimer)clearTimeout(toastTimer);
+    toastTimer=setTimeout(dismissToast,11000);
+    ping();
+  }
+  function promptDesktop(kind,item,count){
     if(!('Notification' in window)||Notification.permission!=='granted')return;
     if(!document.hidden&&document.hasFocus())return;
     try{
-      var label=newC.replies>oldC.replies?'有人回复了你的吐槽':'碎嘴阁有新聊天消息';
-      var n=new Notification('甘露寺·碎嘴阁',{body:label,tag:'ganlu-social',silent:false});
-      n.onclick=function(){window.focus();$('complaintPanel')?.scrollIntoView({behavior:'smooth',block:'start'});try{n.close()}catch(e){}};
+      var title=kind==='reply'?'有人回复了你的吐槽':'碎嘴阁有新聊天消息';
+      var body=(count>1?'共'+count+'条 · ':'')+String(item.nickname||'匿名小主')+'：'+String(item.body||'').slice(0,60);
+      var n=new Notification('甘露寺·'+title,{body:body,tag:'ganlu-social-'+kind,silent:true});
+      n.onclick=function(){
+        window.focus();
+        navigateFromToast({kind:kind,postId:item.post_id||''});
+        try{n.close()}catch(e){}
+      };
     }catch(e){}
+  }
+  function noticeNewItems(){
+    var chats=feedData.chat||[],replies=feedData.notifications||[];
+    var newChats=[],newReplies=[];
+    chats.forEach(function(item){
+      if(!item||!item.id)return;
+      if(!firstFeed&&!seenChatIds.has(item.id)&&!item.mine)newChats.push(item);
+      seenChatIds.add(item.id);
+    });
+    replies.forEach(function(item){
+      if(!item||!item.id)return;
+      if(!firstFeed&&!seenReplyIds.has(item.id))newReplies.push(item);
+      seenReplyIds.add(item.id);
+    });
+    // Avoid repeated notifications from the same message on future polling cycles.
+    if(newReplies.length){
+      var latest=newReplies[newReplies.length-1];
+      showSideToast('reply',latest,newReplies.length);
+      promptDesktop('reply',latest,newReplies.length);
+    }else if(newChats.length){
+      var latestChat=newChats[newChats.length-1];
+      showSideToast('chat',latestChat,newChats.length);
+      promptDesktop('chat',latestChat,newChats.length);
+    }
+  }
+  function navigateFromToast(target){
+    if(!target)return;
+    dismissToast();
+    $('complaintPanel')?.scrollIntoView({behavior:'smooth',block:'start'});
+    if(target.kind==='chat'){
+      setTab('chat');
+      $('socialChatInput')?.focus({preventScroll:true});
+      return;
+    }
+    setTab('posts');
+    $('socialNoticePanel').hidden=false;
+    markRepliesRead();
+    renderNotices(feedData.notifications||[]);
+    if(target.postId){
+      var post=document.querySelector('#boardPosts [data-post="'+target.postId+'"]');
+      if(post){openThread(target.postId);post.scrollIntoView({behavior:'smooth',block:'center'});}
+    }
   }
   function renderChat(items){
     if(!Array.isArray(items))items=[];
@@ -140,8 +242,8 @@
       renderChat(feedData.chat);
       if(!$('socialNoticePanel').hidden)renderNotices(feedData.notifications);
       applyCounts();
+      noticeNewItems();
       var newCount=updateBadges();
-      promptDesktop(oldCount,newCount);
       firstFeed=false;
       prevCounts=newCount;
       msgText('socialLiveStatus','已连接 · 聊天约3秒同步');
@@ -230,6 +332,35 @@
     var panel=$('socialNoticePanel');
     panel.hidden=!panel.hidden;
     if(!panel.hidden){markRepliesRead();renderNotices(feedData.notifications||[])}
+  });
+  syncSoundButton();
+  $('socialSoundBtn').addEventListener('click',async function(){
+    if(soundOn){
+      soundOn=false;
+      setStored(SOUND_KEY,'off');
+      syncSoundButton();
+      return;
+    }
+    var available=await unlockAudio();
+    if(!available){
+      msgText('socialSoundStatus','当前浏览器未允许播放提示音，请先点击网页后重试。');
+      return;
+    }
+    soundOn=true;
+    setStored(SOUND_KEY,'on');
+    syncSoundButton();
+    ping();
+  });
+  // Browsers can suspend WebAudio until a user gesture. Resume it on later interactions.
+  document.addEventListener('pointerdown',function(event){
+    if(soundOn&&audioCtx&&audioCtx.state==='suspended')unlockAudio();
+  },{capture:true});
+  document.addEventListener('keydown',function(event){
+    if(soundOn&&audioCtx&&audioCtx.state==='suspended')unlockAudio();
+  },{capture:true});
+  $('socialToastClose').addEventListener('click',dismissToast);
+  $('socialToastOpen').addEventListener('click',function(){
+    navigateFromToast(toastTarget);
   });
   $('socialDesktopBtn').addEventListener('click',async function(){
     if(!('Notification' in window)){msgText('socialDesktopStatus','当前浏览器不支持桌面通知，可使用站内红点提醒。');return;}
