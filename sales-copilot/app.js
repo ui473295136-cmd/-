@@ -7,7 +7,7 @@ try{var old=JSON.parse(localStorage.getItem(dbKey)||"null");if(old&&Array.isArra
 var current=null,tone="natural",editing=null,editingOriginalChat="",editingOriginalName="",ocrWorking=false,previewUrls=[];
 var names={home:"客户分析",cases:"客户档案",library:"异议话术库",docs:"产品资料"};
 function safe(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");}
-function mask(s){return String(s||"").replace(/(?<!\d)1[3-9]\d{9}(?!\d)/g,"[手机号已隐藏]").replace(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi,"[邮箱已隐藏]").replace(/(?<!\d)\d{17}[\dXx](?!\d)/g,"[证件号已隐藏]");}
+function mask(s){return String(s||"").replace(/(?:\+?86[- ]?)?1[3-9]\d[- ]?\d{4}[- ]?\d{4}/g,"[手机号已隐藏]").replace(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi,"[邮箱已隐藏]").replace(/(?<!\d)\d{17}[\dXx](?!\d)/g,"[证件号已隐藏]");}
 function persist(){try{localStorage.setItem(dbKey,JSON.stringify(db));return true;}catch(e){toast("保存失败：本地空间不足或浏览器禁止存储");return false;}}
 function toast(s){var el=$("toast");el.textContent=s;el.classList.add("show");clearTimeout(toast.timer);toast.timer=setTimeout(function(){el.classList.remove("show");},3200);}
 function date(s){return new Date(s).toLocaleDateString("zh-CN",{year:"numeric",month:"2-digit",day:"2-digit"});}
