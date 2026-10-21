@@ -95,3 +95,78 @@
  .polarAwardEmoji{font-size:63px;width:115px;height:115px}
 }
 @media(prefers-reduced-motion:reduce){.polarChoice,.polarProgressFill,.polarBookCard{transition:none}}
+
+/* POLAR ATLAS COLLECTOR · V2 | premium foil expedition cards */
+.polarAtlas{position:relative;isolation:isolate}
+.polarAtlasHeader{align-items:center}
+.polarAtlasComplete{display:inline-flex;align-items:center;gap:5px;position:relative;border:1px solid rgba(232,205,137,.72);border-radius:999px;padding:6px 10px;font-size:11px;font-weight:800;letter-spacing:.04em;color:#f9dba5;background:linear-gradient(120deg,rgba(143,106,47,.28),rgba(188,151,83,.18));box-shadow:0 0 24px rgba(230,192,104,.15);animation:polarCollectionPulse 3.6s ease-in-out infinite}
+.polarAtlasComplete[hidden]{display:none!important}
+.polarBookGrid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:3px;overflow:visible}
+.polarAtlasCard{appearance:none;position:relative;display:block;isolation:isolate;width:100%;height:210px;padding:0;overflow:hidden;border-radius:16px;transform-origin:center;border:1px solid rgba(216,227,224,.24);background:linear-gradient(150deg,#12344c,#0e263b);box-shadow:0 8px 22px rgba(0,9,24,.20),inset 0 0 0 1px rgba(255,255,255,.04);color:#e9f4f1;text-align:center;text-decoration:none;box-sizing:border-box;transition:transform .38s cubic-bezier(.17,.67,.32,1.05),box-shadow .38s ease,border-color .38s ease;vertical-align:top}
+.polarAtlasCard.unlocked{cursor:pointer;border-color:var(--atlas-edge,rgba(222,197,130,.64));background:radial-gradient(ellipse at 26% 15%,var(--atlas-haze,rgba(204,232,220,.24)),transparent 42%),linear-gradient(153deg,var(--atlas-bg1,#164a5b) 0%,var(--atlas-bg2,#0b2639) 65%,#091e32 100%);box-shadow:0 10px 25px rgba(0,11,28,.30),inset 0 0 0 1px rgba(249,235,192,.08),0 0 18px var(--atlas-glow,rgba(236,205,142,.12));animation:polarAtlasBreathe 5.2s ease-in-out infinite}
+.polarAtlasCard.unlocked:before{content:"";position:absolute;inset:6px;border:1px solid rgba(237,224,181,.40);border-radius:11px;pointer-events:none;z-index:2}
+.polarAtlasCard.unlocked:after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 66%,rgba(4,14,28,.0) 6%,rgba(3,15,27,.37) 100%);pointer-events:none}
+.polarAtlasCard.unlocked:hover{transform:perspective(750px) rotateX(3deg) rotateY(-3deg) translateY(-7px) scale(1.018);border-color:#fae3ab;box-shadow:0 21px 35px rgba(0,12,25,.35),0 0 30px var(--atlas-glow,rgba(236,205,142,.3)),inset 0 0 0 1px rgba(255,251,223,.22);z-index:4}
+.polarAtlasCard.unlocked:focus-visible{outline:3px solid #ffe9a3;outline-offset:4px}
+.polarAtlasCard.locked{cursor:default;background:linear-gradient(145deg,#26445a 0%,#162f45 60%,#132b40 100%);opacity:.76;border-color:rgba(162,194,198,.23)}
+.polarAtlasCard.locked:before{content:"";position:absolute;inset:8px;border:1px dashed rgba(182,205,204,.20);border-radius:9px;pointer-events:none}
+.polarAtlasInner{position:relative;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%;padding:15px 8px 13px;box-sizing:border-box}
+.polarAtlasSeal{position:absolute;top:19px;left:15px;letter-spacing:.12em;font:700 9px/1.3 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:rgba(235,233,208,.65);white-space:nowrap}
+.polarAtlasBadge{position:absolute;top:17px;right:12px;border-radius:999px;border:1px solid rgba(233,208,148,.57);padding:4px 6px;color:var(--atlas-metal,#ffdf9d);font-size:9px;line-height:1;background:rgba(231,200,136,.09)}
+.polarAtlasArtwork{position:relative;display:grid;place-items:center;width:100px;height:100px;margin-top:17px;color:var(--atlas-metal,#ffe0a2);filter:drop-shadow(0 4px 11px var(--atlas-glow,rgba(229,206,156,.3)))}
+.polarAtlasArtwork svg{height:100%;width:100%;display:block}
+.polarAtlasName{position:relative;display:block;color:#fff1c8;font:800 15px/1.3 "STSong","Songti SC","Microsoft YaHei",serif;margin-top:5px;letter-spacing:.04em}
+.polarAtlasSub{display:block;color:rgba(235,238,225,.58);font-size:8px;letter-spacing:.16em;margin-top:5px;white-space:nowrap}
+.polarAtlasLock{font:600 64px/1 "STSong","Songti SC",serif;color:rgba(205,231,224,.27);text-shadow:0 5px 15px rgba(2,15,25,.4);margin:20px 0 7px}
+.polarAtlasCard.locked .polarAtlasName{color:#b7cdd1;font-size:12px}
+.polarAtlasCard.locked .polarAtlasSub{color:#7fa0ab;font-size:10px;letter-spacing:0}
+.polarAtlasAura{position:absolute;z-index:1;pointer-events:none;inset:-40%;background:conic-gradient(from 120deg,transparent 0deg,rgba(255,244,198,.02) 30deg,transparent 63deg,rgba(246,225,157,.13) 93deg,transparent 142deg,rgba(224,241,226,.12) 200deg,transparent 248deg,rgba(255,243,199,.08) 310deg,transparent 360deg);opacity:.65;animation:polarAtlasOrbit 22s linear infinite}
+.polarAtlasSparkles{position:absolute;z-index:4;pointer-events:none;inset:0}
+.polarAtlasStar{position:absolute;top:var(--star-y);left:var(--star-x);width:3px;height:3px;background:#ffedc2;border-radius:50%;box-shadow:0 0 6px 1px #f3dda9;animation:polarAtlasTwinkle 3.3s ease-in-out infinite;animation-delay:var(--star-delay);opacity:.25}
+.polarAtlasStar:nth-child(2n){background:#edffff;box-shadow:0 0 7px 1px #bfeeed;animation-duration:4.5s;width:2px;height:2px}
+.polarAtlasShine{position:absolute;z-index:5;pointer-events:none;width:66%;height:210%;left:-145%;top:-40%;transform:rotate(21deg);background:linear-gradient(90deg,transparent,rgba(255,248,227,.025) 21%,rgba(255,240,180,.27) 51%,rgba(251,252,232,.02) 80%,transparent);animation:polarAtlasShine 5.3s ease-in-out infinite}
+.polarAtlasCard.just-unlocked{animation:polarAtlasReveal 1.05s cubic-bezier(.2,.74,.25,1.08) both,polarAtlasBreathe 5.2s ease-in-out 1.05s infinite;z-index:6}
+.polarAtlasCard.just-unlocked .polarAtlasShine{animation:polarAtlasShine 2.6s ease-in-out infinite}
+.polarAtlasCard.theme-compass{--atlas-bg1:#2c5871;--atlas-bg2:#102c45;--atlas-metal:#ead4a8;--atlas-edge:rgba(229,194,129,.65);--atlas-haze:rgba(222,196,143,.25);--atlas-glow:rgba(220,186,119,.23)}
+.polarAtlasCard.theme-vessel{--atlas-bg1:#174766;--atlas-bg2:#0c2942;--atlas-metal:#cbeef0;--atlas-edge:rgba(175,217,221,.6);--atlas-haze:rgba(166,230,233,.24);--atlas-glow:rgba(152,223,232,.22)}
+.polarAtlasCard.theme-penguin{--atlas-bg1:#234d57;--atlas-bg2:#0e343e;--atlas-metal:#e9ca8a;--atlas-edge:rgba(239,204,145,.65);--atlas-haze:rgba(241,206,154,.27);--atlas-glow:rgba(240,210,152,.23)}
+.polarAtlasCard.theme-iceberg{--atlas-bg1:#275e76;--atlas-bg2:#143d59;--atlas-metal:#c7f1fa;--atlas-edge:rgba(180,237,247,.7);--atlas-haze:rgba(189,241,250,.26);--atlas-glow:rgba(152,219,240,.26)}
+.polarAtlasCard.theme-bear{--atlas-bg1:#42546a;--atlas-bg2:#19364b;--atlas-metal:#f5e4ba;--atlas-edge:rgba(242,214,150,.7);--atlas-haze:rgba(245,235,200,.24);--atlas-glow:rgba(248,217,162,.28)}
+.polarAtlas.all-unlocked:before{content:"";position:absolute;inset:-9px -8px -12px;z-index:-1;border-radius:18px;border:1px solid rgba(238,205,140,.34);background:radial-gradient(ellipse at 50% 70%,rgba(226,196,117,.12),transparent 63%);box-shadow:0 0 20px rgba(238,202,139,.1);animation:polarCollectionPulse 4s ease-in-out infinite;pointer-events:none}
+.polarAtlasCollectionFlash .polarAtlasCard.unlocked{animation:polarAtlasFinale 1s ease-out both}
+.polarAtlasCollectionFlash .polarAtlasCard.unlocked:nth-child(2){animation-delay:.11s}
+.polarAtlasCollectionFlash .polarAtlasCard.unlocked:nth-child(3){animation-delay:.22s}
+.polarAtlasCollectionFlash .polarAtlasCard.unlocked:nth-child(4){animation-delay:.33s}
+.polarAtlasCollectionFlash .polarAtlasCard.unlocked:nth-child(5){animation-delay:.44s}
+.atlasRewardEmblem{color:#f5d9a1}
+.atlasRewardEmblem svg{display:block;width:90px;height:90px;filter:drop-shadow(0 5px 9px rgba(40,85,98,.18))}
+.polarAtlasPreview[hidden]{display:none!important}
+.polarAtlasPreview{position:fixed;inset:0;z-index:10020;display:grid;place-items:center;padding:20px;background:rgba(4,15,27,.82);backdrop-filter:blur(10px);overflow:auto}
+.polarAtlasPreviewCard{position:relative;isolation:isolate;display:flex;flex-direction:column;align-items:center;width:min(400px,92vw);min-height:482px;padding:37px 22px 34px;box-sizing:border-box;border:1px solid #dbc08a;border-radius:22px;background:radial-gradient(ellipse at 25% 11%,rgba(217,223,190,.20),transparent 42%),linear-gradient(150deg,#1a4256,#102c43 63%,#0c2338);box-shadow:0 0 0 7px rgba(231,208,146,.055),0 26px 90px rgba(0,0,0,.55),0 0 45px rgba(237,211,152,.12);overflow:hidden;color:#f0e7cb;transform:translateY(40px) rotateY(-25deg) scale(.82);opacity:0;transition:transform .6s cubic-bezier(.18,.8,.24,1.05),opacity .4s ease}
+.polarAtlasPreview.show .polarAtlasPreviewCard{opacity:1;transform:translateY(0) rotateY(0deg) scale(1)}
+.polarAtlasPreviewCard:before{content:"";position:absolute;inset:12px;border:1px solid rgba(243,214,158,.50);border-radius:13px;pointer-events:none}
+.polarAtlasPreviewCard:after{content:"";position:absolute;pointer-events:none;top:-80%;left:-125%;width:55%;height:260%;transform:rotate(25deg);background:linear-gradient(90deg,transparent,rgba(255,249,209,.31),transparent);animation:polarAtlasPreviewShimmer 5s ease-in-out .9s infinite}
+.polarAtlasPreviewClose{position:absolute;z-index:6;top:16px;right:18px;width:33px;height:33px;border-radius:50%;border:1px solid rgba(245,217,150,.44);background:rgba(11,35,51,.72);color:#f8e9c7;font-size:20px;cursor:pointer}
+.polarAtlasPreviewSeal{font:750 10px sans-serif;letter-spacing:.22em;color:#d4b77d}
+.polarAtlasPreviewArtwork{position:relative;display:grid;place-items:center;width:198px;height:198px;margin:22px 0 8px;color:#f3deb1;filter:drop-shadow(0 6px 16px rgba(230,208,155,.25));animation:polarAtlasFloat 4s ease-in-out infinite}
+.polarAtlasPreviewArtwork.theme-vessel,.polarAtlasPreviewArtwork.theme-iceberg{color:#bfeaf0}
+.polarAtlasPreviewArtwork.theme-bear{color:#f4edd1}
+.polarAtlasPreviewArtwork.theme-penguin{color:#f1d4a5}
+.polarAtlasPreviewArtwork svg{display:block;width:100%;height:100%}
+.polarAtlasPreviewKicker{font-size:10px;letter-spacing:.16em;color:#bfcfd1;margin-top:4px}
+.polarAtlasPreviewName{font:850 31px/1.3 "STSong","Songti SC",serif;color:#fff0c5;margin:8px 0 6px}
+.polarAtlasPreviewChapter{font-size:12px;color:#d4ba8c}
+.polarAtlasPreviewDesc{font-size:12px;line-height:1.8;text-align:center;max-width:295px;color:#bfcfd3;margin:19px 0 3px}
+@keyframes polarAtlasReveal{0%{opacity:0;transform:perspective(750px) rotateY(-65deg) translateY(52px) scale(.64);filter:brightness(2)}55%{opacity:1;transform:perspective(750px) rotateY(8deg) translateY(-13px) scale(1.08);filter:brightness(1.65)}78%{transform:perspective(750px) rotateY(-3deg) translateY(3px) scale(.985);filter:brightness(1.16)}100%{transform:none;filter:brightness(1)}}
+@keyframes polarAtlasOrbit{to{transform:rotate(360deg)}}
+@keyframes polarAtlasTwinkle{0%,100%{opacity:.18;transform:scale(.5)}48%{opacity:1;transform:scale(1.8)}}
+@keyframes polarAtlasShine{0%,16%{left:-155%}74%,100%{left:160%}}
+@keyframes polarAtlasBreathe{0%,100%{box-shadow:0 9px 23px rgba(0,12,30,.25),0 0 9px var(--atlas-glow)}50%{box-shadow:0 12px 28px rgba(0,12,30,.30),0 0 24px var(--atlas-glow)}}
+@keyframes polarCollectionPulse{0%,100%{opacity:.55}50%{opacity:1}}
+@keyframes polarAtlasFinale{0%{transform:scale(.85);filter:brightness(2);opacity:.48}60%{transform:translateY(-9px) scale(1.06);filter:brightness(1.5);opacity:1}100%{transform:none;filter:brightness(1)}}
+@keyframes polarAtlasPreviewShimmer{0%,25%{left:-125%}75%,100%{left:180%}}
+@keyframes polarAtlasFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@media(max-width:900px){.polarBookGrid{grid-template-columns:repeat(3,minmax(0,1fr))}.polarAtlasCard{height:196px}}
+@media(max-width:550px){.polarBookGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.polarAtlasCard{height:190px}.polarAtlasSeal{top:15px;left:12px;font-size:8px}.polarAtlasBadge{top:13px;right:9px}.polarAtlasArtwork{width:90px;height:90px}.polarAtlasName{font-size:14px}.polarAtlasPreviewCard{min-height:450px}.polarAtlasPreviewArtwork{width:170px;height:170px}}
+@media(hover:none){.polarAtlasCard.unlocked:hover{transform:none}}
+@media(prefers-reduced-motion:reduce){.polarAtlasCard,.polarAtlasShine,.polarAtlasAura,.polarAtlasStar,.polarAtlasComplete,.polarAtlasPreviewArtwork,.polarAtlasPreviewCard,.polarAtlasPreviewCard:after,.polarAtlas.all-unlocked:before,.polarAtlasCollectionFlash .polarAtlasCard.unlocked,.polarAtlasCard.just-unlocked{animation:none!important;transition:none!important;transform:none!important;filter:none!important}.polarAtlasPreview.show .polarAtlasPreviewCard{opacity:1}}
