@@ -182,3 +182,19 @@
  .spotterPhotoScene .spotterClueTrue{font-size:9px;max-width:26%;min-height:39px;padding:4px}
  .spotterPhotoScene .spotterPosterBottom{font-size:7px}
 }
+
+/* V3 IMAGE-ONLY SPOTTER: Photo montage; zero hint text and zero visible hit targets before clicking. */
+.spotterPicture{position:relative;isolation:isolate;display:block;width:100%;aspect-ratio:3 / 2;overflow:hidden;border-radius:13px;background:linear-gradient(135deg,#0c283c 0%,#5a8da2 42%,#a2c9c9 62%,#163f56 100%);border:1px solid rgba(219,234,231,.78);box-shadow:0 15px 34px rgba(20,52,63,.2);cursor:crosshair;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+.spotterPicture:before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg,rgba(5,31,51,.13),transparent 36%,rgba(10,36,52,.08) 70%,rgba(9,39,52,.19))}
+.spotterPicturePhoto{display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;pointer-events:none;user-select:none;-webkit-user-drag:none}
+.spotterPictureObjects{display:block;position:absolute;inset:0;z-index:2;width:100%;height:100%;overflow:visible;pointer-events:none;filter:drop-shadow(0 9px 8px rgba(5,23,39,.31));}
+.spotterVisualObject{pointer-events:none;paint-order:stroke;stroke:rgba(9,32,45,.20);stroke-width:2px;stroke-linejoin:round}
+.spotterPicturePins{position:absolute;z-index:3;inset:0;pointer-events:none}
+.spotterFoundPin,.spotterMissPin{position:absolute;display:grid;place-items:center;width:57px;height:57px;transform:translate(-50%,-50%);box-sizing:border-box;border:3px solid #c9f8dd;border-radius:50%;color:#fff;font-size:24px;font-weight:900;text-shadow:0 1px 4px rgba(0,0,0,.35);background:rgba(28,145,102,.46);box-shadow:0 0 0 5px rgba(198,246,219,.25),0 0 25px 5px rgba(68,223,163,.23);pointer-events:none;animation:spotterPinAppear .53s cubic-bezier(.12,.85,.22,1.2) both}
+.spotterMissPin{z-index:4;width:38px;height:38px;border-color:#ffcfbf;color:#fff;background:rgba(194,67,48,.66);box-shadow:0 0 0 4px rgba(242,152,124,.25);animation:spotterMissPulse .65s ease-out both}
+.spotterPicture:focus-visible{outline:3px solid #f0c880;outline-offset:3px}
+.spotterPicture:hover{box-shadow:0 15px 34px rgba(20,52,63,.24),0 0 0 1px rgba(125,201,191,.35)}
+@keyframes spotterPinAppear{0%{opacity:0;transform:translate(-50%,-50%) scale(.25)}60%{opacity:1;transform:translate(-50%,-50%) scale(1.22)}100%{transform:translate(-50%,-50%) scale(1)}}
+@keyframes spotterMissPulse{0%{opacity:1;transform:translate(-50%,-50%) scale(.6)}70%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}100%{opacity:0;transform:translate(-50%,-50%) scale(1)}}
+@media(max-width:700px){.spotterPicture{aspect-ratio:3 / 3.1}.spotterFoundPin{width:39px;height:39px;font-size:16px;border-width:2px}.spotterMissPin{width:30px;height:30px;font-size:19px}}
+@media(prefers-reduced-motion:reduce){.spotterFoundPin,.spotterMissPin{animation:none}}
