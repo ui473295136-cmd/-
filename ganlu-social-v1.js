@@ -196,7 +196,14 @@
     renderNotices(feedData.notifications||[]);
     if(target.postId){
       var post=document.querySelector('#boardPosts [data-post="'+target.postId+'"]');
-      if(post){openThread(target.postId);post.scrollIntoView({behavior:'smooth',block:'center'});}
+      if(post){
+        if(openPost!==target.postId)openThread(target.postId);
+        else{
+          var existing=document.querySelector('#boardPosts [data-social-thread="'+target.postId+'"]');
+          if(existing){existing.hidden=false;loadThread(true);}
+        }
+        post.scrollIntoView({behavior:'smooth',block:'center'});
+      }
     }
   }
   function renderChat(items){
