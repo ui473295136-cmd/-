@@ -3,12 +3,20 @@
 const root=document.getElementById('polarSpotter');
 if(!root)return;
 const $=id=>document.getElementById(id),KEY='ganlu-polar-spotter-v1';
+// Poster composition coordinates. The actual hotspots are positioned over photographic artwork.
 const layouts=[
- [{x:5,y:36},{x:55,y:36},{x:7,y:54},{x:55,y:54},{x:5,y:73},{x:55,y:73}],
- [{x:6,y:34},{x:53,y:37},{x:5,y:55},{x:56,y:55},{x:7,y:73},{x:54,y:76}],
- [{x:5,y:37},{x:55,y:35},{x:6,y:55},{x:54,y:55},{x:5,y:75},{x:56,y:73}],
- [{x:6,y:36},{x:55,y:36},{x:6,y:55},{x:54,y:54},{x:7,y:73},{x:55,y:74}],
- [{x:6,y:37},{x:54,y:37},{x:7,y:54},{x:55,y:55},{x:5,y:74},{x:54,y:74}]
+ [{x:18,y:42},{x:73,y:39},{x:17,y:63},{x:76,y:63},{x:42,y:80},{x:75,y:83}],
+ [{x:17,y:42},{x:75,y:39},{x:22,y:62},{x:78,y:65},{x:41,y:80},{x:74,y:84}],
+ [{x:18,y:41},{x:77,y:42},{x:19,y:64},{x:75,y:65},{x:43,y:80},{x:77,y:84}],
+ [{x:17,y:43},{x:74,y:42},{x:20,y:65},{x:76,y:62},{x:42,y:80},{x:77,y:83}],
+ [{x:18,y:42},{x:74,y:40},{x:18,y:65},{x:77,y:64},{x:43,y:80},{x:77,y:84}]
+];
+const posterPhotography=[
+ {src:'https://images.unsplash.com/photo-1549320905-b26658a67e83?w=1440&h=930&fit=crop&crop=entropy&q=82',credit:'Paul Carroll · Unsplash'},
+ {src:'https://images.unsplash.com/photo-1551988098-87513d4cdaa3?w=1440&h=930&fit=crop&crop=entropy&q=82',credit:'Unsplash · South Georgia'},
+ {src:'https://images.unsplash.com/photo-1561470230-cc0222ef2f5b?w=1440&h=930&fit=crop&crop=entropy&q=82',credit:'NOAA · Public Domain'},
+ {src:'https://images.unsplash.com/photo-1587125297534-f8fddb8c52d7?w=1440&h=930&fit=crop&crop=entropy&q=82',credit:'Annie Spratt · Unsplash'},
+ {src:'https://images.unsplash.com/photo-1648821231292-e17eddf2fca8?w=1440&h=930&fit=crop&crop=entropy&q=82',credit:'66°North · Unsplash'}
 ];
 const posters=[
  {name:'南极半岛 · 离谱宣传',tag:'01 / 半岛探险',theme:'antarctic',headline:'冰川边上的奇遇',
@@ -76,49 +84,28 @@ function recover(){
 }
 let state=recover(),active=false,wonTimer=0,lastBadTimer=0;
 function persist(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
-function landscape(p){
- const scene={
- antarctic:{sky1:'#28485d',sky2:'#83b7c0',ice:'#bde5eb',ridge:'#e4faf8',sea:'#1d637a',sun:'#f6e2af'},
- georgia:{sky1:'#30565d',sky2:'#a9c9bb',ice:'#93ae9d',ridge:'#d8e5cf',sea:'#366c67',sun:'#f3d0a6'},
- flight:{sky1:'#1d5370',sky2:'#9fd5df',ice:'#a4d8e4',ridge:'#f4ffff',sea:'#26637a',sun:'#fff0b6'},
- arctic:{sky1:'#132c50',sky2:'#567e99',ice:'#b6d9e4',ridge:'#e9f7f1',sea:'#1b506d',sun:'#badcc7'},
- grand:{sky1:'#142f49',sky2:'#598c9d',ice:'#9cccd2',ridge:'#e9efe7',sea:'#184563',sun:'#efcea1'}
- }[p.theme];
- const bird=p.theme==='flight';
- const aurora=p.theme==='arctic';
- return '<svg viewBox="0 0 1000 650" aria-hidden="true" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">'
-  +'<defs><linearGradient id="sssky" x1="0" y1="0" x2="0" y2="1"><stop stop-color="'+scene.sky1+'"/><stop offset="1" stop-color="'+scene.sky2+'"/></linearGradient>'
-  +'<linearGradient id="sssea" x1="0" y1="0" x2="1" y2="1"><stop stop-color="'+scene.sea+'"/><stop offset="1" stop-color="'+scene.sky1+'"/></linearGradient>'
-  +'<linearGradient id="ssice" x1="0" y1="0" x2="0" y2="1"><stop stop-color="'+scene.ridge+'"/><stop offset="1" stop-color="'+scene.ice+'"/></linearGradient></defs>'
-  +'<rect width="1000" height="650" fill="url(#sssky)"/>'
-  +(aurora?'<path d="M-50 175 Q220 -15 450 102 T1030 27" fill="none" stroke="#99eac5" stroke-width="72" opacity=".16"/><path d="M-10 208 Q250 10 490 116 T1010 45" fill="none" stroke="#c0e3a5" stroke-width="32" opacity=".22"/>':'')
-  +'<circle cx="802" cy="112" r="75" fill="'+scene.sun+'" opacity=".4"/>'
-  +'<path d="M0 358 L90 276 L160 300 L260 185 L315 266 L420 188 L515 284 L592 213 L690 295 L784 214 L878 314 L1000 265 L1000 480 L0 480Z" fill="'+scene.ridge+'" opacity=".6"/>'
-  +'<path d="M0 420 L70 358 L159 398 L240 315 L322 392 L415 326 L510 400 L617 300 L729 390 L824 342 L940 406 L1000 382 L1000 520 L0 520Z" fill="url(#ssice)" opacity=".85"/>'
-  +'<rect x="0" y="468" width="1000" height="182" fill="url(#sssea)"/>'
-  +'<path d="M0 506 Q260 492 500 514 T1000 513 M0 560 Q280 540 520 554 T1000 561 M0 615 Q290 595 580 611 T1000 615" fill="none" stroke="#d8eef0" stroke-width="3" opacity=".28"/>'
-  +'<path d="M575 497 L685 476 L769 488 L758 517 L607 529Z" fill="'+scene.ridge+'" opacity=".85"/>'
-  +(bird?'<g transform="translate(397 174) rotate(-8)" fill="#f7ffff"><path d="M-178 1 L-36 -9 L2 -78 L37 -80 L55 -13 L191 -2 L191 12 L54 23 L27 62 L1 63 L-24 25 L-178 15Z" stroke="#234e68" stroke-width="3"/><rect x="-112" y="-2" width="45" height="7" rx="3" fill="#4a88a3"/></g>':'<g transform="translate(394 487)"><path d="M-144 15 H157 L132 61 H-101Z" fill="#eaf4ee" stroke="#2a5265" stroke-width="6"/><rect x="-85" y="-53" width="174" height="69" rx="6" fill="#31576e"/><rect x="-27" y="-99" width="86" height="46" rx="5" fill="#f1f4ed"/><rect x="4" y="-128" width="6" height="28" fill="#294660"/><path d="M-63 -29 H65" stroke="#badbe4" stroke-width="12" stroke-dasharray="12 7"/></g>')
-  +'</svg>';
-}
+// Backgrounds are actual expedition photographs. CSS adds a documentary title and advertisement misprints.
 function safeCoordinate(n){return Math.min(95,Math.max(0,Number(n)||0));}
 function posterMarkup(p,i){
- const found=state.found[i];
+ const found=state.found[i],photo=posterPhotography[i];
  const hotspots=p.errors.map((item,index)=>{
-  const pos=layouts[i][index],isFound=found.includes(index);
-  return '<button type="button" class="spotterStamp'+(isFound?' found':'')+'" style="--sx:'+safeCoordinate(pos.x)+'%;--sy:'+safeCoordinate(pos.y)+'%" data-spot-id="'+index+'" aria-label="'+escapeHTML(item[0])+'" aria-pressed="'+isFound+'">'
-    +'<span class="spotterStampLabel">'+escapeHTML(item[0])+'</span><span class="spotterStampHit" aria-hidden="true">'+(isFound?'✓':'')+'</span></button>';
+  const pos=layouts[i][index],hit=found.includes(index);
+  return '<button type="button" class="spotterClue spotterClue'+index+(hit?' found':'')+'" style="--sx:'+safeCoordinate(pos.x)+'%;--sy:'+safeCoordinate(pos.y)+'%" data-spot-id="'+index+'" aria-label="'+escapeHTML(item[0])+'" aria-pressed="'+hit+'">'
+   +'<span class="spotterClueText">'+escapeHTML(item[0])+'</span><span class="spotterFoundMark" aria-hidden="true">'+(hit?'✓':'')+'</span>'
+   +'</button>';
  }).join('');
  const honest=p.correct.map(([label,x,y],index)=>
-  '<button type="button" class="spotterStamp spotterTrue" style="--sx:'+safeCoordinate(x)+'%;--sy:'+safeCoordinate(y)+'%" data-spot-true="'+index+'" aria-label="'+escapeHTML(label)+'">'
+  '<button type="button" class="spotterClue spotterClueTrue spotterDecoy'+index+'" style="--sx:'+safeCoordinate(x)+'%;--sy:'+safeCoordinate(y)+'%" data-spot-true="'+index+'" aria-label="'+escapeHTML(label)+'">'
   +escapeHTML(label)+'</button>').join('');
- return '<div class="spotterPoster spotterTheme-'+p.theme+'" id="spotterPosterCanvas" role="group" aria-label="'+escapeHTML(p.name)+'，点击找出6处错误">'
-  +'<div class="spotterPosterArt">'+landscape(p)+'</div>'
-  +'<div class="spotterPosterTop"><div class="spotterPosterBrand">船客 · 极地探索档案</div><div class="spotterPosterSerial">CASE '+String(i+1).padStart(2,'0')+' / 05</div>'
+ return '<div class="spotterPoster spotterPhotoScene spotterTheme-'+p.theme+'" id="spotterPosterCanvas" role="group" aria-label="'+escapeHTML(p.name)+'。在海报上点击找出6处不合理的细节">'
+  +'<div class="spotterPosterArt"><img class="spotterPhoto" loading="eager" decoding="async" src="'+photo.src+'" alt=""/><div class="spotterPhotoFallback"></div></div>'
+  +'<div class="spotterPhotoGrain" aria-hidden="true"></div>'
+  +'<div class="spotterPosterTop"><div class="spotterPosterBrand">CHUANKE <span>EXPEDITION FILES</span></div>'
+  +'<div class="spotterPosterSerial">FIELD NOTES / 0'+(i+1)+'</div>'
   +'<div class="spotterPosterDeck">'+escapeHTML(p.deck)+'</div><h3>'+escapeHTML(p.headline)+'</h3>'
-  +'<div class="spotterPosterSubtitle">'+p.highlights.map(x=>'<span>'+escapeHTML(x)+'</span>').join('')+'</div></div>'
+  +'<div class="spotterPosterSubtitle">'+p.highlights.map(x=>'<span>'+escapeHTML(x)+'</span>').join('<i>—</i>')+'</div></div>'
   +'<div class="spotterStampLayer">'+hotspots+honest+'</div>'
-  +'<div class="spotterPosterBottom">CHUANKE POLAR EXPEDITION <span>SPOT THE ERRORS</span></div></div>';
+  +'<div class="spotterPosterBottom"><span>船客 · 极地旅行创意海报</span><span>资料视觉：'+escapeHTML(photo.credit)+'</span></div></div>';
 }
 function showFeedback(message,kind){
  const el=$('spotterFeedback');el.textContent=message;el.className='spotterFeedback '+(kind||'');el.hidden=false;
