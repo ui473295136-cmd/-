@@ -1,0 +1,41 @@
+
+/* 甘露寺·财务部 V9 | 重点航次政策速查、连走与邀约辅助计算 */
+#policyDesk[hidden],#policyDeskDetail[hidden],#policyDeskJoin[hidden],#policyDeskInvite[hidden],#policyDeskEmpty[hidden],
+#polarBowUpgradeWrap[hidden],#policyDesk [hidden]{display:none!important}
+.policyDesk{border:1px solid #dcc7a7;border-radius:19px;padding:17px 18px 20px;background:linear-gradient(140deg,#fffaf2,#f9f1e4);box-shadow:0 6px 20px rgba(83,57,29,.05);margin:5px 0 20px;color:#614b38}
+.policyDeskHead{display:flex;flex-wrap:wrap;justify-content:space-between;gap:9px;align-items:start;margin-bottom:12px}
+.policyDeskHead h2{font-family:"STSong","Songti SC",serif;font-size:22px;line-height:1.35;color:#694b34;margin:0 0 4px}
+.policyDeskHead p{font-size:11px;line-height:1.65;color:#9c866e;margin:0}
+.policyDeskVersion{padding:5px 9px;font-size:11px;background:#f1e2cb;border-radius:9px;color:#725435}
+.policyDeskTabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;margin-bottom:15px}
+.policyDeskTab{min-height:46px;padding:8px 10px;background:#fffef8;border:1px solid #decdb3;border-radius:12px;color:#745a42;font-size:12px;font-weight:650;text-align:center;cursor:pointer;line-height:1.5}
+.policyDeskTab.active{background:#79614a;border-color:#79614a;color:#fffaf0;box-shadow:0 4px 11px rgba(84,56,31,.12)}
+.policyDeskName{font:750 19px "STSong","Songti SC",serif;color:#694a33}
+.policyDeskKind{display:inline-flex;margin-left:7px;padding:4px 8px;border-radius:14px;background:#e7f0e0;color:#58704e;font-size:11px;vertical-align:middle}
+.policyDeskHeadline{font-size:13px;color:#65452d;font-weight:700;margin:9px 0 12px;line-height:1.8}
+.policyDeskRows{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.policyDeskRow{display:grid;align-content:start;gap:4px;border:1px solid #e8d8bf;border-radius:12px;padding:11px 12px;background:#fffdf8}
+.policyDeskRow strong{font-size:11px;color:#9b6847}
+.policyDeskRow span{font-size:12px;color:#584735;line-height:1.75;overflow-wrap:anywhere}
+.policyDeskCaution{margin-top:11px;border-left:3px solid #c9934e;padding:8px 11px;background:#fff3de;font-size:11px;line-height:1.8;color:#8f5e3b}
+.policyDeskCalc{border-top:1px dashed #d8be9e;margin-top:18px;padding-top:15px}
+.policyDeskCalcTitle{font:750 16px "STSong","Songti SC",serif;color:#684731;margin:0 0 6px}
+.policyDeskCalcDesc{font-size:11px;color:#9b8065;line-height:1.7;margin:0 0 11px}
+.policyDeskInputs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.policyDeskInputs.three{grid-template-columns:repeat(4,minmax(0,1fr))}
+.policyDeskInputs label{display:flex;flex-direction:column;gap:5px;font-size:11px;color:#7f684e;min-width:0}
+.policyDeskInputs input,.policyDeskInputs select{appearance:auto;min-height:40px;min-width:0;width:100%;border:1px solid #dccbb2;border-radius:9px;background:#fffefb;color:#483b30;font:inherit;font-size:13px;padding:8px 9px}
+.policyDeskResult{display:grid;gap:5px;margin-top:12px;background:#f2eadc;border:1px solid #e4d4ba;border-radius:11px;padding:12px;color:#654d35;font-size:12px;line-height:1.7;overflow-wrap:anywhere}
+.policyDeskResult strong{font-size:17px;color:#784c30}
+.policyDeskResult span{font-size:12px}
+.policyDeskResult small{font-size:11px;color:#957960;line-height:1.7}
+.policyDeskButtons{display:flex;align-items:center;gap:8px;justify-content:space-between;margin-top:11px;flex-wrap:wrap}
+.policyDeskButtons button{border:1px solid #907255;background:#806248;color:#fffaf0;border-radius:10px;min-height:38px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer}
+.policyDeskButtons span{color:#9c866e;font-size:11px;line-height:1.6}
+.policyDeskStatus{font-size:11px;color:#7d6041;min-height:17px;margin-top:6px}
+.polarBowUpgradeWrap{background:#eef4ea;border:1px solid #cbd7bb;border-radius:11px;padding:10px 12px;color:#4f6545;font-size:12px;line-height:1.65}
+.polarBowUpgradeWrap label{display:flex;gap:8px;align-items:flex-start;cursor:pointer}
+.polarBowUpgradeWrap input{width:17px;height:17px;flex:none;accent-color:#617853;margin-top:2px}
+.polarBowUpgradeWrap small{display:block;font-size:10px;color:#718267;margin:5px 0 0 25px}
+@media(max-width:760px){.policyDeskTabs{grid-template-columns:repeat(2,minmax(0,1fr))}.policyDeskRows{grid-template-columns:1fr}.policyDeskInputs.three{grid-template-columns:repeat(2,minmax(0,1fr))}.policyDesk{padding:14px 12px;margin-bottom:14px}}
+@media(max-width:430px){.policyDeskTabs{grid-template-columns:repeat(2,minmax(0,1fr))}.policyDeskHead h2{font-size:18px}.policyDeskInputs{grid-template-columns:1fr}.policyDeskInputs.three{grid-template-columns:repeat(2,minmax(0,1fr))}.policyDeskResult strong{font-size:15px}}
