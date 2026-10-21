@@ -13,10 +13,10 @@ const layouts=[
 ];
 const posterPhotography=[
  {src:'https://images.unsplash.com/photo-1549320905-b26658a67e83?w=1440&h=930&fit=crop&crop=entropy&q=82',credit:'Paul Carroll · Unsplash'},
- {src:'https://images.unsplash.com/photo-1551988098-87513d4cdaa3?w=1440&h=930&fit=crop&crop=entropy&q=82',credit:'Unsplash · South Georgia'},
- {src:'https://images.unsplash.com/photo-1561470230-cc0222ef2f5b?w=1440&h=930&fit=crop&crop=entropy&q=82',credit:'NOAA · Public Domain'},
- {src:'https://images.unsplash.com/photo-1587125297534-f8fddb8c52d7?w=1440&h=930&fit=crop&crop=entropy&q=82',credit:'Annie Spratt · Unsplash'},
- {src:'https://images.unsplash.com/photo-1648821231292-e17eddf2fca8?w=1440&h=930&fit=crop&crop=entropy&q=82',credit:'66°North · Unsplash'}
+ {src:'https://images.unsplash.com/photo-1675130938824-b6a07de7e015?w=1440&h=930&fit=crop&crop=entropy&q=82',credit:'Unsplash · South Georgia'},
+ {src:'https://images.unsplash.com/photo-1745282398449-cc6ce4f2afda?w=1440&h=930&fit=crop&crop=entropy&q=82',credit:'NOAA · Public Domain'},
+ {src:'https://images.unsplash.com/photo-1661511762608-fda6b7b45f18?w=1440&h=930&fit=crop&crop=entropy&q=82',credit:'Annie Spratt · Unsplash'},
+ {src:'https://images.unsplash.com/photo-1662142442563-c0f5045e862e?w=1440&h=930&fit=crop&crop=entropy&q=82',credit:'66°North · Unsplash'}
 ];
 const posters=[
  {name:'南极半岛 · 离谱宣传',tag:'01 / 半岛探险',theme:'antarctic',headline:'冰川边上的奇遇',
@@ -159,6 +159,11 @@ function display(){
  const p=posters[state.stage];
  $('spotterCase').textContent=p.name;
  $('spotterPosterMount').innerHTML=posterMarkup(p,state.stage);
+ const background=$('spotterPosterMount').querySelector('.spotterPicturePhoto');
+ if(background)background.addEventListener('error',function(){
+   if(this.dataset.fallback!=='tried'){this.dataset.fallback='tried';this.src='https://images.unsplash.com/photo-1549320905-b26658a67e83?w=1440&h=960&fit=crop&q=80';}
+   else{this.hidden=true;}
+ });
  $('spotterNext').hidden=state.found[state.stage].length<6;
  $('spotterRetry').disabled=state.found[state.stage].length===0;
  updateProgress();
@@ -272,7 +277,12 @@ $('spotterNext').addEventListener('click',next);
 $('spotterRetry').addEventListener('click',restartPoster);
 $('spotterAllReset').addEventListener('click',resetAll);
 $('spotterAwardClose').addEventListener('click',closeAward);
-$('spotterAwardAgain').addEventListener('click',()=>{closeAward();resetAll()});
+$('spotterAwardAgain').addEventListener('click',()=>{
+ closeAward();
+ clearTimeout(wonTimer);
+ state={stage:0,found:[[],[],[],[],[]],complete:false};
+ persist();display();
+});
 $('spotterAwardDownload').addEventListener('click',downloadCard);
 $('spotterAwardOverlay').addEventListener('click',e=>{if(e.target===$('spotterAwardOverlay'))closeAward()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('spotterAwardOverlay').hidden)closeAward()});
