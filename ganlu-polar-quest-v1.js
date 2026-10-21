@@ -97,7 +97,7 @@ function renderQuestion(){
  ).join('');
  el('polarQuestFeedback').hidden=true;
  el('polarQuestContinue').hidden=true;
- el('polarQuestAction').hidden=true;
+
  el('polarQuestQuestion').hidden=false;
  el('polarQuestReward').hidden=true;
  el('polarQuestFinish').hidden=true;
