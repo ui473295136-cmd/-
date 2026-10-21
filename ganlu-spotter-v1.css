@@ -200,3 +200,58 @@
 @media(prefers-reduced-motion:reduce){.spotterFoundPin,.spotterMissPin{animation:none}}
 
 .spotterPicturePhoto[hidden]{display:none!important}
+
+/* V4 EDITORIAL PROOFREADING CASE FILES — interactive proofreading, not answers on photos */
+.spotterPosterWrap{max-width:1000px;margin:0 auto}
+.spotterProofSheet{position:relative;isolation:isolate;overflow:hidden;padding:29px clamp(16px,4vw,42px) 20px;background:linear-gradient(145deg,#fdfcf8 0%,#f6f4eb 78%,#f1ede1 100%);border:1px solid #dedacc;border-radius:16px;color:#253c46;box-shadow:0 20px 42px rgba(27,61,67,.13),inset 0 0 0 6px rgba(255,255,255,.4)}
+.spotterProofSheet:before{content:"";pointer-events:none;position:absolute;inset:9px;border:1px solid rgba(170,165,138,.27);border-radius:9px}
+.spotterProofSheet:after{content:"";pointer-events:none;position:absolute;right:-15px;top:215px;width:230px;height:230px;background:radial-gradient(circle,rgba(35,104,109,.06),transparent 66%);z-index:-1}
+.spotterProofTop{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;font:700 10px/1.5 sans-serif;letter-spacing:.17em;color:#6b8a91;margin-bottom:23px}
+.spotterProofTop span:last-child{color:#9d8c65}
+.spotterProofTitleRow{display:flex;justify-content:space-between;align-items:center;gap:15px;position:relative;margin-bottom:14px}
+.spotterProofTitleRow>div>span{font:800 10px sans-serif;letter-spacing:.18em;color:#bc986b}
+.spotterProofTitleRow h3{font:800 clamp(22px,3.2vw,34px)/1.3 "STSong","Songti SC","Noto Serif CJK SC",serif;color:#224758;margin:8px 0 5px;letter-spacing:.025em}
+.spotterProofSeal{flex:none;width:61px;height:61px;border:3px double #ac785d;display:grid;place-items:center;transform:rotate(12deg);color:#ad6d59;border-radius:9px;font:800 20px/1.05 "STSong","Songti SC",serif;letter-spacing:.07em;opacity:.65}
+.spotterProofRule{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;border-top:2px solid #355c65;border-bottom:1px solid #d5d5c7;padding:9px 2px;color:#617a80;font-size:11px;margin-bottom:14px}
+.spotterProofRule span:last-child{color:#977a56}
+.spotterProofGroups{display:grid;gap:14px}
+.spotterProofSection{border:1px solid #deddd1;background:rgba(255,255,255,.57);border-radius:13px;overflow:hidden}
+.spotterProofSection>header{display:flex;align-items:center;gap:9px;padding:10px 14px;background:#e9efec;border-bottom:1px solid #d3dad2;color:#41636a}
+.spotterProofSection>header span{display:grid;place-items:center;flex:none;width:24px;height:24px;border:1px solid #bfcfca;border-radius:7px;color:#6f9093;font:800 10px sans-serif}
+.spotterProofSection>header strong{font:800 13px "STSong","Songti SC","Microsoft YaHei",serif}
+.spotterProofLines{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0}
+.spotterProofLine{display:flex;gap:10px;align-items:flex-start;text-align:left;min-width:0;min-height:88px;width:100%;padding:14px 13px 12px;appearance:none;border:0;border-bottom:1px solid #e2e5dc;background:transparent;color:#37515b;cursor:pointer;transition:background .18s ease,box-shadow .18s ease;font:500 12px/1.75 -apple-system,BlinkMacSystemFont,"Microsoft YaHei","Noto Sans CJK SC",sans-serif;position:relative}
+.spotterProofLine:nth-child(odd){border-right:1px solid #e2e5dc}
+.spotterProofLine:nth-last-child(-n+2){border-bottom:0}
+.spotterProofLine:hover{background:#f2f6f0}
+.spotterProofLine:focus-visible{outline:3px solid #c5a269;outline-offset:-3px;z-index:3}
+.spotterProofIndex{flex:none;width:22px;color:#9badab;font:800 10px/2.1 sans-serif;margin-top:0}
+.spotterProofClaim{display:block;flex:1;min-width:0;overflow-wrap:anywhere}
+.spotterProofDot{flex:none;color:#afc5bf;font-size:18px;line-height:1.1;opacity:.6;margin:2px 0 0 1px}
+.spotterProofLine.spotterProofMarked{background:linear-gradient(135deg,#fff3ed,#fff9f5);box-shadow:inset 3px 0 #c07d60;color:#774a3b}
+.spotterProofLine.spotterProofVerified{background:#eff6f1;color:#47695a}
+.spotterProofCorrection{display:block;margin-top:7px;padding-top:6px;border-top:1px dashed rgba(176,107,76,.28);color:#95604b;font-size:11px;line-height:1.7;font-weight:600}
+.spotterProofStamp{flex:none;display:inline-flex;align-items:center;justify-content:center;color:#a45e46;border:1px solid rgba(176,103,77,.55);border-radius:4px;padding:3px 5px;background:rgba(212,126,91,.08);font:800 10px/1.2 "Microsoft YaHei",sans-serif;white-space:nowrap;transform:rotate(-4deg)}
+.spotterProofStamp.verified{color:#52876a;border-color:rgba(82,135,106,.45);transform:none;background:rgba(117,170,137,.10)}
+.spotterProofFooter{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:20px;padding-top:13px;border-top:1px solid #dad7c8;font-size:10px;color:#7f918c}
+.spotterProofFooter span:last-child{letter-spacing:.13em;color:#bca57f}
+.spotterGameHead .spotterEyebrow{letter-spacing:.12em}
+.spotterProofMarked .spotterProofStamp{animation:spotterProofStamp .32s cubic-bezier(.14,.8,.22,1.12) both}
+.spotterProofVerified .spotterProofStamp{animation:spotterProofStamp .32s ease both}
+.spotterFeedback{max-width:1000px}
+.spotterButtons{max-width:1000px}
+@keyframes spotterProofStamp{0%{opacity:.1;transform:scale(1.65) rotate(-12deg)}65%{opacity:1;transform:scale(.92) rotate(-2deg)}100%{transform:scale(1) rotate(-4deg)}}
+@media(max-width:700px){
+ .spotterProofSheet{padding:21px 13px 15px;border-radius:13px}
+ .spotterProofTop{font-size:9px;margin-bottom:16px}
+ .spotterProofTitleRow h3{font-size:22px}
+ .spotterProofSeal{width:48px;height:48px;font-size:16px}
+ .spotterProofSection>header{padding:9px 11px}
+ .spotterProofLines{grid-template-columns:1fr}
+ .spotterProofLine{min-height:62px;padding:10px 10px 11px;font-size:12px;gap:7px}
+ .spotterProofLine:nth-child(odd){border-right:0}
+ .spotterProofLine:nth-last-child(2){border-bottom:1px solid #e2e5dc}
+ .spotterProofStamp{font-size:9px;padding:3px}
+ .spotterProofRule{font-size:10px}
+}
+@media(prefers-reduced-motion:reduce){.spotterProofStamp{animation:none!important}}
