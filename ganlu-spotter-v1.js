@@ -13,10 +13,10 @@ const layouts=[
 ];
 const posterPhotography=[
  {src:'https://images.unsplash.com/photo-1549320905-b26658a67e83?w=1440&h=930&fit=crop&crop=entropy&q=82',credit:'Paul Carroll · Unsplash'},
- {src:'https://images.unsplash.com/photo-1675130938824-b6a07de7e015?w=1440&h=930&fit=crop&crop=entropy&q=82',credit:'Unsplash · South Georgia'},
- {src:'https://images.unsplash.com/photo-1745282398449-cc6ce4f2afda?w=1440&h=930&fit=crop&crop=entropy&q=82',credit:'NOAA · Public Domain'},
- {src:'https://images.unsplash.com/photo-1661511762608-fda6b7b45f18?w=1440&h=930&fit=crop&crop=entropy&q=82',credit:'Annie Spratt · Unsplash'},
- {src:'https://images.unsplash.com/photo-1662142442563-c0f5045e862e?w=1440&h=930&fit=crop&crop=entropy&q=82',credit:'66°North · Unsplash'}
+ {src:'https://images.unsplash.com/photo-1675130938824-b6a07de7e015?w=1440&h=930&fit=crop&crop=entropy&q=82',credit:'Lesly Derksen · Unsplash'},
+ {src:'https://images.unsplash.com/photo-1745282398449-cc6ce4f2afda?w=1440&h=930&fit=crop&crop=entropy&q=82',credit:'Matthew Stephenson · Unsplash'},
+ {src:'https://images.unsplash.com/photo-1661511762608-fda6b7b45f18?w=1440&h=930&fit=crop&crop=entropy&q=82',credit:'Fredrik Solli Wandem · Unsplash'},
+ {src:'https://images.unsplash.com/photo-1662142442563-c0f5045e862e?w=1440&h=930&fit=crop&crop=entropy&q=82',credit:'Tetiana GRY · Unsplash'}
 ];
 const posters=[
  {name:'南极半岛 · 离谱宣传',tag:'01 / 半岛探险',theme:'antarctic',headline:'冰川边上的奇遇',
