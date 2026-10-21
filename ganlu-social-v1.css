@@ -67,3 +67,21 @@
  .socialBell,.socialDesktopBtn{flex:1;font-size:11px;text-align:center}
  .socialNoticeItem{flex-direction:column;gap:4px}
 }
+/* Right-edge flyout notification: visible from anywhere on the page. */
+.socialSoundBtn{border:1px solid #e0cfb8;background:#fff8e9;color:#76563b;border-radius:11px;padding:9px 13px;font:inherit;font-size:12px;font-weight:750;cursor:pointer}
+.socialSoundBtn[aria-pressed="true"]{background:#eff4e7;border-color:#c8d7b8;color:#557449}
+#socialSoundStatus{display:block;color:#988270;font-size:10px;line-height:1.5;max-width:240px}
+#socialSideToast[hidden]{display:none!important}
+.socialSideToast{position:fixed;right:max(14px,env(safe-area-inset-right));top:max(88px,calc(env(safe-area-inset-top) + 74px));width:min(360px,calc(100vw - 28px));z-index:3000;background:linear-gradient(135deg,#fffbf3,#f8edd9);color:#624b39;border:1px solid #d8bd93;border-left:4px solid #9a744b;border-radius:17px;box-shadow:0 15px 55px rgba(53,37,23,.20);padding:14px 15px 13px;animation:socialToastSlide .25s ease-out;overflow-wrap:anywhere}
+.socialToastHead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.socialToastHead strong{display:block;font:750 15px "STSong","Songti SC",serif;color:#5d412c}
+.socialToastClose{display:grid;place-items:center;width:27px;height:27px;flex:0 0 auto;background:#fff8eb;color:#886b51;border:1px solid #e7d6be;border-radius:9px;cursor:pointer;font-size:15px}
+.socialToastPreview{font-size:12px;line-height:1.7;color:#77614e;margin:8px 0 11px;max-height:4.9em;overflow:hidden;white-space:pre-wrap}
+.socialToastOpen{background:#80634d;color:#fffaf2;border:0;border-radius:10px;padding:8px 12px;font-size:12px;font-weight:750;cursor:pointer}
+@keyframes socialToastSlide{from{opacity:0;transform:translateX(32px)}to{opacity:1;transform:translateX(0)}}
+@media(prefers-reduced-motion:reduce){.socialSideToast{animation:none}}
+@media(max-width:650px){
+  .socialSoundBtn{flex:1;text-align:center;font-size:11px}
+  #socialSoundStatus{flex-basis:100%;max-width:none}
+  .socialSideToast{top:max(66px,calc(env(safe-area-inset-top) + 56px));right:9px;width:calc(100vw - 18px);padding:12px}
+}
