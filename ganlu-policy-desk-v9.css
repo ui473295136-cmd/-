@@ -45,3 +45,30 @@ details.policyDeskCalc{border-top:1px dashed #d8be9e;margin-top:13px;padding-top
 details.policyDeskCalc summary{display:list-item;cursor:pointer;font-size:14px;line-height:1.6;padding:4px 5px;border-radius:8px}
 details.policyDeskCalc summary:hover{background:#f3e8d7}
 details.policyDeskCalc[open] summary{margin-bottom:9px;color:#65442e}
+
+/* V10 compact sales policy fold, located below ordinary booking conditions */
+details.policyDesk{display:block;width:100%;max-width:100%;margin:14px 0 17px;padding:10px 12px;border-radius:13px;box-shadow:none;background:#fff9ed}
+details.policyDesk>.policyDeskSummary{display:list-item;cursor:pointer;color:#735338;font-weight:750;font-size:13px;line-height:1.6;list-style-position:inside}
+details.policyDesk>.policyDeskSummary span{color:#9b7b58;font-size:10px;font-weight:500;white-space:nowrap}
+details.policyDesk[open]>.policyDeskSummary{padding-bottom:10px;border-bottom:1px solid #e4d5be;margin-bottom:11px}
+.leftPanel .policyDeskInside{min-width:0}
+.leftPanel .policyDeskTabs{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.leftPanel .policyDeskTab{font-size:11px;min-height:45px;padding:7px 5px}
+.leftPanel .policyDeskRows{grid-template-columns:1fr;gap:7px}
+.leftPanel .policyDeskInputs,.leftPanel .policyDeskInputs.three{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.leftPanel .policyDeskRow{padding:9px 10px}
+.leftPanel .policyDeskHeadline{font-size:12px}
+.leftPanel .policyDeskCalc{margin-top:12px}
+.leftPanel .policyDeskResult strong{font-size:14px}
+.policyDeskIntro{color:#897459;line-height:1.7;font-size:11px;margin:0 0 10px}
+details.ponantExtras{display:block;background:#fff9ec;border:1px solid #dfc9a6;border-radius:12px;padding:11px 12px;margin-top:12px;font-size:11px;color:#70563e;line-height:1.75}
+details.ponantExtras[hidden]{display:none!important}
+details.ponantExtras>summary{font-size:12px;font-weight:750;cursor:pointer;list-style-position:inside;color:#815d3d}
+details.ponantExtras[open]>summary{margin-bottom:9px}
+details.ponantExtras p{margin:8px 0;color:#93775b}
+details.ponantExtras label{display:flex;align-items:flex-start;gap:8px;margin:9px 0;font-size:11px;color:#664b35;line-height:1.7}
+details.ponantExtras label[for]{margin-bottom:4px;font-weight:650}
+details.ponantExtras input[type=checkbox]{flex:0 0 auto;appearance:auto;width:16px;height:16px;margin:2px 0 0;accent-color:#7e613c}
+details.ponantExtras select{width:100%;min-height:40px;border:1px solid #deccb2;border-radius:9px;background:white;color:#503b2b;font:inherit;font-size:12px;padding:7px}
+details.ponantExtras small{font-size:10px;line-height:1.7;color:#9a7a57}
+@media(max-width:480px){.leftPanel .policyDeskInputs,.leftPanel .policyDeskInputs.three{grid-template-columns:1fr}details.policyDesk>.policyDeskSummary span{display:block;padding-left:12px;white-space:normal}}
