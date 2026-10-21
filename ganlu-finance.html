@@ -124,12 +124,53 @@
   
 </section>
 
-<section class="policyDesk" id="policyDesk" aria-labelledby="policyDeskHeading">
- <div class="policyDeskHead">
-  <div><h2 id="policyDeskHeading">📋 销售政策速查 · 最新群通知</h2>
-    <p>点航次看对应政策；“已报名专属”请使用下方独立计算器，不要叠加进普通报价。</p></div>
-  <span class="policyDeskVersion">重点航次：1122 / 1204 / 0118 / 0130</span>
- </div>
+<div class="layout"><section class="panel leftPanel"><h2>选择报价条件</h2>
+<div class="form">
+<div class="field"><label for="route">① 选择航次</label><select id="route"></select></div>
+<div class="field"><label for="cabin">② 楼层 · 房型</label><select id="cabin"></select></div>
+<div class="field hide polarBowUpgradeWrap" id="polarBowUpgradeWrap">
+  <label><input id="polarBowUpgrade" type="checkbox">选择3层舷窗原价报名，免费升5层船头海景</label>
+  <small>仅0118、0130适用。此项与普通优惠独立；升舱后实际房号须由产品部确认。</small>
+</div>
+<div class="field hide" id="atlasPromoWrap"><label for="atlasPromo">Atlas 优惠方案（仅该航次）</label><select id="atlasPromo">
+<option value="earlybird">早鸟93折</option>
+<option value="upgrade1">免费升舱：5层法式阳台 → 6层阳台（约92.69折）</option>
+<option value="upgrade2">免费升舱：6层豪华阳台 → 5层旅行家套房（约91.87折，限2间）</option>
+<option value="upgrade3">免费升舱：6层旅行家套房 → 6层航海家套房（约92.77折，限2间）</option>
+<option value="adult_child">1大1小（孩子未满18岁）</option>
+<option value="gaokao">应届高考生8折</option>
+</select><p class="smallinfo">早鸟/免费升舱四选一；1大1小和高考生按专属规则计价。多人优惠可与市场优惠同享。</p></div>
+<div class="field hide" id="atlasDeductionsWrap">
+  <div class="fLabel">可选费用减免（按实际情况勾选）</div>
+  <div class="atlasDeductionChoices">
+    <label><input type="checkbox" id="atlasSelfSchengen"> 自备多次申根签证 <strong>−¥1,200/人</strong></label>
+    <label><input type="checkbox" id="atlasSelfGreenland"> 自备格陵兰签注 <strong>−¥1,200/人</strong></label>
+    <label><input type="checkbox" id="atlasSelfFlight"> 国际机票自理 <strong>−¥7,000/人</strong></label>
+    <label><input type="checkbox" id="atlasSelfInsurance"> 保险自理（须符合文件条件） <strong>−¥530/人</strong></label>
+  </div>
+  <p class="smallinfo">申根签证与格陵兰签注需同时满足对应要求；保险减免仅适用于文件注明的情况。勾选后会按每位旅客自动扣减。</p>
+</div>
+<div class="field hide" id="gaokaoCountWrap"><label for="gaokaoCount">应届高考生人数</label><input id="gaokaoCount" type="number" inputmode="numeric" min="1" max="100" value="1" step="1"><p class="smallinfo">其余同行人按正常早鸟政策测算；高考生需提供证明。</p></div>
+<div class="field"><label for="people">③ 出行人数</label><div class="inlineCount"><button class="step" type="button" id="minus" aria-label="减少1人">−</button><input id="people" type="number" inputmode="numeric" value="2" min="1" max="100" step="1"><button class="step" type="button" id="plus" aria-label="增加1人">＋</button></div><div class="quick"><span>常用</span><button type="button" data-people="1">1人</button><button type="button" data-people="2">2人</button><button type="button" data-people="3">3人</button><button type="button" data-people="4">4人</button><button type="button" data-people="6">6人</button><button type="button" data-people="8">8人</button></div></div>
+<div class="field"><div class="fLabel">④ 客户类型</div><div class="choices" id="customerType"><button type="button" data-type="new" class="selected" aria-pressed="true">新客户</button><button type="button" data-type="old" aria-pressed="false">老客户</button></div></div>
+<div class="field" id="stayWrap"><div class="fLabel">⑤ 入住方式</div><div class="choices" id="stayType"><button type="button" data-stay="double" class="selected" aria-pressed="true">双人拼住</button><button type="button" data-stay="single" aria-pressed="false">单人住</button><button type="button" data-stay="triple" id="tripleStay" class="hide" aria-pressed="false">三人同舱</button></div><div class="stayHint">独住才加单房差；拼住按每位价格计算。</div>
+<details id="ponantExtrasWrap" class="ponantExtras" hidden>
+  <summary>庞洛 · 机票／签证／保险自理费用（点击选择）</summary>
+  <p>默认原价已含机票、签证等。机票自理须先减 ¥12,000 / 人，再对剩余金额打折。</p>
+  <label><input type="checkbox" id="ponantSelfFlight"> 机票自理：先减 ¥12,000 / 人，再按对应折扣报价</label>
+  <label for="ponantVisaType">签证服务方式</label>
+  <select id="ponantVisaType">
+    <option value="included">默认包含阿根廷签证费</option>
+    <option value="ownUS">已有美签：减 ¥1,200 / 人签证费</option>
+    <option value="agencyUS">代办美签：加 ¥800 / 人</option>
+  </select>
+  <label><input type="checkbox" id="ponantSelfInsurance"> 符合条件的境外出发人员保险自理：减 ¥595 / 人</label>
+  <small>同舱第3位旅客按原价50%，不自动套用折扣和自理减免；具体服务安排须确认。</small>
+</details></div>
+</div><div class="deadline">优惠截止日期：<strong id="deadline">—</strong><small>按北京时间判断</small></div>
+<details class="policyDesk" id="policyDesk" aria-labelledby="policyDeskHeading">
+ <summary class="policyDeskSummary" id="policyDeskHeading">📋 销售政策速查 <span>点击展开 · 连走／邀约专项</span></summary>
+ <div class="policyDeskInside"><p class="policyDeskIntro">普通航次价格请直接在上方计算。本区仅用于1122／1204连走和0118／0130已报名邀约权益。</p>
  <div class="policyDeskTabs" id="policyDeskTabs" aria-label="选择要查看的政策航次"></div>
  <div id="policyDeskEmpty" class="policyDeskCaution" hidden>当前航次暂无这条群通知的新增专项政策。请选择上方四条重点航次查看。</div>
  <div id="policyDeskDetail" hidden>
@@ -164,42 +205,8 @@
   </details>
   <div class="policyDeskStatus" id="policyDeskStatus" role="status" aria-live="polite"></div>
  </div>
-</section>
-<div class="layout"><section class="panel leftPanel"><h2>选择报价条件</h2>
-<div class="form">
-<div class="field"><label for="route">① 选择航次</label><select id="route"></select></div>
-<div class="field"><label for="cabin">② 楼层 · 房型</label><select id="cabin"></select></div>
-<div class="field hide polarBowUpgradeWrap" id="polarBowUpgradeWrap">
-  <label><input id="polarBowUpgrade" type="checkbox">选择3层舷窗原价报名，免费升5层船头海景</label>
-  <small>仅0118、0130适用。此项与普通优惠独立；升舱后实际房号须由产品部确认。</small>
-</div>
-<div class="field hide" id="atlasPromoWrap"><label for="atlasPromo">Atlas 优惠方案（仅该航次）</label><select id="atlasPromo">
-<option value="earlybird">早鸟93折</option>
-<option value="upgrade1">免费升舱：5层法式阳台 → 6层阳台（约92.69折）</option>
-<option value="upgrade2">免费升舱：6层豪华阳台 → 5层旅行家套房（约91.87折，限2间）</option>
-<option value="upgrade3">免费升舱：6层旅行家套房 → 6层航海家套房（约92.77折，限2间）</option>
-<option value="adult_child">1大1小（孩子未满18岁）</option>
-<option value="gaokao">应届高考生8折</option>
-</select><p class="smallinfo">早鸟/免费升舱四选一；1大1小和高考生按专属规则计价。多人优惠可与市场优惠同享。</p></div>
-<div class="field hide" id="atlasDeductionsWrap">
-  <div class="fLabel">可选费用减免（按实际情况勾选）</div>
-  <div class="atlasDeductionChoices">
-    <label><input type="checkbox" id="atlasSelfSchengen"> 自备多次申根签证 <strong>−¥1,200/人</strong></label>
-    <label><input type="checkbox" id="atlasSelfGreenland"> 自备格陵兰签注 <strong>−¥1,200/人</strong></label>
-    <label><input type="checkbox" id="atlasSelfFlight"> 国际机票自理 <strong>−¥7,000/人</strong></label>
-    <label><input type="checkbox" id="atlasSelfInsurance"> 保险自理（须符合文件条件） <strong>−¥530/人</strong></label>
-  </div>
-  <p class="smallinfo">申根签证与格陵兰签注需同时满足对应要求；保险减免仅适用于文件注明的情况。勾选后会按每位旅客自动扣减。</p>
-</div>
-<div class="field hide" id="gaokaoCountWrap"><label for="gaokaoCount">应届高考生人数</label><input id="gaokaoCount" type="number" inputmode="numeric" min="1" max="100" value="1" step="1"><p class="smallinfo">其余同行人按正常早鸟政策测算；高考生需提供证明。</p></div>
-<div class="field"><label for="people">③ 出行人数</label><div class="inlineCount"><button class="step" type="button" id="minus" aria-label="减少1人">−</button><input id="people" type="number" inputmode="numeric" value="2" min="1" max="100" step="1"><button class="step" type="button" id="plus" aria-label="增加1人">＋</button></div><div class="quick"><span>常用</span><button type="button" data-people="1">1人</button><button type="button" data-people="2">2人</button><button type="button" data-people="3">3人</button><button type="button" data-people="4">4人</button><button type="button" data-people="6">6人</button><button type="button" data-people="8">8人</button></div></div>
-<div class="field"><div class="fLabel">④ 客户类型</div><div class="choices" id="customerType"><button type="button" data-type="new" class="selected" aria-pressed="true">新客户</button><button type="button" data-type="old" aria-pressed="false">老客户</button></div></div>
-<div class="field" id="stayWrap"><div class="fLabel">⑤ 入住方式</div><div class="choices" id="stayType"><button type="button" data-stay="double" class="selected" aria-pressed="true">双人拼住</button><button type="button" data-stay="single" aria-pressed="false">单人住</button><button type="button" data-stay="triple" id="tripleStay" class="hide" aria-pressed="false">三人同舱</button></div><div class="stayHint">独住才加单房差；拼住按每位价格计算。</div>
-<div id="ponantLandOption" class="hide" style="margin-top:10px;padding:10px 12px;border:1px solid #e2d2bd;border-radius:12px;background:#fff8ec;font-size:12px;color:#71543a">
- <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" id="ponantLandSingle" checked style="width:16px;height:16px">陆地酒店也单住（每人另加 ¥5,000）</label>
- <div style="margin-top:5px;line-height:1.6;color:#90775f">不需要陆地酒店单住可取消勾选；免邮轮单房差限5间，请确认名额。</div>
-</div></div>
-</div><div class="deadline">优惠截止日期：<strong id="deadline">—</strong><small>按北京时间判断</small></div>
+ </div>
+</details>
 <section class="dailySign" aria-labelledby="signHeading"><div class="signHeading"><h3 id="signHeading">甘露寺 · 每日抽签</h3><span id="signDate"></span></div><p class="signPrompt" id="signEmpty">修行之前，先讨一支今日的好彩头。</p><div class="signResult hide" id="signResult" aria-live="polite"><div class="signTitleRow"><strong id="signTitle"></strong><span id="signGrade"></span></div><p id="signText"></p><small id="signTip"></small></div><button type="button" class="signButton" id="drawSign">抽一支今日签</button><p class="signFoot">一日一签 · 明日再续回宫缘</p></section></section>
 <section class="panel" id="resultPanel"><div class="resultsHead"><div><h2>报价结果</h2></div><span class="palaceTag" id="policyFlag">政策测算</span></div>
 <div class="palaceStatus" id="palaceStatus" role="status"><div class="icon" id="palaceIcon">✦</div><div><strong id="palaceStatusTitle">报价失败</strong><small id="palaceStatusText">你离回宫又远了一步~</small></div></div>
@@ -897,18 +904,21 @@
     "sub": "双岛深度 · 庞洛",
     "policy": "2027年1110庞洛双岛营销政策（伊兰）.docx",
     "deadline": "2026-11-30",
-    "rate": 0.93,
+    "rate": 0.95,
     "loyal": 5000,
     "groupRoom8": false,
     "pdf": "2027.11.10-12.01 南极半岛&南乔治亚岛·奇遇王企鹅之旅(1).pdf",
     "sourcePage": 23,
     "hasPolicy": true,
     "notes": [
-      "2026年10月21日更正：直客优惠截止2026年11月30日。市场早鸟93折；呼朋唤友4人同行且满2间房享91折；单间正价报名免邮轮单间差（限5间，先到先得）。以上三种方案不可同享。",
-      "老客户本人及直系亲属，在有效直客政策基础上每位正常价旅客额外减5000元。",
-      "独住使用正价免邮轮单间差，限5间，先到先得；如果陆地酒店也需单住另加5000元/人，陆地酒店拼住则不收此项差额。",
-      "同舱第三人按原价50%收费，不再享受早鸟或其他折扣。多人套房默认按双人拼住报价；选三人同舱才使用第三人价格。",
-      "庞洛不套用其他航次的额外2%或3%多人优惠。单项机票、签证、保险及增值服务不包含在本工具当前调整范围内。"
+      "最新版附件：2027年11月10日庞洛双岛，直客优惠截至2026年11月30日。市场早鸟95折；4人同行满2间房93折；三种原政策优惠已被本附件替代。",
+      "老客户本人及直系亲属（父母、配偶、子女），在相应直客折扣基础上每人再减5000元。",
+      "庞洛单人入住：邮轮加陆地的全程单房差为舱位原价的50%，可以和早鸟95折同享。不存在旧版正价免邮轮单房差+陆地5000元方案。",
+      "同舱第3人按原价50%支付，不享受早鸟及其他折扣、无佣金；儿童与成人同价。",
+      "机票自理：原价先减12000元/人，再对余下团款按早鸟95折或4人满2间房93折计算；额外服务不得享优惠。",
+      "签证：包含阿根廷签证费；已有美签符合免签证费条件的减1200元/人；需代办美签另加800元/人。境外出发符合条件的客人保险自理减595元/人。",
+      "同行内部结算（不等于客人折扣）：佣金按原价另核；散转团1-5人10%、6-10人12%、11-15人15%，16人免一间房；OTA统一原价15%佣金；延长线结算价固定90%。同行直客优惠不得低于官方政策。",
+      "异业渠道合作单独报批。优惠截止后网页保留旧政策价格试算并提示确认，不能视为优惠自动延期。"
     ],
     "cabins": [
       {
@@ -1279,9 +1289,9 @@
      b.disabled=Boolean(atlas&&atlasPromo!=='earlybird'&&b.dataset.stay!=='double');
    });
    const hint=document.querySelector('.stayHint');
-   if(hint)hint.textContent=atlas?'指定房型可3/4人同舱；第3/4人按全款50%计价，且不计入多人优惠人数。':route().id==='d1110'?'庞洛：普通早鸟93折；4人满2间房91折；独住走正价免邮轮单间差。':'独住才加单房差；拼住按每位价格计算。';
+   if(hint)hint.textContent=atlas?'指定房型可3/4人同舱；第3/4人按全款50%计价，且不计入多人优惠人数。':route().id==='d1110'?'庞洛：早鸟95折；4人满2间房93折；独住加原价50%全程房差，可同享95折早鸟。':'独住才加单房差；拼住按每位价格计算。';
    $('tripleStay').textContent=atlas?'三/四人同舱':'三人同舱';
-   $('ponantLandOption').classList.toggle('hide',!(route().id==='d1110'&&stay==='single'));
+   $('ponantExtrasWrap').hidden=route().id!=='d1110';
  }
  function getAtlasOptions(){
    return {
@@ -1332,7 +1342,7 @@
    const eligibleBow=['b0118','b0130'].includes(route().id)&&cabin().id==='3p';
    $('polarBowUpgradeWrap').classList.toggle('hide',!eligibleBow);
    if(!eligibleBow)$('polarBowUpgrade').checked=false;
-   const q=P.plan(route(),cabin(),num(),customer,stay,priceOverride(),today,atlasPromo,Number($('gaokaoCount').value||1),getAtlasOptions(),$('ponantLandSingle').checked,$('polarBowUpgrade').checked),r=q.route,c=q.cabin;last=q;
+   const q=P.plan(route(),cabin(),num(),customer,stay,priceOverride(),today,atlasPromo,Number($('gaokaoCount').value||1),getAtlasOptions(),true,$('polarBowUpgrade').checked,{selfFlight:$('ponantSelfFlight').checked,visa:$('ponantVisaType').value,selfInsurance:$('ponantSelfInsurance').checked}),r=q.route,c=q.cabin;last=q;
    closeCopy();
    $('today').textContent='北京时间 · '+P.dateCN(today);
    const offDay=P.weekendCountdown(today);
@@ -1393,7 +1403,8 @@
  function init(){
    $('route').innerHTML=data.map(r=>`<option value="${esc(r.id)}">${esc(r.date.replaceAll('-','.'))} · ${esc(r.name)}</option>`).join('');$('route').value='a1204';
    $('route').addEventListener('change',onRoute);$('cabin').addEventListener('change',onCabin);$('people').addEventListener('input',render);
-   $('ponantLandSingle').addEventListener('change',render);
+   ['ponantSelfFlight','ponantSelfInsurance'].forEach(id=>$(id).addEventListener('change',render));
+   $('ponantVisaType').addEventListener('change',render);
    $('polarBowUpgrade').addEventListener('change',render);
    $('atlasPromo').addEventListener('change',onAtlasPromoChange);$('gaokaoCount').addEventListener('input',render);document.querySelectorAll('#atlasDeductionsWrap input[type=checkbox]').forEach(el=>el.addEventListener('change',render));
    $('minus').addEventListener('click',()=>{$('people').value=Math.max(1,(num()||2)-1);render()});$('plus').addEventListener('click',()=>{$('people').value=Math.min(100,(num()||1)+1);render()});
