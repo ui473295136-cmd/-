@@ -110,7 +110,7 @@
  .quizEmoji{font-size:20px}
 }
 
-</style><link rel="stylesheet" href="./ganlu-policy-desk-v9.css?v=20261021-v9a"><link rel="stylesheet" href="./ganlu-social-v1.css?v=20261021-emoji1"><link rel="stylesheet" href="./ganlu-edicts-v8.css?v=20261021-v8c"></head><body>
+</style><link rel="stylesheet" href="./ganlu-policy-desk-v9.css?v=20261021-ponant1021"><link rel="stylesheet" href="./ganlu-social-v1.css?v=20261021-emoji1"><link rel="stylesheet" href="./ganlu-edicts-v8.css?v=20261021-v8c"></head><body>
 <header class="mast"><div class="petals" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <svg class="roofArt" viewBox="0 0 400 220" aria-hidden="true"><g fill="none" stroke="#e7d2ad" stroke-linecap="round" stroke-linejoin="round"><path d="M26 128 Q122 120 193 70 Q253 115 369 115" stroke-width="5"/><path d="M42 142 Q125 132 193 88 Q251 127 354 127" stroke-width="2"/><path d="M76 143 L76 220 M326 133 L326 220 M111 137 L111 220 M291 134 L291 220" stroke-width="6"/><path d="M74 164 H329 M99 183 H302 M154 165 V220 M247 166 V220" stroke-width="2"/><path d="M20 132 Q47 140 66 130 M351 125 Q373 135 392 125" stroke-width="2"/><path d="M164 86 Q193 40 218 82 M165 85 Q195 69 218 83" stroke-width="3"/></g><g fill="#e1c69d" opacity=".18"><path d="M55 141 L195 81 L350 135 L350 220 L55 220Z"/></g></svg>
 <div class="wrap mastInner"><div><h1>甘露寺·财务部</h1>
@@ -911,13 +911,13 @@
     "sourcePage": 23,
     "hasPolicy": true,
     "notes": [
-      "最新版附件：2027年11月10日庞洛双岛，直客优惠截至2026年11月30日。市场早鸟95折；4人同行满2间房93折；三种原政策优惠已被本附件替代。",
+      "最新版附件：2027年11月10日庞洛双岛，直客优惠截至2026年11月30日。市场早鸟95折；4人同行满2间房93折；优惠方案以附件这版为准。",
       "老客户本人及直系亲属（父母、配偶、子女），在相应直客折扣基础上每人再减5000元。",
       "庞洛单人入住：邮轮加陆地的全程单房差为舱位原价的50%，可以和早鸟95折同享。不存在旧版正价免邮轮单房差+陆地5000元方案。",
       "同舱第3人按原价50%支付，不享受早鸟及其他折扣、无佣金；儿童与成人同价。",
       "机票自理：原价先减12000元/人，再对余下团款按早鸟95折或4人满2间房93折计算；额外服务不得享优惠。",
       "签证：包含阿根廷签证费；已有美签符合免签证费条件的减1200元/人；需代办美签另加800元/人。境外出发符合条件的客人保险自理减595元/人。",
-      "同行内部结算（不等于客人折扣）：佣金按原价另核；散转团1-5人10%、6-10人12%、11-15人15%，16人免一间房；OTA统一原价15%佣金；延长线结算价固定90%。同行直客优惠不得低于官方政策。",
+      "同行内部结算（不等于客人折扣）：佣金按原价另核；散转团1-5人10%、6-10人12%、11-15人15%，满16人可免1人（8间房免1人）；OTA统一原价15%佣金；延长线结算价固定90%。同行直客优惠不得低于官方政策。",
       "异业渠道合作单独报批。优惠截止后网页保留旧政策价格试算并提示确认，不能视为优惠自动延期。"
     ],
     "cabins": [
@@ -1331,6 +1331,7 @@
  function onRoute(){
    const r=route(),previous=$('cabin').value;
    atlasPromo='earlybird';$('atlasPromo').value='earlybird';
+   $('ponantSelfFlight').checked=false;$('ponantVisaType').value='included';$('ponantSelfInsurance').checked=false;
    ['atlasSelfSchengen','atlasSelfGreenland','atlasSelfFlight','atlasSelfInsurance'].forEach(id=>$(id).checked=false);
    $('cabin').innerHTML=r.cabins.slice().sort((a,b)=>(a.deck||99)-(b.deck||99)).map(c=>`<option value="${esc(c.id)}">${esc(P.nameCabin(c))}</option>`).join('');
    const first=r.cabins.find(c=>c.id===previous)||r.cabins.find(c=>c.id==='4o')||r.cabins.find(c=>c.id==='4pb')||r.cabins.find(c=>c.id==='5v')||r.cabins.find(c=>c.price)||r.cabins[0];
@@ -1610,6 +1611,6 @@
  $('resetQuiz')?.addEventListener('click',resetQuiz);
 })();
 </script>
-<script defer src="./ganlu-policy-desk-v9.js?v=20261021-v9a"></script><script defer src="./ganlu-social-v1.js?v=20261021-emoji1"></script><script defer src="./ganlu-edicts-v8.js?v=20261021-v8-edictclean"></script>
+<script defer src="./ganlu-policy-desk-v9.js?v=20261021-ponant1021"></script><script defer src="./ganlu-social-v1.js?v=20261021-emoji1"></script><script defer src="./ganlu-edicts-v8.js?v=20261021-v8-edictclean"></script>
 
 </body></html>
