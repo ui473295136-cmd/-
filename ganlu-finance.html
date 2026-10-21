@@ -148,7 +148,11 @@
 <div class="field hide" id="gaokaoCountWrap"><label for="gaokaoCount">应届高考生人数</label><input id="gaokaoCount" type="number" inputmode="numeric" min="1" max="100" value="1" step="1"><p class="smallinfo">其余同行人按正常早鸟政策测算；高考生需提供证明。</p></div>
 <div class="field"><label for="people">③ 出行人数</label><div class="inlineCount"><button class="step" type="button" id="minus" aria-label="减少1人">−</button><input id="people" type="number" inputmode="numeric" value="2" min="1" max="100" step="1"><button class="step" type="button" id="plus" aria-label="增加1人">＋</button></div><div class="quick"><span>常用</span><button type="button" data-people="1">1人</button><button type="button" data-people="2">2人</button><button type="button" data-people="3">3人</button><button type="button" data-people="4">4人</button><button type="button" data-people="6">6人</button><button type="button" data-people="8">8人</button></div></div>
 <div class="field"><div class="fLabel">④ 客户类型</div><div class="choices" id="customerType"><button type="button" data-type="new" class="selected" aria-pressed="true">新客户</button><button type="button" data-type="old" aria-pressed="false">老客户</button></div></div>
-<div class="field" id="stayWrap"><div class="fLabel">⑤ 入住方式</div><div class="choices" id="stayType"><button type="button" data-stay="double" class="selected" aria-pressed="true">双人拼住</button><button type="button" data-stay="single" aria-pressed="false">单人住</button><button type="button" data-stay="triple" id="tripleStay" class="hide" aria-pressed="false">三人同舱</button></div><div class="stayHint">独住才加单房差；拼住按每位价格计算。</div></div>
+<div class="field" id="stayWrap"><div class="fLabel">⑤ 入住方式</div><div class="choices" id="stayType"><button type="button" data-stay="double" class="selected" aria-pressed="true">双人拼住</button><button type="button" data-stay="single" aria-pressed="false">单人住</button><button type="button" data-stay="triple" id="tripleStay" class="hide" aria-pressed="false">三人同舱</button></div><div class="stayHint">独住才加单房差；拼住按每位价格计算。</div>
+<div id="ponantLandOption" class="hide" style="margin-top:10px;padding:10px 12px;border:1px solid #e2d2bd;border-radius:12px;background:#fff8ec;font-size:12px;color:#71543a">
+ <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" id="ponantLandSingle" checked style="width:16px;height:16px">陆地酒店也单住（每人另加 ¥5,000）</label>
+ <div style="margin-top:5px;line-height:1.6;color:#90775f">不需要陆地酒店单住可取消勾选；免邮轮单房差限5间，请确认名额。</div>
+</div></div>
 </div><div class="deadline">优惠截止日期：<strong id="deadline">—</strong><small>按北京时间判断</small></div>
 <section class="dailySign" aria-labelledby="signHeading"><div class="signHeading"><h3 id="signHeading">甘露寺 · 每日抽签</h3><span id="signDate"></span></div><p class="signPrompt" id="signEmpty">修行之前，先讨一支今日的好彩头。</p><div class="signResult hide" id="signResult" aria-live="polite"><div class="signTitleRow"><strong id="signTitle"></strong><span id="signGrade"></span></div><p id="signText"></p><small id="signTip"></small></div><button type="button" class="signButton" id="drawSign">抽一支今日签</button><p class="signFoot">一日一签 · 明日再续回宫缘</p></section></section>
 <section class="panel" id="resultPanel"><div class="resultsHead"><div><h2>报价结果</h2></div><span class="palaceTag" id="policyFlag">政策测算</span></div>
@@ -842,17 +846,17 @@
     "name": "南极半岛 & 南乔治亚 · 奇遇王企鹅 22天",
     "sub": "双岛深度 · 庞洛",
     "policy": "2027年1110庞洛双岛营销政策（伊兰）.docx",
-    "deadline": "2026-09-30",
-    "rate": 0.95,
+    "deadline": "2026-11-30",
+    "rate": 0.93,
     "loyal": 5000,
     "groupRoom8": false,
     "pdf": "2027.11.10-12.01 南极半岛&南乔治亚岛·奇遇王企鹅之旅(1).pdf",
     "sourcePage": 23,
     "hasPolicy": true,
     "notes": [
-      "直客优惠截止2026年9月30日。95折早鸟、4人起至少2间房93折、正价免邮轮单间差，三选一。过期后不再使用上述优惠。",
+      "2026年10月21日更正：直客优惠截止2026年11月30日。市场早鸟93折；呼朋唤友4人同行且满2间房享91折；单间正价报名免邮轮单间差（限5间，先到先得）。以上三种方案不可同享。",
       "老客户本人及直系亲属，在有效直客政策基础上每位正常价旅客额外减5000元。",
-      "常规全程单间差为原价50%，文件明确可与早鸟同享。优惠期内选择免邮轮单间差方案，全程独住另加陆地酒店5000元/人。",
+      "独住使用正价免邮轮单间差，限5间，先到先得；如果陆地酒店也需单住另加5000元/人，陆地酒店拼住则不收此项差额。",
       "同舱第三人按原价50%收费，不再享受早鸟或其他折扣。多人套房默认按双人拼住报价；选三人同舱才使用第三人价格。",
       "庞洛不套用其他航次的额外2%或3%多人优惠。单项机票、签证、保险及增值服务不包含在本工具当前调整范围内。"
     ],
@@ -973,7 +977,7 @@
  const isFixedTriple=c=>c?.id==='4t';
  const hasThirdBed=(r,c)=>r?.id==='b0202'||(r?.id==='d1110'&&c?.capacity>=3)||(r?.id==='c0708'&&c?.capacity>=3);
  const stayName=s=>({double:'双人拼住',single:'每人单独住一间',triple:'三人同舱'}[s]||s);
- function plan(r,c,n,customer='new',stay='double',priceOverride=null,today=bjToday(),atlasPromo='earlybird',gaokaoCount=1,atlasOptions={}){
+ function plan(r,c,n,customer='new',stay='double',priceOverride=null,today=bjToday(),atlasPromo='earlybird',gaokaoCount=1,atlasOptions={},ponantLandSingle=true){
    const errors=[],warnings=[],steps=[],standardSteps=[],assumptions=[],policy=r?.id==='b0130'&&c?.id==='5o'?{code:'latest_unconfirmed',valid:false,label:'5层海景9折 · 截止日期待确认'}:policyState(r,today);
    const usePolicy=Boolean(r?.hasPolicy); // 优惠金额不因为超出文件有效期而改为原价；仍显示须确认的过期警示。
    const price=priceOverride===null||priceOverride===undefined?c?.price:Number(priceOverride);
@@ -1046,9 +1050,13 @@
          assumptions.push('应届高考生按8折单独计算且不叠加其他优惠；其余同行人按早鸟93折，并按同行人数核算多人/老客优惠。');
        }
      }else if(ponant){
-       if(stay==='single'){name='正价报名 · 免邮轮单房差';postAdd=5000*n;}
-       else if(n>=4&&rooms>=2){ratePercent=93;name='4人起、至少2间房 · 93折';}
-       else {ratePercent=95;name='早鸟95折';}
+       if(stay==='single'){
+         name=ponantLandSingle?'正价报名 · 邮轮免单房差 · 陆地单住+5000元/人':'正价报名 · 邮轮免单房差 · 陆地酒店拼住';
+         postAdd=ponantLandSingle?5000*n:0;
+         assumptions.push('邮轮免单房差限5间，先到先得，须核实名额；不与93折早鸟或91折多人方案同享。');
+       }
+       else if(n>=4&&rooms>=2){ratePercent=91;name='4人同行满2间房 · 91折';}
+       else {ratePercent=93;name='市场早鸟93折';}
      }else if(r.id==='b0130'&&c.id==='5o'){
        ratePercent=90;name='5层海景房最新9折';
      }else if(r.id==='b0118'&&c.id==='5o'&&customer==='new'){
@@ -1061,8 +1069,8 @@
    if(stay==='single'){
      const extraRate=haishen?.7:(ponant||silversea||atlas)?.5:null;
      if(extraRate===null)return fail('文件未给出该航次的单房差金额。');
-     q.singleSupplement=price*extraRate*n;
-     q.singleTotal=q.standard+q.singleSupplement;
+     q.singleSupplement=ponant&&usePolicy?0:price*extraRate*n;
+     q.singleTotal=q.standard+q.singleSupplement+(ponant&&usePolicy?postAdd:0);
      if(!(usePolicy&&ponant))postAdd=q.singleSupplement;
      if(atlas){
        ratePercent=100;allowBenefits=false;name='常规单人入住 · 原价×150%';
@@ -1214,8 +1222,9 @@
      b.disabled=Boolean(atlas&&atlasPromo!=='earlybird'&&b.dataset.stay!=='double');
    });
    const hint=document.querySelector('.stayHint');
-   if(hint)hint.textContent=atlas?'指定房型可3/4人同舱；第3/4人按全款50%计价，且不计入多人优惠人数。':'独住才加单房差；拼住按每位价格计算。';
+   if(hint)hint.textContent=atlas?'指定房型可3/4人同舱；第3/4人按全款50%计价，且不计入多人优惠人数。':route().id==='d1110'?'庞洛：普通早鸟93折；4人满2间房91折；独住走正价免邮轮单间差。':'独住才加单房差；拼住按每位价格计算。';
    $('tripleStay').textContent=atlas?'三/四人同舱':'三人同舱';
+   $('ponantLandOption').classList.toggle('hide',!(route().id==='d1110'&&stay==='single'));
  }
  function getAtlasOptions(){
    return {
@@ -1263,7 +1272,7 @@
  function render(){
    today=P.bjToday();
    updateAtlasPromoUI();
-   const q=P.plan(route(),cabin(),num(),customer,stay,priceOverride(),today,atlasPromo,Number($('gaokaoCount').value||1),getAtlasOptions()),r=q.route,c=q.cabin;last=q;
+   const q=P.plan(route(),cabin(),num(),customer,stay,priceOverride(),today,atlasPromo,Number($('gaokaoCount').value||1),getAtlasOptions(),$('ponantLandSingle').checked),r=q.route,c=q.cabin;last=q;
    closeCopy();
    $('today').textContent='北京时间 · '+P.dateCN(today);
    const offDay=P.weekendCountdown(today);
@@ -1324,6 +1333,7 @@
  function init(){
    $('route').innerHTML=data.map(r=>`<option value="${esc(r.id)}">${esc(r.date.replaceAll('-','.'))} · ${esc(r.name)}</option>`).join('');$('route').value='a1204';
    $('route').addEventListener('change',onRoute);$('cabin').addEventListener('change',onCabin);$('people').addEventListener('input',render);
+   $('ponantLandSingle').addEventListener('change',render);
    $('atlasPromo').addEventListener('change',onAtlasPromoChange);$('gaokaoCount').addEventListener('input',render);document.querySelectorAll('#atlasDeductionsWrap input[type=checkbox]').forEach(el=>el.addEventListener('change',render));
    $('minus').addEventListener('click',()=>{$('people').value=Math.max(1,(num()||2)-1);render()});$('plus').addEventListener('click',()=>{$('people').value=Math.min(100,(num()||1)+1);render()});
    document.querySelectorAll('button[data-people]').forEach(b=>b.addEventListener('click',()=>{$('people').value=b.dataset.people;render()}));
