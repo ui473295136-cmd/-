@@ -38,7 +38,7 @@ professional:"如果家里人也参与决定，我可以把出发日期、总行
 advance:"那我们先把家里最在意的问题弄清楚：是出行时间、身体适应，还是预算？你告诉我，我先把那部分解释清楚，方便你们判断。"},
 next:"确认共同决策者的主要关切，提供简明、可转发的书面资料，并按客户愿意的时间再跟进。",avoid:"不要绕过客户联系其家人，也不要施压要求客户马上说服家人。"},
 {id:"date",title:"出行时间尚未确定",tags:["假期安排","航期匹配","可用天数"],cues:[
-{rx:/假期.{0,8}(?:不确定|没定|排不开|不够|不好请)|出发时间|时间没定|日期不确定|排不开|请不了假|哪天出发|几月份去|出发月份|时间冲突|春节|暑假|寒假|可出行时间|行程日期|明年.{0,8}(?:去|出发|旅行)|最多.{0,5}\d{1,2}天/,w:4}],
+{rx:/假期.{0,8}(?:不确定|没定|排不开|不够|不好请)|出发时间|时间没定|日期不确定|排不开|请不了假|哪天出发|几月份去|出发月份|时间冲突|(?:春节|暑假|寒假).{0,8}(?:有时间|去|出发|假期|能安排)|(?:去|出发).{0,8}(?:春节|暑假|寒假)|可出行时间|行程日期|明年.{0,8}(?:去|出发|旅行)|最多.{0,5}\d{1,2}天/,w:4}],
 summary:"航次选择首先取决于能否出行。客户的日期和可用天数没定时，先明确时间窗口，再筛选能实际参加的航次。",checks:["最早、最晚可出发日期以及可用天数是多少？","国内往返、国际转机和落地休息是否计入总假期？","具体航期是否已由产品组核实？"],replies:{
 natural:"那咱们先不急着看具体船票。你大概能安排几月份、前后最多拿出多少天？我按你的时间范围帮你挑，比看一大堆走不了的行程轻松。",
 professional:"南极线路要把国内往返、国际转机和海上探险时间一起算。你给我一个可出发的日期范围和最长旅行天数，我再筛真正能匹配的航次。",
@@ -107,16 +107,17 @@ function positiveText(raw){return raw
 .replace(/(?:一点也不|完全不|并不|不太|不怎么|不算|不担心|不怕|不用担心|没有那么|没那么)(?:太)?贵|不贵/g," ")
 .replace(/(?:一点也不|完全不|并不|不太|不怎么|不担心|不怕|不用担心|没有那么|没那么)(?:会)?晕船/g," ")
 .replace(/(?:不担心|不怕|不用担心|不考虑)海况/g," ");}
+function customerFocus(raw){var lines=raw.split("\n");var customerLines=lines.filter(function(line){return /^\s*(?:客户|顾客|买家|对方)(?:[^：:\n]{0,8})?[:：]/.test(line);});return customerLines.length?customerLines.join("\n"):raw;}
 function analyze(input,stage){
-var raw=normalize(input);if(!raw)return null;
-var stop=/不想再联系|不要再联系|别再联系|别再给我发|不要再发|不用再联系|别打扰我|请勿联系|停止联系|不需要你们再联系|不用跟进|别跟进了|不必再联系|不要再打电话|别再打电话|不要再联系我/.test(raw);
+var raw=normalize(input);if(!raw)return null;var focus=customerFocus(raw);
+var stop=/不想再联系|不要再联系|别再联系|别再给我发|不要再发|不用再联系|别打扰我|请勿联系|停止联系|不需要你们再联系|不用跟进|别跟进了|不必再联系|不要再打电话|别再打电话|不要再联系我/.test(focus);
 if(stop)return Object.assign({},stopRule,{proof:"对话中出现了明确的停止联系表述。此类意愿优先于销售跟进目标。",secondary:[],stage:stage||"初次咨询",mode:"明确意愿识别"});
-var searchable=positiveText(raw),scored=[];
+var searchable=positiveText(focus),scored=[];
 rules.filter(function(r){return r.id!=="general";}).forEach(function(rule){
 var score=0,matched=[];
 rule.cues.forEach(function(cue){var m=searchable.match(cue.rx);if(m){score+=cue.w;matched.push(m[0]);}});
-if(rule.id==="price"&&/价格不是问题|钱不是问题|预算充足/.test(raw)&&!/(?:超预算|超出预算|便宜|优惠|打折|降价|贵了|太贵|有点贵|比较贵|差.{0,8}(?:万|千|元|块))/.test(raw))score=0;
-if(rule.id==="seasick"&&/(?:不担心|不怕|不用担心).{0,5}(?:晕船|德雷克|海况)/.test(raw)&&!/(?:但|不过|可是|然而).{0,12}(?:晕船|德雷克|海况)/.test(raw))score=0;
+if(rule.id==="price"&&/价格不是问题|钱不是问题|预算充足/.test(focus)&&!/(?:超预算|超出预算|便宜|优惠|打折|降价|贵了|太贵|有点贵|比较贵|差.{0,8}(?:万|千|元|块))/.test(focus))score=0;
+if(rule.id==="seasick"&&/(?:不担心|不怕|不用担心).{0,5}(?:晕船|德雷克|海况)/.test(focus)&&!/(?:但|不过|可是|然而).{0,12}(?:晕船|德雷克|海况)/.test(focus))score=0;
 if(score>0)scored.push({rule:rule,score:score,matched:matched});
 });
 scored.sort(function(a,b){return b.score-a.score;});
@@ -124,7 +125,7 @@ var best=scored.length&&scored[0].score>=4?scored[0]:{rule:rules.find(function(r
 var secondary=scored.filter(function(x){return x.rule.id!==best.rule.id&&x.score>=4&&x.score>=best.score-2;}).slice(0,2);
 var hit=best.matched[0],evidence="对话里暂时没有足够明确的顾虑信号，当前不能可靠判断客户的真实想法。";
 if(hit)evidence="对话中识别到「"+hit+"」这一表达。它能说明客户提到了相关问题，但不能单凭这句话确认其背后的真实动机。";
-var lines=raw.split(/[\n。！？!?]/).map(function(s){return s.trim();}).filter(Boolean);
+var lines=focus.split(/[\n。！？!?]/).map(function(s){return s.trim();}).filter(Boolean);
 var evidenceLine=lines.find(function(line){return best.rule.cues.some(function(c){return c.rx.test(positiveText(line));});});
 if(evidenceLine)evidence="对话中出现：「"+evidenceLine.slice(0,100)+(evidenceLine.length>100?"…":"")+"」。这是可见表达；客户的真实动机仍需进一步确认。";
 if(secondary.length)evidence+=" 同时还出现了"+secondary.map(function(x){return x.rule.title;}).join("、")+"相关信号，建议一次只先解决客户最在意的一项。";
