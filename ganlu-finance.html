@@ -108,7 +108,7 @@
 .voyageCabinPrices summary{cursor:pointer;font-size:11px;font-weight:700;color:#4e7a62}
 .voyageCabinPrices #priceList{padding-top:8px}
 @media(max-width:650px){.voyagePolicyCard{padding:10px}.voyagePolicyPreview p{font-size:11px}}
-</style><link rel="stylesheet" href="./ganlu-policy-desk-v9.css?v=20261021-v11-layout"><link rel="stylesheet" href="./ganlu-social-v1.css?v=20261021-emoji1"><link rel="stylesheet" href="./ganlu-edicts-v8.css?v=20261021-v8c"></head><body>
+</style><link rel="stylesheet" href="./ganlu-policy-desk-v9.css?v=20261021-v11-layout"><link rel="stylesheet" href="./ganlu-social-v1.css?v=20261021-emoji1"><link rel="stylesheet" href="./ganlu-edicts-v8.css?v=20261021-v8c"><link rel="stylesheet" href="./ganlu-polar-quest-v1.css?v=20261021-q1"></head><body>
 <header class="mast"><div class="petals" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <svg class="roofArt" viewBox="0 0 400 220" aria-hidden="true"><g fill="none" stroke="#e7d2ad" stroke-linecap="round" stroke-linejoin="round"><path d="M26 128 Q122 120 193 70 Q253 115 369 115" stroke-width="5"/><path d="M42 142 Q125 132 193 88 Q251 127 354 127" stroke-width="2"/><path d="M76 143 L76 220 M326 133 L326 220 M111 137 L111 220 M291 134 L291 220" stroke-width="6"/><path d="M74 164 H329 M99 183 H302 M154 165 V220 M247 166 V220" stroke-width="2"/><path d="M20 132 Q47 140 66 130 M351 125 Q373 135 392 125" stroke-width="2"/><path d="M164 86 Q193 40 218 82 M165 85 Q195 69 218 83" stroke-width="3"/></g><g fill="#e1c69d" opacity=".18"><path d="M55 141 L195 81 L350 135 L350 220 L55 220Z"/></g></svg>
 <div class="wrap mastInner"><div><h1>甘露寺·财务部</h1>
@@ -274,6 +274,58 @@
 </div>
 </section>
 
+<section class="polarQuest" id="polarQuest" aria-labelledby="polarQuestHeading">
+ <header class="polarQuestHeader">
+  <div>
+    <span class="polarQuestEyebrow">CHUANKE · POLAR KNOWLEDGE ACADEMY</span>
+    <h2 id="polarQuestHeading">🧭 极地知识通关挑战</h2>
+    <p>不考行程多少钱，也不考背天数。用20道真实销售场景题，练习把极地旅行讲明白。答错也没关系，这里有点搞笑，更有点干货。</p>
+  </div>
+  <div class="polarQuestPill"><small>当前知识称号</small><strong id="polarQuestRank">极地实习生</strong></div>
+ </header>
+ <div class="polarQuestMeta"><span>🎓 5关 · 20题 · 答对解锁图鉴</span><strong id="polarQuestCount">0 / 20</strong></div>
+ <div class="polarProgressTrack"><div class="polarProgressFill" id="polarQuestBar" role="progressbar" aria-label="闯关进度" aria-valuemin="0" aria-valuemax="20" aria-valuenow="0"></div></div>
+ <div class="polarChapterNav" id="polarQuestChapterNav" aria-label="关卡进度"></div>
+ <div class="polarStageCard">
+  <div id="polarQuestQuestion">
+   <div class="polarStageTop"><span id="polarQuestStage" class="polarStageBadge"></span><span class="polarStageIndex" id="polarQuestStep"></span></div>
+   <h3 id="polarQuestTitle">南美出发不迷路</h3>
+   <p id="polarQuestIntro" class="polarQuestIntro"></p>
+   <p id="polarQuestPrompt" class="polarPrompt"></p>
+   <div id="polarQuestChoices" class="polarChoices"></div>
+   <div id="polarQuestFeedback" class="polarAnswerFeedback" role="status" aria-live="polite" hidden>
+    <strong id="polarFeedbackHeading"></strong><p id="polarFeedbackDetail"></p>
+   </div>
+   <button id="polarQuestContinue" class="polarPrimaryBtn" type="button" hidden>下一题 →</button>
+  </div>
+  <div id="polarQuestReward" class="polarAwardPanel" hidden>
+   <span class="polarAwardEyebrow">STAGE CLEARED · 图鉴已解锁</span>
+   <div id="polarRewardIcon" class="polarAwardEmoji" aria-hidden="true"></div>
+   <h3 id="polarRewardName"></h3>
+   <p id="polarRewardDescription"></p>
+   <div class="polarNewRank">🎖️ 晋升称号：<strong id="polarRewardRank"></strong></div>
+   <div><button class="polarPrimaryBtn" id="polarRewardNext" type="button">进入下一关 →</button></div>
+  </div>
+  <div id="polarQuestFinish" class="polarFinishPanel polarAwardPanel" hidden>
+   <span class="polarAwardEyebrow">CHUANKE · POLAR ACADEMY</span>
+   <div class="polarFinishEmojis" id="polarFinishIcons"></div>
+   <h3>恭喜通关！「<span id="polarFinishRank">极地百科全书</span>」</h3>
+   <p id="polarFinishSummary"></p>
+   <button class="polarPrimaryBtn" id="polarFinishRestart" type="button">🔄 再挑战一次</button>
+  </div>
+ </div>
+ <div class="polarAtlas">
+  <div class="polarAtlasHeader"><h3>📚 我的极地图鉴</h3><small>每通一关解锁一张 · 进度保存在当前浏览器</small></div>
+  <div id="polarQuestBook" class="polarBookGrid"></div>
+ </div>
+ <div class="polarQuestFoot">
+  <p>题目参考极地旅行常见安排与规范。具体航次以最终行程、船司和现场安全要求为准。知识依据：
+   <a href="https://www.antarctica21.com/landing/antarctica-air-cruises" target="_blank" rel="noopener noreferrer">飞船航线</a> ·
+   <a href="https://iaato.org/about-us/bylaws" target="_blank" rel="noopener noreferrer">IAATO登陆规则</a>
+  </p>
+  <button type="button" class="polarSecondaryBtn" id="polarQuestRestart">重新闯关</button>
+ </div>
+</section>
 </main>
 <aside id="socialSideToast" class="socialSideToast" aria-live="polite" aria-label="新消息侧边弹窗" hidden>
   <div class="socialToastHead"><strong id="socialToastTitle">福气许愿池有新消息</strong><button class="socialToastClose" id="socialToastClose" type="button" aria-label="关闭消息提示">×</button></div>
@@ -1530,5 +1582,6 @@
 })();
 </script>
 <script defer src="./ganlu-policy-desk-v9.js?v=20261021-ponant1021"></script><script defer src="./ganlu-social-v1.js?v=20261021-emoji1"></script><script defer src="./ganlu-edicts-v8.js?v=20261021-v8-edictclean"></script>
+<script defer src="./ganlu-polar-quest-v1.js?v=20261021-q1"></script>
 
 </body></html>
