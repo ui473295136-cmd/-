@@ -50,7 +50,7 @@ const items=[
 $("extractedGrid").innerHTML=items.map(([k,v])=>'<div class="extracted-item"><small>'+safe(k)+'</small><b>'+safe(v)+'</b></div>').join("");
 $("extracted").hidden=false;
 if(!$("highlights").value.trim()&&data.days.length){$("highlights").value=data.days.slice(0,5).map(x=>x.replace(/^[•·\-–—\s]+/,"")).join("\n");}
-if(!$("priceInfo").value.trim()&&data.dates.length)$("priceInfo").value=data.dates.slice(0,3).join(" / ");
+
 $("parseStatus").textContent="已提取文字线索，请检查日期、船名和价格。";
 $("charCount").textContent=text.length+" 字";
 toast("已整理行程线索；请核对识别结果");
@@ -77,7 +77,7 @@ return "把远方，变成一段值得亲历的旅程";
 function getHighlights(){
 let list=$("highlights").value.split(/\n|；|;/).map(s=>s.trim()).filter(Boolean).slice(0,5);
 if(!list.length&&state.draft)list=state.draft.days.slice(0,3);
-if(!list.length)list=["目的地与行程体验以正式资料为准","小团体验与活动安排请核对原文"];
+if(!list.length)list=["核心体验以正式行程为准","航期、船舶与活动信息请核对原文"];
 return list;
 }
 function makeCopy(mode){
@@ -85,7 +85,7 @@ const title=getTitle(),sub=getSubtitle(),product=$("projectName").value.trim()||
 const validDetails=[...data.places.slice(0,4),...data.duration.slice(0,2)].filter(Boolean);
 if(mode==="short")return title+"\n"+sub+"\n\n"+h.slice(0,3).map(x=>"· "+x).join("\n")+(dateInfo?"\n\n"+dateInfo:"")+(cta!=="不加销售引导"?"\n\n"+cta:"");
 if(mode==="moments")return "最近在整理一趟"+product+"。\n\n比起把行程写得很满，我更希望先把真正值得期待的体验讲清楚：\n"+h.slice(0,3).map(x=>"· "+x).join("\n")+"\n\n具体航期、船舶与费用，以最终核实的行程资料为准。"+(cta!=="不加销售引导"?"\n如果你也在做旅行功课，可以先收藏。":"");
-return title+"\n"+sub+"\n\n有些地方，光看照片很难真正理解。真正出发之前，先把路线、活动和行程节奏看明白，才能判断它是否适合自己。\n\n这份行程值得关注的几个点：\n"+h.map(x=>"· "+x).join("\n")+(validDetails.length?"\n\n行程线索："+validDetails.join(" / "):"")+(dateInfo?"\n已核对的信息："+dateInfo:"")+"\n\n航期、船舶、费用包含与活动安排，请以正式行程和合同为准。"+(cta!=="不加销售引导"?"\n\n"+cta+"，先把适合自己的方案了解清楚。":"");
+return title+"\n"+sub+"\n\n有些地方，光看照片很难真正理解。真正出发之前，先把路线、活动和行程节奏看明白，才能判断它是否适合自己。\n\n这份行程值得关注的几个点：\n"+h.map(x=>"· "+x).join("\n")+(validDetails.length?"\n\n行程线索："+validDetails.join(" / "):"")+(dateInfo?"\n行程信息线索（请核实）："+dateInfo:"")+"\n\n航期、船舶、费用包含与活动安排，请以正式行程和合同为准。"+(cta!=="不加销售引导"?"\n\n"+cta+"，先把适合自己的方案了解清楚。":"");
 }
 function buildPrompt(){
 const f=formats[$("format").value]||formats.xhs,style=styles[state.style],title=getTitle(),sub=getSubtitle(),h=getHighlights(),product=$("projectName").value.trim()||"极地旅行";
@@ -107,10 +107,10 @@ const scale=1.25;canvas.width=f.w;canvas.height=f.h;
 const w=canvas.width,h=canvas.height,ratio=w/900;
 ctx.save();
 if(state.background&&state.background.complete){const im=state.background,ir=im.width/im.height,cr=w/h;let sx=0,sy=0,sw=im.width,sh=im.height;if(ir>cr){sw=im.height*cr;sx=(im.width-sw)/2;}else{sh=im.width/cr;sy=(im.height-sh)/2;}ctx.drawImage(im,sx,sy,sw,sh,0,0,w,h);}else{
-let g=ctx.createLinearGradient(0,0,0,h);g.addColorStop(0,"#d8e1dc");g.addColorStop(.4,"#9fb9bc");g.addColorStop(.7,"#4e727d");g.addColorStop(1,"#1d3b49");ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+const palette={editorial:["#d8e1dc","#9fb9bc","#4e727d","#1d3b49"],luxury:["#162b3a","#415e68","#46545b","#122936"],documentary:["#d5ded2","#a9bcb6","#6c8582","#344e53"],minimal:["#e9e4d7","#c6d4ce","#829d9d","#304c54"],cinematic:["#132a3a","#557785","#304c5b","#0e2634"],illustration:["#eee2c6","#c1d7ca","#80a5a3","#416d76"]}[state.style]||["#d8e1dc","#9fb9bc","#4e727d","#1d3b49"];let g=ctx.createLinearGradient(0,0,0,h);g.addColorStop(0,palette[0]);g.addColorStop(.4,palette[1]);g.addColorStop(.7,palette[2]);g.addColorStop(1,palette[3]);ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
 const sunX=w*.74,sunY=h*.24;const rg=ctx.createRadialGradient(sunX,sunY,2,sunX,sunY,w*.2);rg.addColorStop(0,"rgba(247,231,192,.85)");rg.addColorStop(1,"rgba(247,231,192,0)");ctx.fillStyle=rg;ctx.fillRect(0,0,w,h);
-ctx.fillStyle="#b9ccc7";ctx.beginPath();ctx.moveTo(0,h*.57);ctx.lineTo(w*.2,h*.33);ctx.lineTo(w*.33,h*.48);ctx.lineTo(w*.53,h*.28);ctx.lineTo(w*.77,h*.53);ctx.lineTo(w,h*.4);ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();ctx.fill();
-ctx.fillStyle="#e9ede2";ctx.beginPath();ctx.moveTo(0,h*.62);ctx.lineTo(w*.22,h*.43);ctx.lineTo(w*.32,h*.53);ctx.lineTo(w*.54,h*.37);ctx.lineTo(w*.72,h*.58);ctx.lineTo(w,h*.48);ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();ctx.fill();
+ctx.fillStyle=state.style==="luxury"?"#52656a":state.style==="cinematic"?"#5d7b83":state.style==="illustration"?"#c2d9cc":"#b9ccc7";ctx.beginPath();ctx.moveTo(0,h*.57);ctx.lineTo(w*.2,h*.33);ctx.lineTo(w*.33,h*.48);ctx.lineTo(w*.53,h*.28);ctx.lineTo(w*.77,h*.53);ctx.lineTo(w,h*.4);ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();ctx.fill();
+ctx.fillStyle=state.style==="luxury"?"#9faeaa":state.style==="cinematic"?"#c4d2cc":state.style==="illustration"?"#f1e6cb":"#e9ede2";ctx.beginPath();ctx.moveTo(0,h*.62);ctx.lineTo(w*.22,h*.43);ctx.lineTo(w*.32,h*.53);ctx.lineTo(w*.54,h*.37);ctx.lineTo(w*.72,h*.58);ctx.lineTo(w,h*.48);ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();ctx.fill();
 const sea=ctx.createLinearGradient(0,h*.62,0,h);sea.addColorStop(0,"#6f9296");sea.addColorStop(1,"#1e3d4a");ctx.fillStyle=sea;ctx.fillRect(0,h*.64,w,h*.36);
 for(let i=0;i<32;i++){ctx.strokeStyle="rgba(245,245,224,"+(0.05+(i%4)*.02)+")";ctx.lineWidth=Math.max(1,ratio);ctx.beginPath();let yy=h*.69+i*h*.009;ctx.moveTo(w*(i%7)*.12,yy);ctx.lineTo(w*(.35+(i%5)*.14),yy+(i%3)*ratio);ctx.stroke();}
 }
