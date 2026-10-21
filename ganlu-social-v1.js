@@ -264,7 +264,7 @@
   function renderNotices(items){
     var list=$('socialNoticeList');if(!list)return;
     var mentions=Array.isArray(feedData.mentions)?feedData.mentions:[];
-    var notices=(Array.isArray(items)?items:[]).map(function(c){return {...c,kind:'reply'};})
+    var notices=(Array.isArray(items)?items:[]).map(function(c){return {...c,kind:c.kind||'post_reply'};})
       .concat(mentions.map(function(c){return {...c,kind:'mention'};}))
       .sort(function(a,b){return String(b.created_at).localeCompare(String(a.created_at))});
     list.innerHTML=notices.length?notices.slice(0,20).map(function(c){
