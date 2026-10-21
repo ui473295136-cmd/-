@@ -2,7 +2,7 @@
 'use strict';
 const root=document.getElementById('polarSpotter');
 if(!root)return;
-const $=id=>document.getElementById(id),KEY='ganlu-polar-spotter-v1';
+const $=id=>document.getElementById(id),KEY='ganlu-polar-spotter-v2';
 // Poster composition coordinates. The actual hotspots are positioned over photographic artwork.
 const layouts=[
  [{x:18,y:42},{x:73,y:39},{x:17,y:63},{x:76,y:63},{x:42,y:80},{x:75,y:83}],
@@ -94,9 +94,11 @@ function posterMarkup(p,i){
    +'<span class="spotterClueText">'+escapeHTML(item[0])+'</span><span class="spotterFoundMark" aria-hidden="true">'+(hit?'✓':'')+'</span>'
    +'</button>';
  }).join('');
- const honest=p.correct.map(([label,x,y],index)=>
-  '<button type="button" class="spotterClue spotterClueTrue spotterDecoy'+index+'" style="--sx:'+safeCoordinate(x)+'%;--sy:'+safeCoordinate(y)+'%" data-spot-true="'+index+'" aria-label="'+escapeHTML(label)+'">'
-  +escapeHTML(label)+'</button>').join('');
+ const honest=p.correct.map(([label,x,y],index)=>{
+  const pos=[{x:47,y:34},{x:49,y:62},{x:25,y:91}][index]||{x,y};
+  return '<button type="button" class="spotterClue spotterClueTrue spotterDecoy'+index+'" style="--sx:'+safeCoordinate(pos.x)+'%;--sy:'+safeCoordinate(pos.y)+'%" data-spot-true="'+index+'" aria-label="'+escapeHTML(label)+'">'
+  +escapeHTML(label)+'</button>';
+ }).join('');
  return '<div class="spotterPoster spotterPhotoScene spotterTheme-'+p.theme+'" id="spotterPosterCanvas" role="group" aria-label="'+escapeHTML(p.name)+'。在海报上点击找出6处不合理的细节">'
   +'<div class="spotterPosterArt"><img class="spotterPhoto" loading="eager" decoding="async" src="'+photo.src+'" alt=""/><div class="spotterPhotoFallback"></div></div>'
   +'<div class="spotterPhotoGrain" aria-hidden="true"></div>'
