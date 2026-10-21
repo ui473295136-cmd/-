@@ -102,6 +102,44 @@
 .quizResult strong{font-size:17px;color:#855e31}
 .quizResult .quizScore{font-size:26px;font-weight:900;margin:0 0 4px}
 .quizFoot{font-size:10px;color:#9a8977;margin-top:10px}
+
+.quizLeaderboard{margin-top:16px;padding:16px;border:1px solid #e3d0b4;border-radius:17px;background:linear-gradient(145deg,#fffaf0,#fffdf8)}
+.quizLeaderboardHead{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px}
+.quizLeaderboardHead h3{margin:0 0 4px;color:#6b4e36;font-family:"STSong","Songti SC",serif;font-size:18px;letter-spacing:.04em}
+.quizLeaderboardHead p{margin:0;color:#8a7968;font-size:11px;line-height:1.7}
+.quizRankRefresh{flex:0 0 auto;border:1px solid #deccb1;border-radius:10px;background:#fffdf8;color:#7b5b40;padding:7px 11px;font-size:11px}
+.quizRankRefresh:disabled,.quizRankForm button:disabled{opacity:.55;cursor:wait}
+.quizRankForm{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;margin:12px 0;padding:12px;border:1px solid #eadbc7;border-radius:13px;background:#fbf5e9}
+.quizRankForm[hidden]{display:none}
+.quizRankForm label{grid-column:1/-1;color:#80664e;font-size:11px;font-weight:700}
+.quizRankForm input{width:100%;min-width:0;min-height:42px;padding:10px 12px;border:1px solid #ddcdb6;border-radius:11px;background:#fffdf8;color:#4c392f}
+.quizRankForm input:focus{outline:2px solid #c1a677;outline-offset:1px}
+.quizRankForm button{border:1px solid #6d5140;border-radius:11px;background:linear-gradient(135deg,#80634d,#654b3b);color:#fff8ef;font-size:12px;font-weight:750;padding:9px 13px}
+.quizRankForm p{grid-column:1/-1;margin:0;color:#8b7867;font-size:11px;line-height:1.7}
+.quizRankStatus{padding:9px 2px;color:#887563;font-size:11px;line-height:1.7}
+.quizRankList{display:grid;gap:7px;list-style:none;margin:0;padding:0}
+.quizRankRow{display:grid;grid-template-columns:34px minmax(0,1fr) auto;align-items:center;gap:10px;padding:10px 11px;border:1px solid #eee2d0;border-radius:12px;background:rgba(255,255,255,.78)}
+.quizRankRow.self{border-color:#bd9a69;background:#fff6e5;box-shadow:inset 0 0 0 1px #bd9a6922}
+.quizRankPlace{display:grid;place-items:center;width:30px;height:30px;border-radius:10px;background:#f2e7d6;color:#80634d;font-size:12px;font-weight:850}
+.quizRankRow.top1 .quizRankPlace{background:#ead3a1;color:#76521b}
+.quizRankRow.top2 .quizRankPlace{background:#e6e5e1;color:#5f6267}
+.quizRankRow.top3 .quizRankPlace{background:#ecd0b8;color:#80563c}
+.quizRankName{display:block;overflow:hidden;color:#5d4533;font-size:12px;font-weight:800;text-overflow:ellipsis;white-space:nowrap}
+.quizRankMeta{display:block;margin-top:2px;color:#a08d79;font-size:10px}
+.quizRankScore{color:#825c31;font-size:18px;font-weight:900;white-space:nowrap;font-variant-numeric:tabular-nums}
+.quizRankScore small{font-size:10px;font-weight:600;color:#a08d79}
+.quizRankEmpty{padding:22px 12px;border:1px dashed #dfceb6;border-radius:12px;text-align:center;color:#9b8975;font-size:12px;background:#fffdf8}
+.quizRankFoot{margin:9px 0 0;color:#a08f7e;font-size:10px;line-height:1.7}
+@media(max-width:650px){
+ .quizLeaderboard{padding:13px}
+ .quizLeaderboardHead h3{font-size:17px}
+ .quizRankForm{grid-template-columns:1fr}
+ .quizRankForm label,.quizRankForm p{grid-column:auto}
+ .quizRankForm button{min-height:42px}
+ .quizRankRow{grid-template-columns:31px minmax(0,1fr) auto;padding:9px}
+ .quizRankPlace{width:28px;height:28px}
+ .quizRankScore{font-size:16px}
+}
 @media(max-width:650px){
  .funTop{flex-direction:column}.livePill{white-space:normal}
  .boardFormRow{grid-template-columns:1fr}
@@ -183,6 +221,21 @@
   <div class="quizQuestions" id="quizQuestions"></div>
   <div class="quizActions"><button id="checkQuiz" type="button">交卷，看看本宫几斤几两</button><button id="resetQuiz" class="secondary" type="button">重新答题</button></div>
   <div id="quizResult" class="quizResult" role="status" aria-live="polite" hidden></div>
+  <div class="quizLeaderboard" id="quizLeaderboard" aria-labelledby="quizRankHeading">
+    <div class="quizLeaderboardHead">
+      <div><h3 id="quizRankHeading">甄学榜 · 答题排名</h3><p>答对越多，排名越靠前；同分按首次达到该成绩的时间排序。</p></div>
+      <button id="refreshQuizRank" class="quizRankRefresh" type="button">刷新榜单</button>
+    </div>
+    <div class="quizRankForm" id="quizRankForm" hidden>
+      <label for="quizNickname">上榜昵称（最多16字）</label>
+      <input id="quizNickname" type="text" maxlength="16" autocomplete="nickname" placeholder="给自己起个宫中名号">
+      <button id="submitQuizRank" type="button">提交成绩并上榜</button>
+      <p id="quizRankSubmitStatus" role="status" aria-live="polite">交卷后填写昵称，即可参与排名。</p>
+    </div>
+    <div class="quizRankStatus" id="quizRankStatus" role="status" aria-live="polite">正在召集各宫小主……</div>
+    <ol class="quizRankList" id="quizRankList"><li class="quizRankEmpty">榜单加载中……</li></ol>
+    <p class="quizRankFoot">每个浏览器只保留个人最好成绩；清除浏览器数据后会生成新的参赛记录。</p>
+  </div>
   <p class="quizFoot">友情提示：标点和空格不影响判分；部分台词接受常见异体写法。</p>
 </section>
 
@@ -1409,6 +1462,74 @@
      <input type="text" data-answer="${index}" maxlength="20" autocomplete="off" placeholder="填入关键字" aria-label="第${index+1}题答案">
    </div>`).join('');
  }
+
+ const RANK_API='https://wpfqcztbxxarsrruuuce.supabase.co/functions/v1/ganlu-quiz-rank';
+ const RANK_ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndwZnFjenRieHhhcnNycnV1dWNlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNjk3NzMsImV4cCI6MjEwNDk0NTc3M30.9PLp0P6PS59sANpxZ9OlOc6Iv444Uindg8CHGwrjZE4';
+ const RANK_TOKEN_KEY='ganlu-quiz-client-token-v1';
+ const RANK_NAME_KEY='ganlu-quiz-nickname-v1';
+ const makeRankToken=()=>{const bytes=new Uint8Array(32);crypto.getRandomValues(bytes);return Array.from(bytes,x=>x.toString(16).padStart(2,'0')).join('')};
+ let rankToken='',lastScore=null;
+ try{
+   rankToken=localStorage.getItem(RANK_TOKEN_KEY)||'';
+   if(!/^[a-f0-9]{64}$/.test(rankToken)){rankToken=makeRankToken();localStorage.setItem(RANK_TOKEN_KEY,rankToken);}
+ }catch{rankToken=makeRankToken();}
+ try{const savedNickname=localStorage.getItem(RANK_NAME_KEY);if(savedNickname&&$('quizNickname'))$('quizNickname').value=savedNickname;}catch{}
+
+ async function callRankApi(payload){
+   const response=await fetch(RANK_API,{method:'POST',headers:{'Content-Type':'application/json','apikey':RANK_ANON,'Authorization':'Bearer '+RANK_ANON},body:JSON.stringify({...payload,client_token:rankToken})});
+   const data=await response.json().catch(()=>({}));
+   if(!response.ok)throw new Error(data.message||'甄学榜暂时不可用，请稍后重试。');
+   return data;
+ }
+ function rankDate(value){
+   const date=new Date(value);
+   if(Number.isNaN(date.getTime()))return '时间未知';
+   return date.toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false});
+ }
+ function renderQuizRank(data){
+   const entries=Array.isArray(data.entries)?data.entries:[];
+   $('quizRankList').innerHTML=entries.length?entries.map((entry,index)=>{
+     const place=index+1,medal=place===1?'🥇':place===2?'🥈':place===3?'🥉':String(place).padStart(2,'0');
+     const own=Number(data.myRank)===place;
+     return `<li class="quizRankRow ${place<=3?'top'+place:''} ${own?'self':''}">
+       <span class="quizRankPlace">${medal}</span>
+       <span><strong class="quizRankName">${escapeHtml(entry.nickname)}</strong><small class="quizRankMeta">上榜时间 ${escapeHtml(rankDate(entry.updated_at))}</small></span>
+       <span class="quizRankScore">${Number(entry.score)||0}<small> / 19</small></span>
+     </li>`;
+   }).join(''):'<li class="quizRankEmpty">甄学榜刚开张，快来争夺榜首。</li>';
+   if(data.myRank){
+     $('quizRankStatus').textContent=`目前共有 ${data.total} 位玩家上榜；你的最好成绩是 ${data.myBestScore}/19，当前第 ${data.myRank} 名。${data.myRank>20?'（榜单仅展示前20名）':''}`;
+   }else if(data.total){
+     $('quizRankStatus').textContent=`目前共有 ${data.total} 位玩家上榜。交卷后提交成绩，就能加入甄学榜。`;
+   }else{
+     $('quizRankStatus').textContent='榜单刚开张，交卷并提交成绩，成为第一位上榜的小主。';
+   }
+ }
+ async function refreshQuizRank(){
+   const button=$('refreshQuizRank');
+   if(button)button.disabled=true;
+   $('quizRankStatus').textContent='正在刷新甄学榜……';
+   try{renderQuizRank(await callRankApi({action:'list'}));}
+   catch(error){$('quizRankStatus').textContent=error instanceof Error?error.message:'榜单暂时不可用，请稍后重试。';}
+   finally{if(button)button.disabled=false;}
+ }
+ async function submitQuizRank(){
+   if(lastScore===null){$('quizRankSubmitStatus').textContent='请先交卷，查看本次得分。';return;}
+   const nickname=$('quizNickname').value.trim();
+   if(!nickname||[...nickname].length>16){$('quizRankSubmitStatus').textContent='请填写1—16字的上榜昵称。';$('quizNickname').focus();return;}
+   const button=$('submitQuizRank');
+   button.disabled=true;button.textContent='正在登记成绩……';
+   $('quizRankSubmitStatus').textContent='正在核对答题结果并更新排名……';
+   const answers=Array.from($('quizQuestions').querySelectorAll('input[data-answer]')).map(input=>input.value);
+   try{
+     const data=await callRankApi({action:'submit',nickname,answers});
+     try{localStorage.setItem(RANK_NAME_KEY,nickname);}catch{}
+     renderQuizRank(data);
+     $('quizRankSubmitStatus').textContent=`本次成绩：${data.attemptScore}/19；你的个人最好成绩：${data.myBestScore}/19。${data.myRank?'当前排名第 '+data.myRank+' 名。':'成绩已记录。'}`;
+   }catch(error){
+     $('quizRankSubmitStatus').textContent=error instanceof Error?error.message:'提交失败，请稍后重试。';
+   }finally{button.disabled=false;button.textContent='提交成绩并上榜';}
+ }
  function submitQuiz(){
    let score=0;
    riddles.forEach((r,index)=>{
@@ -1420,6 +1541,7 @@
      card.querySelector('.answerMark').textContent=correct?'✓ 答对了':'✗ 再接再厉';
      if(correct)score++;
    });
+   lastScore=score;
    let rank,comment;
    if(score<=3){rank='路过的宫女选手';comment='刚进宫门，台词还没背熟，先去吃口瓜。';}
    else if(score<=7){rank='后宫吃瓜群众选手';comment='有几句你听过，但离熟读宫规还差几集。';}
@@ -1429,16 +1551,21 @@
    else {rank='甄学博士·本宫亲自认证';comment='十九题全中，恭喜你把后宫台词刻进DNA。';}
    $('quizResult').hidden=false;
    $('quizResult').innerHTML=`<p class="quizScore">${score} / ${riddles.length} 题</p><div>恭喜你属于：<strong>${escapeHtml(rank)}</strong></div><div>${escapeHtml(comment)}</div>`;
+   $('quizRankForm').hidden=false;
+   $('quizRankSubmitStatus').textContent='填入昵称后提交本次成绩，即可参与全站排名。';
    $('quizResult').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'nearest'});
  }
  function resetQuiz(){
    $('quizQuestions').querySelectorAll('input').forEach(input=>input.value='');
    $('quizQuestions').querySelectorAll('.quizQuestion').forEach(card=>{card.classList.remove('correct','wrong');card.querySelector('.answerMark').textContent='';});
    $('quizResult').hidden=true;$('quizResult').textContent='';
+   $('quizRankForm').hidden=true;lastScore=null;
  }
- if($('quizQuestions'))renderRiddles();
+ if($('quizQuestions')){renderRiddles();refreshQuizRank();}
  $('checkQuiz')?.addEventListener('click',submitQuiz);
  $('resetQuiz')?.addEventListener('click',resetQuiz);
+ $('refreshQuizRank')?.addEventListener('click',refreshQuizRank);
+ $('submitQuizRank')?.addEventListener('click',submitQuizRank);
 })();
 </script>
 
