@@ -1,0 +1,69 @@
+/* 甘露寺·碎嘴阁：吐槽评论 / 3秒互动聊天 / 新消息提醒 */
+#socialPostsArea[hidden],#socialChatArea[hidden],#socialNoticePanel[hidden],
+.socialCommentMount[hidden],.socialBadge[hidden]{display:none!important}
+.socialControls{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:0 0 12px}
+.socialBell,.socialDesktopBtn,.socialTabs button,.socialCommentToggle,.socialCommentDelete,.socialChatDelete,.socialReplyBtn,.socialReplyCancel{border:1px solid #e0cfb8;background:#fffdf8;color:#755c47;border-radius:11px;padding:9px 13px;font:inherit;font-size:12px;cursor:pointer}
+.socialBell{background:#fbf0dc;font-weight:750}
+.socialBadge{display:inline-grid;place-items:center;margin-left:4px;padding:1px 6px;min-width:18px;border-radius:20px;background:#a34e40;color:#fff;font-size:11px;font-weight:750}
+.socialDesktopBtn{font-size:11px}
+.socialTabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 13px}
+.socialTabs button{flex:1 1 140px;background:#f8f0e3;font-weight:750;min-height:44px}
+.socialTabs button.active{background:linear-gradient(135deg,#80634d,#624937);border-color:#725541;color:#fff8ef}
+.socialTabs button .socialBadge{background:#9d483d}
+.socialNotifyBox{border:1px solid #e2d1b7;border-radius:16px;background:linear-gradient(145deg,#fff9eb,#fffbf3);padding:14px;margin:0 0 14px}
+.socialNotifyBox h3{font:750 16px "STSong","Songti SC",serif;color:#654a36;margin:0 0 7px}
+.socialNotifyBox p{font-size:12px;line-height:1.8;color:#867360;margin:4px 0}
+.socialNoticeItems{display:grid;gap:8px;margin-top:9px}
+.socialNoticeItem{display:flex;gap:10px;justify-content:space-between;width:100%;border:1px solid #e6d9c5;border-radius:10px;background:#fffdf8;padding:9px 10px;color:#634e3a;text-align:left;cursor:pointer}
+.socialNoticeItem span{font-size:12px;line-height:1.6;overflow-wrap:anywhere}
+.socialNoticeItem small{flex:0 0 auto;color:#968575;font-size:10px;white-space:nowrap}
+.socialNoticeEmpty{font-size:12px;color:#9b8c78}
+.socialChatArea{background:linear-gradient(160deg,#fbf5eb,#fffdf8);border:1px solid #e6d5bc;border-radius:18px;padding:14px}
+.socialChatHead{display:flex;align-items:center;gap:9px;justify-content:space-between;flex-wrap:wrap;margin:0 0 12px}
+.socialChatHead strong{font-family:"STSong","Songti SC",serif;color:#694c37;font-size:17px}
+.socialChatHead small{color:#8b7864;font-size:11px}
+.socialChatStream{display:flex;flex-direction:column;gap:9px;min-height:230px;max-height:420px;overflow-y:auto;padding:12px;border:1px solid #e8dcca;border-radius:14px;background:#fffcf6;scroll-behavior:smooth}
+.socialChatBubble{max-width:86%;align-self:flex-start;background:#f3e9d9;border:1px solid #e9d8c1;border-radius:14px 14px 14px 4px;padding:10px 12px;overflow-wrap:anywhere}
+.socialChatBubble.mine{align-self:flex-end;background:#e5eedc;border-color:#ccd7bb;border-radius:14px 14px 4px 14px}
+.socialChatMeta{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:5px;color:#88705d;font-size:10px}
+.socialChatMeta strong{color:#75533b;font-size:11px}
+.socialChatMessage{font-size:13px;color:#4c3d31;line-height:1.65;white-space:pre-wrap}
+.socialChatDelete{margin-top:5px;padding:2px 7px;border:0;background:transparent;color:#968272;font-size:10px}
+.socialChatForm{display:grid;gap:9px;margin-top:12px}
+.socialChatFields{display:grid;grid-template-columns:minmax(135px,175px) minmax(0,1fr);gap:10px}
+.socialChatFields label{display:flex;flex-direction:column;gap:5px;color:#8b7864;font-size:11px}
+.socialChatFields input,.socialChatFields textarea{width:100%;background:#fffefb;color:#4c3b30;border:1px solid #ddcbb2;border-radius:11px;padding:10px 11px;min-height:41px;font:inherit;font-size:13px;resize:vertical}
+.socialChatFields textarea{min-height:61px;max-height:145px;line-height:1.6}
+.socialChatFormFoot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.socialChatFormFoot small{font-size:11px;color:#907b66}
+.socialSend,.socialCommentSubmit{border:1px solid #6d5140;border-radius:11px;background:linear-gradient(135deg,#80634d,#654b3b);color:#fff8ef;font:inherit;font-size:12px;font-weight:800;padding:9px 16px;min-height:40px;cursor:pointer}
+.socialSend:disabled,.socialCommentSubmit:disabled{opacity:.52;cursor:wait}
+.socialStatus{font-size:11px;color:#8d7865;min-height:16px}
+.socialCommentToggle{padding:5px 10px;font-size:11px;border-radius:999px}
+.socialCommentMount{margin-top:12px;border-top:1px solid #eadcc9;padding-top:13px;display:grid;gap:9px}
+.socialThreadTitle{display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:800;color:#684a35}
+.socialThreadList{display:grid;gap:8px}
+.socialCommentRow{padding:10px 11px;background:#faf4e9;border:1px solid #ecdeca;border-radius:12px;overflow-wrap:anywhere}
+.socialCommentRow.mine{background:#f3f7ed;border-color:#d8dfc8}
+.socialCommentTop{display:flex;gap:8px;align-items:center;justify-content:space-between}
+.socialCommentTop strong{font-size:11px;color:#70503c}
+.socialCommentTop time{font-size:10px;color:#9d8977}
+.socialCommentBody{margin:5px 0;color:#554231;font-size:12px;line-height:1.7;white-space:pre-wrap}
+.socialCommentReplyTo{color:#aa7b53;font-size:11px;margin-right:3px}
+.socialCommentActions{display:flex;gap:12px}
+.socialReplyBtn,.socialCommentDelete,.socialReplyCancel{font-size:10px;padding:2px 7px;border-radius:7px}
+.socialCommentComposer{display:grid;gap:7px;margin-top:5px}
+.socialCommentComposer textarea{resize:vertical;min-height:64px;width:100%;border-radius:10px;border:1px solid #dfcdb6;padding:10px;background:#fffefa;color:#554232;font:inherit;font-size:12px;line-height:1.6}
+.socialReplyContext{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:#a07451;font-size:11px;min-height:0}
+.socialCommentFoot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.socialCommentFoot small{font-size:10px;color:#95806d}
+.socialThreadEmpty{padding:14px;text-align:center;color:#aa937e;font-size:11px}
+@media(max-width:650px){
+ .socialChatArea{padding:10px}
+ .socialChatFields{grid-template-columns:1fr}
+ .socialChatStream{max-height:390px}
+ .socialChatBubble{max-width:94%}
+ .socialControls{gap:7px}
+ .socialBell,.socialDesktopBtn{flex:1;font-size:11px;text-align:center}
+ .socialNoticeItem{flex-direction:column;gap:4px}
+}
