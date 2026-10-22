@@ -9,7 +9,7 @@ if(count&&latest){
     if(!iso||Number.isNaN(dt.getTime()))return '暂无其他访问记录';
     return new Intl.DateTimeFormat('zh-CN',{
       timeZone:'Asia/Shanghai',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit',hour12:false
-    }).format(dt)+'（北京时间）';
+    }).format(dt);
   }
   function update(stats){
     if(!stats||!Number.isInteger(stats.uniqueVisitors)||stats.uniqueVisitors<0)throw Error('no verified count');
