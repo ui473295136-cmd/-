@@ -449,7 +449,9 @@
     threadBusy=true;
     try{
       var result=await call('thread',{post_id:openPost});
-      var items=Array.isArray(result.comments)?result.comments:[];
+      var items=Array.isArray(result.comments)?result.comments.slice().sort(function(a,b){
+        return (Date.parse(a.created_at)||0)-(Date.parse(b.created_at)||0);
+      }):[];
       var signature=openPost+':'+items.map(function(x){return x.id}).join('|');
       if(!force&&signature===lastThreadSignature)return;
       var oldCount=Math.max(0,items.length-3);
