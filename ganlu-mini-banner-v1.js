@@ -40,7 +40,12 @@ if(!ad)return;
 const slides=Array.from(ad.querySelectorAll('[data-ad-slide]'));
 const dots=Array.from(ad.querySelectorAll('[data-ad-dot]'));
 if(slides.length<2||dots.length!==slides.length)return;
-let active=0,paused=false;
+let active=0,paused=false,touching=false,swipeStart=null,lastManual=0,adVisible=true;
+const viewport=ad.querySelector('.ganluAdViewport');
+function markManual(){lastManual=Date.now();}
+if('IntersectionObserver' in window){
+  new IntersectionObserver(entries=>{adVisible=entries[0].isIntersecting},{threshold:.35}).observe(ad);
+}
 function display(index){
   active=(index+slides.length)%slides.length;
   slides.forEach((slide,i)=>{
@@ -55,15 +60,44 @@ function display(index){
     dot.setAttribute('aria-pressed',String(shown));
   });
 }
-$('ganluAdPrev').addEventListener('click',()=>display(active-1));
-$('ganluAdNext').addEventListener('click',()=>display(active+1));
-dots.forEach((btn,i)=>btn.addEventListener('click',()=>display(i)));
+function manualDisplay(index){markManual();display(index);}
+$('ganluAdPrev').addEventListener('click',()=>manualDisplay(active-1));
+$('ganluAdNext').addEventListener('click',()=>manualDisplay(active+1));
+dots.forEach((btn,i)=>btn.addEventListener('click',()=>manualDisplay(i)));
+
+// Passive touch listeners preserve normal up/down page scrolling while
+// allowing deliberate horizontal swipes to change the advertisement.
+if(viewport){
+  viewport.addEventListener('touchstart',event=>{
+    if(event.touches.length!==1){swipeStart=null;return;}
+    const p=event.touches[0];
+    swipeStart={x:p.clientX,y:p.clientY};
+    touching=true;
+  },{passive:true});
+  viewport.addEventListener('touchend',event=>{
+    const start=swipeStart;
+    swipeStart=null;
+    touching=false;
+    if(!start||!event.changedTouches.length||event.touches.length)return;
+    const p=event.changedTouches[0];
+    const dx=p.clientX-start.x,dy=p.clientY-start.y;
+    if(Math.abs(dx)>=42&&Math.abs(dx)>Math.abs(dy)*1.25){
+      manualDisplay(active+(dx<0?1:-1));
+    }
+  },{passive:true});
+  viewport.addEventListener('touchcancel',()=>{
+    swipeStart=null;
+    touching=false;
+  },{passive:true});
+}
 ad.addEventListener('mouseenter',()=>{paused=true});
 ad.addEventListener('mouseleave',()=>{paused=false});
 ad.addEventListener('focusin',()=>{paused=true});
 ad.addEventListener('focusout',event=>{if(!ad.contains(event.relatedTarget))paused=false});
 display(0);
 if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-  window.setInterval(()=>{if(!paused&&!document.hidden)display(active+1)},9000);
+  window.setInterval(()=>{
+    if(!paused&&!touching&&adVisible&&!document.hidden&&Date.now()-lastManual>=9000)display(active+1);
+  },9000);
 }
 })();
