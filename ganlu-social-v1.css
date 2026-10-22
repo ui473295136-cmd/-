@@ -119,3 +119,25 @@
  .socialEmojiItem{min-height:37px}
 }
 @media(prefers-reduced-motion:reduce){.socialEmojiItem{transition:none}}
+
+/* Compact wishes wall: latest three posts/replies stay visible;
+   the remaining items can be expanded without changing chat or quoting UI. */
+.boardPosts > .boardPost[hidden],.socialCommentRow[hidden],
+.boardMoreToggle[hidden],.socialThreadMore[hidden]{display:none!important}
+.boardMoreToggle,.socialThreadMore{
+ display:flex;align-items:center;justify-content:center;gap:6px;
+ width:100%;min-height:34px;padding:7px 12px;margin-top:8px;
+ color:#856e58;background:#faf6ee;border:1px solid #eadfcd;
+ border-radius:11px;font-size:11px;font-weight:600;letter-spacing:.015em;
+ cursor:pointer;transition:background .2s,border-color .2s
+}
+.boardMoreToggle:hover,.socialThreadMore:hover{
+ background:#f3eadc;border-color:#deceb8;color:#6f533f
+}
+.boardMoreToggle:focus-visible,.socialThreadMore:focus-visible{
+ outline:2px solid #b39b7c;outline-offset:2px
+}
+.socialThreadMore{margin-top:-2px;background:#fffbf5}
+@media(max-width:650px){
+ .boardMoreToggle,.socialThreadMore{min-height:36px;font-size:11px}
+}
