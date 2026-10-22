@@ -1,0 +1,47 @@
+/* Ganlu mini visitor status + unobtrusive rotating sponsorship banner */
+.ganluVisitorStatus{position:relative;z-index:2;display:flex;flex-direction:column;gap:5px;align-items:flex-end;justify-content:center;max-width:min(300px,37%);margin-top:3px;text-align:right;color:#ffedd2;font-size:11px;line-height:1.65}
+.ganluVisitorPrimary{display:inline-flex;align-items:center;gap:6px;background:rgba(255,252,243,.13);border:1px solid rgba(255,243,221,.25);border-radius:999px;padding:6px 11px;white-space:nowrap;backdrop-filter:blur(5px);font-size:11px;font-weight:650}
+.ganluVisitorPrimary strong{font-size:15px;letter-spacing:.01em;color:#fff6cb;font-variant-numeric:tabular-nums}
+.ganluVisitorDot{width:6px;height:6px;border-radius:50%;background:#d6e4c2;box-shadow:0 0 7px rgba(219,251,199,.45)}
+.ganluVisitorLatest{color:rgba(255,243,227,.72);font-size:10px;max-width:100%;overflow-wrap:anywhere}
+.ganluAdCarousel{position:relative;width:min(100%,660px);margin:12px 0 16px auto;display:flex;align-items:center;gap:10px}
+.ganluAdLabel{writing-mode:vertical-rl;color:#8f806c;font-size:9px;letter-spacing:.11em;text-orientation:mixed;white-space:nowrap;flex:0 0 auto}
+.ganluAdViewport{position:relative;overflow:hidden;width:100%;min-width:0;height:105px;border-radius:14px;border:1px solid rgba(182,151,104,.4);box-shadow:0 7px 23px rgba(75,53,30,.065);background:#e7e0d3}
+.ganluAdSlide{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;gap:15px;padding:14px 20px 14px 23px;opacity:0;visibility:hidden;pointer-events:none;transform:translateX(14px);transition:opacity .48s ease,transform .48s ease,visibility .48s}
+.ganluAdSlide.is-active{opacity:1;visibility:visible;pointer-events:auto;transform:translateX(0)}
+.ganluAdSlide--gold{background:radial-gradient(circle at 80% 30%,rgba(255,251,227,.42),transparent 45%),linear-gradient(110deg,#f8f3e7,#e8dbc4)}
+.ganluAdSlide--sea{background:radial-gradient(circle at 80% 18%,rgba(127,192,206,.24),transparent 45%),linear-gradient(110deg,#1e4256,#396b78)}
+.ganluAdText{position:relative;z-index:2;min-width:0;max-width:470px}
+.ganluAdEyebrow{font-size:9px;letter-spacing:.13em;color:#998362;font-weight:760;margin:0 0 4px}
+.ganluAdSlide--sea .ganluAdEyebrow{color:#c2dfdf}
+.ganluAdText strong{font:750 clamp(15px,2.1vw,21px)/1.25 "STSong","Songti SC","Microsoft YaHei",serif;color:#594839;letter-spacing:.05em;display:block;white-space:nowrap}
+.ganluAdSlide--sea .ganluAdText strong{color:#faf3dc}
+.ganluAdText p{font-size:10px;line-height:1.65;letter-spacing:.03em;color:#806f5e;margin:5px 0 0}
+.ganluAdSlide--sea .ganluAdText p{color:#d9e8e6}
+.ganluAdIllustration{position:relative;flex:0 0 auto;width:104px;height:86px;display:grid;place-items:center;opacity:.86}
+.ganluAdIllustration svg{width:100%;height:100%;display:block}
+.ganluAdControls{display:flex;flex-direction:column;gap:6px;align-items:center;flex:0 0 23px}
+.ganluAdArrow{display:grid;place-items:center;width:23px;height:23px;border:1px solid rgba(132,114,92,.42);background:rgba(255,252,242,.6);border-radius:50%;color:#866d4c;line-height:1;font-size:17px;padding:0;cursor:pointer}
+.ganluAdArrow:hover{background:#fff6e4}
+.ganluAdDots{display:flex;gap:5px;align-items:center;justify-content:center}
+.ganluAdDot{display:block;width:6px;height:6px;min-width:6px;border:0;border-radius:50%;background:#cabcab;padding:0;cursor:pointer}
+.ganluAdDot.is-active{width:15px;border-radius:99px;background:#9d784d}
+.ganluAdMeta{font-size:9px;letter-spacing:.1em;color:#a29581;white-space:nowrap;align-self:flex-end}
+@media(max-width:720px){
+ .mastInner{flex-wrap:wrap}
+ .ganluVisitorStatus{max-width:100%;width:100%;align-items:flex-start;text-align:left;margin-top:1px;gap:2px}
+ .ganluVisitorPrimary{padding:3px 9px;font-size:10px}
+ .ganluVisitorPrimary strong{font-size:12px}
+ .ganluVisitorLatest{font-size:9px}
+ .ganluAdCarousel{gap:5px;margin-top:8px;margin-bottom:12px}
+ .ganluAdViewport{height:91px;border-radius:12px}
+ .ganluAdSlide{padding:12px 12px 12px 15px;gap:8px}
+ .ganluAdIllustration{width:60px;height:69px}
+ .ganluAdText strong{font-size:15px}
+ .ganluAdText p{font-size:9px}
+ .ganluAdControls{flex-basis:19px;gap:9px}
+ .ganluAdArrow{width:19px;height:19px;font-size:14px}
+ .ganluAdLabel{font-size:8px}
+}
+@media(max-width:375px){.ganluAdIllustration{display:none}.ganluAdSlide{padding-right:8px}.ganluAdMeta{display:none}}
+@media(prefers-reduced-motion:reduce){.ganluAdSlide{transition:none;transform:none}}
