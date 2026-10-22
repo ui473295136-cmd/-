@@ -1755,7 +1755,10 @@
    return date.toLocaleString('zh-CN',{timeZone:'Asia/Shanghai',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false});
  }
  function renderBoard(posts){
-   currentPosts=Array.isArray(posts)?posts.slice(0,21):[];
+   currentPosts=Array.isArray(posts)?posts.slice(0,21).sort((a,b)=>{
+     const tb=Date.parse(b.created_at)||0,ta=Date.parse(a.created_at)||0;
+     return tb-ta;
+   }):[];
    if(boardPostsEl.contains(document.activeElement)&&document.activeElement.closest('.socialCommentComposer'))return;
    if(!currentPosts.length){
      boardPostsEl.innerHTML='<div class="boardEmpty">许愿池刚开张，来写下第一份心愿吧。</div>';
