@@ -45,3 +45,26 @@
 }
 @media(max-width:375px){.ganluAdIllustration{display:none}.ganluAdSlide{padding-right:8px}.ganluAdMeta{display:none}}
 @media(prefers-reduced-motion:reduce){.ganluAdSlide{transition:none;transform:none}}
+
+/* Wide desktop: relocate the same banner into the masthead's lower-right blank area.
+   Below 1100px the original inline/mobile layout remains untouched. */
+@media (min-width:1100px){
+ .mastInner{min-height:181px}
+ .ganluAdDesktopSlot{
+  position:absolute;top:79px;right:18px;width:min(46%,545px);height:108px;
+  z-index:2;min-width:0;
+ }
+ .ganluAdDesktopSlot .ganluAdCarousel{
+  width:100%;max-width:none;height:100%;margin:0;gap:8px;
+ }
+ .ganluAdDesktopSlot .ganluAdViewport{height:104px;flex:1}
+ .ganluAdDesktopSlot .ganluAdLabel{color:#f3dfbf;text-shadow:0 1px 2px rgba(35,23,13,.2)}
+ .ganluAdDesktopSlot .ganluAdSlide{padding:11px 15px}
+ .ganluAdDesktopSlot .ganluAdText strong{font-size:clamp(14px,1.52vw,19px);white-space:normal;line-height:1.26}
+ .ganluAdDesktopSlot .ganluAdText p{font-size:10px;line-height:1.4}
+ .ganluAdDesktopSlot .ganluAdIllustration{width:82px;height:78px}
+ .ganluAdDesktopSlot .ganluAdControls{gap:5px}
+ .ganluAdDesktopSlot .ganluAdArrow{border-color:rgba(255,243,221,.6);color:#fff1d9;background:rgba(255,246,226,.14)}
+ .ganluAdDesktopSlot .ganluAdDot{background:rgba(255,236,202,.55)}
+ .ganluAdDesktopSlot .ganluAdDot.is-active{background:#ffe4af}
+}
