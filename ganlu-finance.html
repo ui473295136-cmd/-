@@ -136,8 +136,8 @@
 </section>
 <div class="field"><label for="cabin">② 楼层 · 房型</label><select id="cabin"></select></div>
 <div class="field hide polarBowUpgradeWrap" id="polarBowUpgradeWrap">
-  <label><input id="polarBowUpgrade" type="checkbox">选择3层舷窗原价报名，免费升5层船头海景</label>
-  <small>仅0118、0130适用。此项与普通优惠独立；升舱后实际房号须由产品部确认。</small>
+  <label><input id="polarBowUpgrade" type="checkbox">按原价免费升5层船头海景（0118与立减2000二选一）</label>
+  <small>0118默认3层舷窗每人立减2000，不打折；选中本项则改按原价免费升5层船头，不叠加减2000。0130保持原价免费升舱。实际房号由产品部确认。</small>
 </div>
 <div class="field hide" id="polarAnniversaryWrap">
   <label for="polarAnniversaryOption">船客二十五周年庆 · 专项方案</label>
@@ -524,7 +524,8 @@
     "notes": [
       "常规市场优惠94折，4–7人额外2%，8人且至少4间房额外3%；常规优惠有效期以政策日期为准。",
       "周年庆A：5层非船头海景仅新客户可单独享92折，名额有限、额满即止；不自动叠加老客、多人优惠或邀约减免。",
-      "3层舷窗原价报名，可免费升级5层船头海景房；在报价区勾选专属升舱方案，实际房号与名额以项目组确认为准。",
+      "3层舷窗新政策：按原价立减2,000元/人，不参加任何折扣、老客或多人减免。",
+      "另可选择按3层舷窗原价免费升5层船头海景房；与立减2,000元/人不叠加。实际升舱房号与名额以项目组确认。",
       "周年庆B：已报名4层海景房客户加2500元/人，可升级至5层海景房并享受优先选舱权益。该金额仅为升舱补差价，不重算原合同团款。周年庆A/B二选一，不可同时参加。",
       "仅0118/0130已报名客户邀约亲友政策：按原邀约专项规则另行核算；与周年庆A/B是否可叠加未明确，暂不自动叠加，需项目组确认。",
       "老客户本人及直系亲属原减5000元政策保留；与周年庆A/B、邀约等专项能否同享未明确，不自动叠加。",
@@ -1099,7 +1100,8 @@
    const isLatest5o=anniversaryRoute&&c?.id==='5o'&&anniversaryOption==='new92';
    const isAnniversaryUpgrade=anniversaryRoute&&c?.id==='4o'&&anniversaryOption==='upgrade2500';
    const isPolarBowUpgrade=anniversaryRoute&&c?.id==='3p'&&polarBowUpgrade===true;
-   const policy=(isLatest5o||isAnniversaryUpgrade||isPolarBowUpgrade)?{code:'anniversary',valid:true,label:'周年庆专项 · 名额有限，额满即止'}:policyState(r,today);
+   const isJan18Porthole=r?.id==='b0118'&&c?.id==='3p'&&!isPolarBowUpgrade;
+   const policy=isJan18Porthole?{code:'jan18porthole',valid:true,label:'0118三层舷窗立减2000元/人'}:(isLatest5o||isAnniversaryUpgrade||isPolarBowUpgrade)?{code:'anniversary',valid:true,label:'周年庆专项 · 名额有限，额满即止'}:policyState(r,today);
    const usePolicy=Boolean(r?.hasPolicy); // 优惠金额不因为超出文件有效期而改为原价；仍显示须确认的过期警示。
    const price=priceOverride===null||priceOverride===undefined?c?.price:Number(priceOverride);
    const q={route:r,cabin:c,people:n,customer,stay,deadline:r?.deadline||null,today,policy,price,standard:null,offer:null,status:'manual',statusReason:'',errors,warnings,steps,standardSteps,assumptions,baseRate:1,groupRate:0,groupSaving:0,loyalDeduction:0,postAdd:0,bonusDeduction:0,copyOffer:false,offerValid:false,conditional:false,manualGroup:false,policyName:'',singleSupplement:null,singleTotal:null,thirdPeople:0,regularPeople:n,atlasPromo,gaokaoCount:atlasPromo==='gaokao'?gaokaoCount:null,upgradeTarget:null,atlasChild:false,atlasOptions,anniversaryOption,anniversaryUpgradeOnly:false,atlasDeduction:0,atlasDeductionItems:[]};
@@ -1130,6 +1132,30 @@
    if(anniversaryOption==='new92'&&(!anniversaryRoute||c.id!=='5o'))return fail('周年庆A仅适用于0118／0130的5层海景房，请重新选择舱型。');
    if(anniversaryOption==='upgrade2500'&&(!anniversaryRoute||c.id!=='4o'))return fail('周年庆B仅适用于已报名的4层海景房客户，请重新选择舱型。');
    if(isLatest5o&&customer!=='new')return fail('周年庆A仅限新客户；请切换为新客户，或选择常规报价。');
+   if(isJan18Porthole){
+     if(stay==='triple')return fail('3层舷窗房未提供第三人同舱价格，请选择双人拼住或单人入住。');
+     // 不与常规94折、老客、多人、邀约或三层原价免费升舱权益叠加。
+     const saving=2000*n;
+     const soloAdd=stay==='single'?price*.7*n:0;
+     const amount=price*n-saving+soloAdd;
+     if(!Number.isFinite(amount)||amount<=0)return fail('价格计算异常，请核对人数及舱型原价。');
+     q.rooms=stay==='single'?n:Math.ceil(n/2);
+     q.policyName='0118 3层舷窗原价立减2,000元/人 · 不叠加折扣';
+     q.baseRate=1;q.bonusDeduction=saving;q.postAdd=soloAdd;
+     q.singleSupplement=stay==='single'?soloAdd:null;
+     q.singleTotal=stay==='single'?amount:null;
+     q.rawOffer=amount;q.offer=Math.round(amount);
+     q.status='ready';q.statusReason='按0118最新3层舷窗独立减免政策计算';
+     q.copyOffer=true;q.offerValid=true;
+     q.steps.push('基础原价：'+money(price)+'/人 × '+n+'人 = '+money(q.standard));
+     q.steps.push('0118三层舷窗独立优惠：减 ¥2,000/人 × '+n+'人 = −'+money(saving));
+     if(soloAdd)q.steps.push('单人入住单房差：'+money(price)+' × 70% × '+n+'人 = +'+money(soloAdd));
+     q.steps.push('本次报价合计：'+money(q.offer));
+     q.assumptions.push('0118三层舷窗按原价直接减2,000元/人；不再叠加常规折扣、老客优惠、多人优惠或免费升5层船头权益。');
+     q.assumptions.push('如需选择原价免费升至5层船头海景房，请切换到免费升舱方案，二选一。');
+     if(soloAdd)q.warnings.push('单人入住另按现有文件规定计70%单房差，此金额不是额外折扣。');
+     return q;
+   }
    if(isAnniversaryUpgrade){
      q.anniversaryUpgradeOnly=true;
      q.upgradeTarget='5层海景房（优先选舱）';
@@ -1465,7 +1491,7 @@
    const offDay=P.weekendCountdown(today);
    $('palaceDays').textContent=offDay.badge;
    $('palaceCountdown').textContent=offDay.title;
-   $('deadline').textContent=q.policy.code==='anniversary'?'周年庆名额有限 · 额满即止（未注明截止日）':q.policy.code==='latest_unconfirmed'?'专项优惠截止日期待确认':P.dateCN(r.deadline)+'（含当日）';
+   $('deadline').textContent=q.policy.code==='jan18porthole'?'三层舷窗立减2000元/人 · 截止日未注明':q.policy.code==='anniversary'?'周年庆名额有限 · 额满即止（未注明截止日）':q.policy.code==='latest_unconfirmed'?'专项优惠截止日期待确认':P.dateCN(r.deadline)+'（含当日）';
    const flag=$('policyFlag');flag.textContent=q.policy.label;flag.classList.toggle('valid',q.policy.valid);flag.classList.toggle('invalid',!q.policy.valid);
    const cabinSummary=q.anniversaryUpgradeOnly?`${P.nameCabin(c)} → ${q.upgradeTarget}`:q.upgradeTarget?`${P.nameCabin(c)} · 免费升舱至${q.upgradeTarget}`:P.nameCabin(c);
    const staySummary=r.id==='c0708'&&q.stay==='triple'?'三/四人同舱':P.stayName(q.stay);
@@ -1481,9 +1507,9 @@
    $('offerLabel').textContent=q.anniversaryUpgradeOnly?'升舱补差价':'优惠价格';
    $('discountTotal').textContent=ready?P.money(q.offer):'金额待确认';
    $('discountAvg').textContent=ready?`平均约 ${P.money(q.offer/q.people)}/人`:'补齐价格依据后自动出价';
-   $('offerBadge').textContent=!ready?'待核价':q.policy.code==='anniversary'?'周年庆活动 · 名额有限':q.policy.code==='expired'?'政策过期 · 待确认':q.policy.code==='upcoming'?'未生效 · 试算':q.policy.code==='unknown'?'日期待确认':q.policy.code==='latest_unconfirmed'?'专项优惠 · 日期待确认':q.route.hasPolicy?'优惠试算':'常规价格';
+   $('offerBadge').textContent=!ready?'待核价':q.policy.code==='jan18porthole'?'0118舷窗专享 · 原价立减':q.policy.code==='anniversary'?'周年庆活动 · 名额有限':q.policy.code==='expired'?'政策过期 · 待确认':q.policy.code==='upcoming'?'未生效 · 试算':q.policy.code==='unknown'?'日期待确认':q.policy.code==='latest_unconfirmed'?'专项优惠 · 日期待确认':q.route.hasPolicy?'优惠试算':'常规价格';
    $('offerBadge').classList.toggle('wait',!ready||!q.policy.valid);
-   $('offerCaveat').textContent=ready?(q.anniversaryUpgradeOnly?'仅升舱补差价，不含原合同团款':q.policy.code==='anniversary'?'周年庆活动名额有限，额满即止':q.policy.code==='expired'?'按原优惠试算，报名价须确认':q.policyName):'请查看下方说明';
+   $('offerCaveat').textContent=ready?(q.anniversaryUpgradeOnly?'仅升舱补差价，不含原合同团款':q.policy.code==='jan18porthole'?'原价减2000/人 · 不叠加折扣':q.policy.code==='anniversary'?'周年庆活动名额有限，额满即止':q.policy.code==='expired'?'按原优惠试算，报名价须确认':q.policyName):'请查看下方说明';
    $('miniPrice').textContent=ready?P.money(q.offer):'金额待确认';
    $('groupBanner').classList.add('hidden');
    $('explanation').innerHTML=(q.steps.length?q.steps:[q.statusReason||'请选择报价条件。']).map((s,i)=>`<div class="${ready&&i===q.steps.length-1?'sum':''}">${esc(s)}</div>`).join('');
