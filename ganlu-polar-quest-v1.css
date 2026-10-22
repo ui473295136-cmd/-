@@ -360,3 +360,13 @@
  .polarAtlasPreview.show .polarAtlasPreviewArtwork,
  .polarAtlasPreviewArtwork svg{animation:none!important;transform:none!important}
 }
+
+/* Quiet real-completion count beside the academy heading. */
+.polarQuestTitleRow{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.polarQuestTitleRow h2{flex:0 1 auto}
+.polarCompleteCount{font-size:11px;line-height:1.5;font-weight:400;letter-spacing:.015em;color:rgba(200,221,224,.71);white-space:nowrap}
+.polarCompleteCount b{font-weight:650;color:rgba(229,236,222,.91);font-variant-numeric:tabular-nums}
+@media(max-width:600px){
+ .polarQuestTitleRow{gap:5px 10px}
+ .polarCompleteCount{font-size:10px}
+}
