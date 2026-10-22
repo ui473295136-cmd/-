@@ -68,3 +68,9 @@
  .ganluAdDesktopSlot .ganluAdDot{background:rgba(255,236,202,.55)}
  .ganluAdDesktopSlot .ganluAdDot.is-active{background:#ffe4af}
 }
+
+/* Match the marked upper-right banner area on wide computer screens.
+   Mobile and small screens retain the exact existing banner placement. */
+@media (min-width:1250px){
+ .ganluAdDesktopSlot{right:-25px;width:min(49%,560px)}
+}
