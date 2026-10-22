@@ -1255,7 +1255,7 @@
      q.steps.push('基础原价：'+money(price)+'/人 × '+n+'人 = '+money(q.standard));
      if(shipOnly)q.steps.push('单船票折前减免：−'+money(shipDeductionPerPerson)+'/人 × '+n+'人；船票计价基数 '+money(shipUnitPrice)+'/人。');
      q.steps.push('0118三层舷窗独立优惠：减 ¥2,000/人 × '+n+'人 = −'+money(saving));
-     if(soloAdd)q.steps.push('单人入住单房差：'+money(price)+' × 70% × '+n+'人 = +'+money(soloAdd));
+     if(soloAdd)q.steps.push('单人入住单房差：'+money(shipUnitPrice)+' × 70% × '+n+'人 = +'+money(soloAdd));
      q.steps.push('本次报价合计：'+money(q.offer));
      q.assumptions.push('0118三层舷窗按原价直接减2,000元/人；不再叠加常规折扣、老客优惠、多人优惠或免费升5层船头权益。');
      q.assumptions.push('如需选择原价免费升至5层船头海景房，请切换到免费升舱方案，二选一。');
