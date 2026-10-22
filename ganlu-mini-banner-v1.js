@@ -37,6 +37,25 @@ if(count&&latest){
 }
 const ad=$('ganluAdCarousel');
 if(!ad)return;
+
+// Keep a single carousel instance; change only its DOM location on wide desktops.
+// Returning it to the original marker preserves the unchanged phone/tablet layout.
+const desktopSlot=$('ganluAdDesktopSlot');
+if(desktopSlot&&window.matchMedia){
+  const origin=document.createComment('ganlu ad carousel original position');
+  ad.parentNode.insertBefore(origin,ad);
+  const desktopMedia=window.matchMedia('(min-width:1100px)');
+  const syncLocation=()=>{
+    if(desktopMedia.matches){
+      if(ad.parentNode!==desktopSlot)desktopSlot.appendChild(ad);
+    }else if(origin.parentNode&&ad.parentNode!==origin.parentNode){
+      origin.parentNode.insertBefore(ad,origin.nextSibling);
+    }
+  };
+  syncLocation();
+  if(desktopMedia.addEventListener)desktopMedia.addEventListener('change',syncLocation);
+  else if(desktopMedia.addListener)desktopMedia.addListener(syncLocation);
+}
 const slides=Array.from(ad.querySelectorAll('[data-ad-slide]'));
 const dots=Array.from(ad.querySelectorAll('[data-ad-dot]'));
 if(slides.length<2||dots.length!==slides.length)return;
