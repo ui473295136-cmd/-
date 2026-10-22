@@ -108,6 +108,26 @@
 .voyageCabinPrices summary{cursor:pointer;font-size:11px;font-weight:700;color:#4e7a62}
 .voyageCabinPrices #priceList{padding-top:8px}
 @media(max-width:650px){.voyagePolicyCard{padding:10px}.voyagePolicyPreview p{font-size:11px}}
+
+/* Collapsed ship-only price deduction selector: no footprint unless selected. */
+.shipOnlyField{margin-top:10px}
+.shipOnlyToggle{display:flex;align-items:center;gap:10px;padding:11px 12px;border:1px solid #ddcbae;border-radius:13px;background:#fbf5e9;cursor:pointer;color:#624d3c}
+.shipOnlyToggle input{width:18px;height:18px;accent-color:#80634d;flex:none}
+.shipOnlyToggleText{display:flex;flex:1;min-width:0;flex-direction:column;gap:1px}
+.shipOnlyToggleText strong{font-size:13px}
+.shipOnlyToggleText small{font-size:10px;color:#8d7a68;line-height:1.4}
+.shipOnlyToggleAmount{white-space:nowrap;font-size:12px;font-weight:750;color:#806544}
+.shipOnlyField:has(#shipOnlyEnabled:checked) .shipOnlyToggle{background:#f0f4ed;border-color:#b5c7b2}
+.shipOnlyDetails[hidden]{display:none!important}
+.shipOnlyDetails{margin-top:7px;padding:11px;border:1px solid #e6d8c6;border-radius:13px;background:#fffdf8}
+.shipOnlyChoices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.shipOnlyChoices label{display:flex;align-items:center;gap:5px;padding:7px 8px;border-radius:8px;border:1px solid #eadfcf;background:#fff;color:#655341;font-size:11px;min-width:0;cursor:pointer}
+.shipOnlyChoices input{accent-color:#796049;width:15px;height:15px;flex:none}
+.shipOnlyChoices strong{margin-left:auto;color:#7d6043;white-space:nowrap;font-size:10px}
+.shipOnlySummary{display:flex;gap:6px;justify-content:space-between;flex-wrap:wrap;font-size:11px;color:#786554;margin:10px 0 6px}
+.shipOnlySummary strong{color:#557355}
+.shipOnlyNote{display:block;color:#91806e;font-size:10px;line-height:1.6}
+@media(max-width:400px){.shipOnlyChoices{grid-template-columns:1fr}}
 </style><link rel="stylesheet" href="./ganlu-policy-desk-v9.css?v=20261021-v11-layout"><link rel="stylesheet" href="./ganlu-social-v1.css?v=20261021-emoji1"><link rel="stylesheet" href="./ganlu-edicts-v8.css?v=20261021-v8c"><link rel="stylesheet" href="./ganlu-polar-quest-v1.css?v=20261021-medalspin3"><link rel="stylesheet" href="./ganlu-mini-banner-v1.css?v=20261022-desktop-position2"></head><body>
 <header class="mast"><div class="petals" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <svg class="roofArt" viewBox="0 0 400 220" aria-hidden="true"><g fill="none" stroke="#e7d2ad" stroke-linecap="round" stroke-linejoin="round"><path d="M26 128 Q122 120 193 70 Q253 115 369 115" stroke-width="5"/><path d="M42 142 Q125 132 193 88 Q251 127 354 127" stroke-width="2"/><path d="M76 143 L76 220 M326 133 L326 220 M111 137 L111 220 M291 134 L291 220" stroke-width="6"/><path d="M74 164 H329 M99 183 H302 M154 165 V220 M247 166 V220" stroke-width="2"/><path d="M20 132 Q47 140 66 130 M351 125 Q373 135 392 125" stroke-width="2"/><path d="M164 86 Q193 40 218 82 M165 85 Q195 69 218 83" stroke-width="3"/></g><g fill="#e1c69d" opacity=".18"><path d="M55 141 L195 81 L350 135 L350 220 L55 220Z"/></g></svg>
@@ -183,6 +203,25 @@
   <label><input type="checkbox" id="ponantSelfInsurance"> 符合条件的境外出发人员保险自理：减 ¥595 / 人</label>
   <small>同舱第3位旅客按原价50%，不自动套用折扣和自理减免；具体服务安排须确认。</small>
 </details></div>
+<div class="field hide shipOnlyField" id="shipOnlyField">
+ <label class="shipOnlyToggle" for="shipOnlyEnabled">
+  <input type="checkbox" id="shipOnlyEnabled">
+  <span class="shipOnlyToggleText"><strong>单船票减免</strong><small>不跟团？勾选后展开可减项目</small></span>
+  <span class="shipOnlyToggleAmount" id="shipOnlyToggleAmount">−¥22,350/人</span>
+ </label>
+ <div class="shipOnlyDetails" id="shipOnlyDetails" hidden>
+  <div class="shipOnlyChoices">
+   <label><input type="checkbox" data-ship-item="flight" checked>机票 <strong>−¥12,000</strong></label>
+   <label><input type="checkbox" data-ship-item="santiagoPickup" checked>圣地亚哥接待 <strong>−¥2,100</strong></label>
+   <label><input type="checkbox" data-ship-item="santiagoHotel" checked>圣地亚哥酒店2晚 <strong>−¥2,100</strong></label>
+   <label><input type="checkbox" data-ship-item="buenosPickup" checked>布宜接待 <strong>−¥3,500</strong></label>
+   <label><input type="checkbox" data-ship-item="buenosHotel" checked>布宜酒店2晚 <strong>−¥2,100</strong></label>
+   <label><input type="checkbox" data-ship-item="insurance" checked>保险 <strong>−¥550</strong></label>
+  </div>
+  <div class="shipOnlySummary"><span>折前合计减免 <strong id="shipOnlySum">¥22,350/人</strong></span><span>先减费用，再按本航次优惠折扣报价</span></div>
+  <small class="shipOnlyNote">只扣除客人不使用的项目；单房差、专项优惠按当前航次规则计算。不含服务须在客户报价中明确告知。</small>
+ </div>
+</div>
 </div><div class="deadline">优惠截止日期：<strong id="deadline">—</strong><small>按北京时间判断</small></div>
 <details class="policyDesk" id="policyDesk" aria-labelledby="policyDeskHeading">
  <summary class="policyDeskSummary" id="policyDeskHeading"><span class="policyDeskSummaryIcon" aria-hidden="true">📋</span><span class="policyDeskSummaryTitle">专项政策速查<strong>连走 · 邀约 · 升舱</strong></span><span class="policyDeskSummaryAction">点击展开 <span aria-hidden="true">⌄</span></span></summary>
@@ -1140,7 +1179,7 @@
  const isFixedTriple=c=>c?.id==='4t';
  const hasThirdBed=(r,c)=>r?.id==='b0202'||(r?.id==='d1110'&&c?.capacity>=3)||(r?.id==='c0708'&&c?.capacity>=3);
  const stayName=s=>({double:'双人拼住',single:'每人单独住一间',triple:'三人同舱'}[s]||s);
- function plan(r,c,n,customer='new',stay='double',priceOverride=null,today=bjToday(),atlasPromo='earlybird',gaokaoCount=1,atlasOptions={},ponantLandSingle=true,polarBowUpgrade=false,ponantExtras={},anniversaryOption='none'){
+ function plan(r,c,n,customer='new',stay='double',priceOverride=null,today=bjToday(),atlasPromo='earlybird',gaokaoCount=1,atlasOptions={},ponantLandSingle=true,polarBowUpgrade=false,ponantExtras={},anniversaryOption='none',shipOnlyOptions={}){
    const errors=[],warnings=[],steps=[],standardSteps=[],assumptions=[];
    const anniversaryRoute=['b0118','b0130'].includes(r?.id);
    const isLatest5o=anniversaryRoute&&c?.id==='5o'&&anniversaryOption==='new92';
@@ -1150,7 +1189,7 @@
    const policy=isJan18Porthole?{code:'jan18porthole',valid:true,label:'0118三层舷窗立减2000元/人'}:(isLatest5o||isAnniversaryUpgrade||isPolarBowUpgrade)?{code:'anniversary',valid:true,label:'周年庆专项 · 名额有限，额满即止'}:policyState(r,today);
    const usePolicy=Boolean(r?.hasPolicy); // 优惠金额不因为超出文件有效期而改为原价；仍显示须确认的过期警示。
    const price=priceOverride===null||priceOverride===undefined?c?.price:Number(priceOverride);
-   const q={route:r,cabin:c,people:n,customer,stay,deadline:r?.deadline||null,today,policy,price,standard:null,offer:null,status:'manual',statusReason:'',errors,warnings,steps,standardSteps,assumptions,baseRate:1,groupRate:0,groupSaving:0,loyalDeduction:0,postAdd:0,bonusDeduction:0,copyOffer:false,offerValid:false,conditional:false,manualGroup:false,policyName:'',singleSupplement:null,singleTotal:null,thirdPeople:0,regularPeople:n,atlasPromo,gaokaoCount:atlasPromo==='gaokao'?gaokaoCount:null,upgradeTarget:null,atlasChild:false,atlasOptions,anniversaryOption,anniversaryUpgradeOnly:false,atlasDeduction:0,atlasDeductionItems:[]};
+   const q={route:r,cabin:c,people:n,customer,stay,deadline:r?.deadline||null,today,policy,price,standard:null,offer:null,status:'manual',statusReason:'',errors,warnings,steps,standardSteps,assumptions,baseRate:1,groupRate:0,groupSaving:0,loyalDeduction:0,postAdd:0,bonusDeduction:0,copyOffer:false,offerValid:false,conditional:false,manualGroup:false,policyName:'',singleSupplement:null,singleTotal:null,thirdPeople:0,regularPeople:n,atlasPromo,gaokaoCount:atlasPromo==='gaokao'?gaokaoCount:null,upgradeTarget:null,atlasChild:false,atlasOptions,anniversaryOption,anniversaryUpgradeOnly:false,atlasDeduction:0,atlasDeductionItems:[],shipOnly:false,shipDeductionPerPerson:0,shipDeductionItems:[]};
    const fail=s=>{errors.push(s);q.statusReason=errors.join('；');return q};
    if(!r||!c||!r.cabins?.some(x=>x.id===c.id))return fail('请选择有效的航次和舱型。');
    if(!Number.isInteger(n)||n<1||n>100)return fail('请输入1—100之间的整数人数。');
@@ -1164,6 +1203,26 @@
    const ponantSelfFlight=ponant&&ponantExtras.selfFlight===true;
    const ponantSelfInsurance=ponant&&ponantExtras.selfInsurance===true;
    const haishen=['a1122','a1204','b0118','b0130','c0719'].includes(r.id);
+   // The 22,350 RMB removal table covers flights and land services in
+   // Santiago/Buenos Aires for the four Antarctica fly-and-cruise packages.
+   // Do not apply that table to Arctic, Atlas, Silversea or Ponant routes.
+   const shipEligible=['a1122','a1204','b0118','b0130'].includes(r.id);
+   const shipFeeTable=[
+     {id:'flight',label:'机票',amount:12000},
+     {id:'santiagoPickup',label:'圣地亚哥接待',amount:2100},
+     {id:'santiagoHotel',label:'圣地亚哥酒店2晚',amount:2100},
+     {id:'buenosPickup',label:'布宜接待',amount:3500},
+     {id:'buenosHotel',label:'布宜酒店2晚',amount:2100},
+     {id:'insurance',label:'保险',amount:550}
+   ];
+   const shipOnly=shipOnlyOptions?.enabled===true;
+   if(shipOnly&&!shipEligible)return fail('该航次尚无对应的单船票减免政策，不能直接套用南极飞船减免表。');
+   const shipSelected=shipOnly?shipFeeTable.filter(item=>shipOnlyOptions.items?.[item.id]===true):[];
+   if(shipOnly&&!shipSelected.length)return fail('请至少勾选一项实际不使用的服务，再计算单船票报价。');
+   const shipDeductionPerPerson=shipSelected.reduce((t,item)=>t+item.amount,0);
+   const shipUnitPrice=price-shipDeductionPerPerson;
+   if(shipUnitPrice<=0)return fail('单船票减免超过舱型原价，请核对。');
+   Object.assign(q,{shipOnly,shipDeductionPerPerson,shipDeductionItems:shipSelected,shipUnitPrice});
    const atlasUpgrades={upgrade1:{source:'5f',target:'6b',label:'5层法式阳台房免费升级至6层阳台房'},upgrade2:{source:'6db',target:'5ts',label:'6层豪华阳台房免费升级至5层旅行家套房（限2间）'},upgrade3:{source:'6ts',target:'6ns',label:'6层旅行家套房免费升级至6层航海家套房（限2间）'}};
    if(fixedTriple)stay='triple';q.stay=stay;
    if(atlas&&!['earlybird','upgrade1','upgrade2','upgrade3','adult_child','gaokao'].includes(atlasPromo))return fail('请选择有效的Atlas优惠方案。');
@@ -1182,8 +1241,8 @@
      if(stay==='triple')return fail('3层舷窗房未提供第三人同舱价格，请选择双人拼住或单人入住。');
      // 不与常规94折、老客、多人、邀约或三层原价免费升舱权益叠加。
      const saving=2000*n;
-     const soloAdd=stay==='single'?price*.7*n:0;
-     const amount=price*n-saving+soloAdd;
+     const soloAdd=stay==='single'?shipUnitPrice*.7*n:0;
+     const amount=shipUnitPrice*n-saving+soloAdd;
      if(!Number.isFinite(amount)||amount<=0)return fail('价格计算异常，请核对人数及舱型原价。');
      q.rooms=stay==='single'?n:Math.ceil(n/2);
      q.policyName='0118 3层舷窗原价立减2,000元/人 · 不叠加折扣';
@@ -1194,6 +1253,7 @@
      q.status='ready';q.statusReason='按0118最新3层舷窗独立减免政策计算';
      q.copyOffer=true;q.offerValid=true;
      q.steps.push('基础原价：'+money(price)+'/人 × '+n+'人 = '+money(q.standard));
+     if(shipOnly)q.steps.push('单船票折前减免：−'+money(shipDeductionPerPerson)+'/人 × '+n+'人；船票计价基数 '+money(shipUnitPrice)+'/人。');
      q.steps.push('0118三层舷窗独立优惠：减 ¥2,000/人 × '+n+'人 = −'+money(saving));
      if(soloAdd)q.steps.push('单人入住单房差：'+money(price)+' × 70% × '+n+'人 = +'+money(soloAdd));
      q.steps.push('本次报价合计：'+money(q.offer));
@@ -1203,6 +1263,7 @@
      return q;
    }
    if(isAnniversaryUpgrade){
+     if(shipOnly)return fail('已报名升舱方案仅计算补差价，不能再叠加单船票减免。');
      q.anniversaryUpgradeOnly=true;
      q.upgradeTarget='5层海景房（优先选舱）';
      q.standardSteps.push('此处为4层海景房挂牌价参考，不代表客户已报名合同金额；原合同价不重算。');
@@ -1249,10 +1310,10 @@
    const rooms=stay==='single'?n:stay==='triple'?(atlas?Math.ceil(n/(c.capacity||3)):Math.ceil(n/3)):Math.ceil(n/2);
    q.rooms=rooms;
    const thirdRatio=(ponant||atlas)?.5:.6;
-   const regularBase=price*q.regularPeople;
+   const regularBase=shipUnitPrice*q.regularPeople;
    const ponantFlightSaving=ponantSelfFlight?12000*q.regularPeople:0;
    const ponantDiscountBase=regularBase-ponantFlightSaving;
-   const thirdCharge=price*q.thirdPeople*thirdRatio;
+   const thirdCharge=shipUnitPrice*q.thirdPeople*thirdRatio;
    let ratePercent=100,name=usePolicy?'按文件优惠条款试算':'暂无明确优惠 · 常规价格',postAdd=0;
    let allowBenefits=usePolicy;
    if(usePolicy){
@@ -1292,8 +1353,8 @@
    if(stay==='single'){
      const extraRate=haishen?.7:(ponant||silversea||atlas)?.5:null;
      if(extraRate===null)return fail('文件未给出该航次的单房差金额。');
-     q.singleSupplement=price*extraRate*n;
-     q.singleTotal=q.standard+q.singleSupplement;
+     q.singleSupplement=shipUnitPrice*extraRate*n;
+     q.singleTotal=shipUnitPrice*n+q.singleSupplement;
      postAdd=q.singleSupplement;
      if(atlas){
        ratePercent=100;allowBenefits=false;name='常规单人入住 · 原价×150%';
@@ -1305,7 +1366,7 @@
        warnings.push('文件未明确单房差与优惠的叠加口径，本次按可确定的常规独住价报价。');
      }
    }
-   if(haishen&&isLatest5o&&stay==='single')q.singleTotal=price*n*.92+q.singleSupplement;
+   if(haishen&&isLatest5o&&stay==='single')q.singleTotal=shipUnitPrice*n*.92+q.singleSupplement;
    let groupRate=0;
    const groupCount=atlas&&(stay==='triple'||atlasPromo==='gaokao')?q.regularPeople:n;
    if(allowBenefits&&!ponant&&groupCount>=4){
@@ -1349,11 +1410,16 @@
      if(ponantSelfInsurance)name+=' · 保险自理';
      if(q.thirdPeople&&(ponantSelfFlight||ponantVisa!=='included'||ponantSelfInsurance))warnings.push('第3位旅客固定为原价50%，自理费用减免仅按正常价旅客计算，具体服务安排需确认。');
    }
+   if(shipOnly)name+=' · 单船票（服务费折前扣除）';
    const raw=discounted-groupSaving-loyal-bonus+thirdCharge+postAdd-atlasDeduction+ponantAdjustment;
    if(!Number.isFinite(raw)||raw<0)return fail('计算金额异常，请核对原价与现金减免。');
    Object.assign(q,{baseRate:ratePercent/100,policyName:name,groupRate,groupSaving,loyalDeduction:loyal,postAdd,bonusDeduction:bonus,thirdCharge,discounted,atlasDeduction,atlasDeductionItems,ponantFlightSaving,ponantAdjustment,rawOffer:raw,offer:Math.round(raw),status:'ready',statusReason:'金额已计算',copyOffer:true,offerValid:true});
    if(customer==='old'&&loyal)assumptions.push(r.id==='c0719'?'老客减免按所有正常价旅客均为船客老客户本人计算。':'老客减免按所有正常价旅客均符合本人或直系亲属资格计算。');
    steps.push(`基础原价：${money(price)}/人 × ${n}人 = ${money(q.standard)}`);
+   if(shipOnly){
+     steps.push(`单船票不含项目：${shipSelected.map(x=>x.label).join('、')}。`);
+     steps.push(`折前减免：${money(shipDeductionPerPerson)}/人 × ${n}人 = −${money(shipDeductionPerPerson*n)}；每人折前基数 ${money(shipUnitPrice)}，此后再按当前政策享折扣。`);
+   }
    if(q.thirdPeople){
      steps.push(`正常价旅客：${q.regularPeople}人 × ${money(price)} = ${money(regularBase)}`);
      steps.push(atlas?`同舱第3/4人：${q.thirdPeople}人 × ${money(price)} × 50% = ${money(thirdCharge)}（按全款50%计价）`:`同舱第三人：${q.thirdPeople}人 × ${money(price)} × ${thirdRatio*100}% = ${money(thirdCharge)}（不再打折）`);
@@ -1373,7 +1439,7 @@
    }
    if(loyal)steps.push(`老客户减免：${money(r.loyal)}/人 × ${atlas&&stay==='triple'?n:q.regularPeople}人 = −${money(loyal)}`);
    if(bonus)steps.push(`3月3日前报名红包：¥888 × ${q.regularPeople}人 = −${money(bonus)}`);
-   if(postAdd)steps.push(`全程单房差：${money(price)} × ${haishen?70:50}% × ${n}人 = +${money(postAdd)}`);
+   if(postAdd)steps.push(`全程单房差：${money(shipUnitPrice)} × ${haishen?70:50}% × ${n}人 = +${money(postAdd)}`);
    if(ponantVisaAdjustment)steps.push(`签证方案：${ponantVisa==='ownUS'?'已有美签减签证费':'代办美签'} ${ponantVisaAdjustment<0?'−':'+'}${money(Math.abs(ponantVisaAdjustment))}`);
    if(ponantInsuranceAdjustment)steps.push(`保险自理：−${money(-ponantInsuranceAdjustment)}`);
    for(const item of atlasDeductionItems)steps.push(`${item.label}：−${money(item.perPerson)}/人 × ${n}人 = −${money(item.perPerson*n)}`);
@@ -1401,6 +1467,11 @@
      `舱型：${nameCabin(c)}`,
      `人数：${n}人`,
      `原价：${amount(q.price)}元/人`,
+     ...(q.shipOnly?[
+       '报价类型：单船票（不含所选接待服务）',
+       '折前减免：'+amount(q.shipDeductionPerPerson)+'元/人',
+       '不含项目：'+q.shipDeductionItems.map(x=>x.label).join('、')
+     ]:[]),
      `优惠方案：${q.policyName||'暂无优惠方案'}`,
      '',
      `最终价格：${amount(q.offer)}元`
@@ -1443,6 +1514,21 @@
  function persist(key,value){try{localStorage.setItem(key,JSON.stringify(value));return true}catch{return false}}
  function toast(s){$('toast').textContent=s;$('toast').classList.remove('hide');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.add('hide'),3000)}
  function setChoice(id,key,value){for(const b of $(id).querySelectorAll('button')){const selected=b.dataset[key]===value;b.classList.toggle('selected',selected);b.setAttribute('aria-pressed',String(selected))}}
+ const shipRouteIds=['a1122','a1204','b0118','b0130'];
+ const shipFeeMap={flight:12000,santiagoPickup:2100,santiagoHotel:2100,buenosPickup:3500,buenosHotel:2100,insurance:550};
+ function shipSelectedItems(){return Object.fromEntries(Array.from(document.querySelectorAll('[data-ship-item]')).map(el=>[el.dataset.shipItem,el.checked]));}
+ function getShipOnlyOptions(){return {enabled:$('shipOnlyEnabled').checked,items:shipSelectedItems()};}
+ function updateShipOnlyUI(){
+   const upgradeOnly=$('polarAnniversaryOption').value==='upgrade2500';
+   const eligible=shipRouteIds.includes(route().id)&&!upgradeOnly;
+   $('shipOnlyField').classList.toggle('hide',!eligible);
+   if(!eligible)$('shipOnlyEnabled').checked=false;
+   const chosen=shipSelectedItems();
+   const perPerson=Object.entries(shipFeeMap).reduce((t,[id,fee])=>t+(chosen[id]?fee:0),0);
+   $('shipOnlyToggleAmount').textContent='−'+P.money(perPerson)+'/人';
+   $('shipOnlySum').textContent=P.money(perPerson)+'/人';
+   $('shipOnlyDetails').hidden=!eligible||!$('shipOnlyEnabled').checked;
+ }
  function updateStay(){
    const fixed=P.isFixedTriple(cabin());
    $('stayWrap').classList.toggle('hide',fixed);
@@ -1500,6 +1586,8 @@
    const r=route(),previous=$('cabin').value;
    $('polarAnniversaryOption').value='none';
    atlasPromo='earlybird';$('atlasPromo').value='earlybird';
+   $('shipOnlyEnabled').checked=false;
+   document.querySelectorAll('[data-ship-item]').forEach(input=>input.checked=true);
    $('ponantSelfFlight').checked=false;$('ponantVisaType').value='included';$('ponantSelfInsurance').checked=false;
    ['atlasSelfSchengen','atlasSelfGreenland','atlasSelfFlight','atlasSelfInsurance'].forEach(id=>$(id).checked=false);
    $('cabin').innerHTML=r.cabins.slice().sort((a,b)=>(a.deck||99)-(b.deck||99)).map(c=>`<option value="${esc(c.id)}">${esc(P.nameCabin(c))}</option>`).join('');
@@ -1528,10 +1616,11 @@
    today=P.bjToday();
    updateAnniversaryUI();
    updateAtlasPromoUI();
+   updateShipOnlyUI();
    const eligibleBow=['b0118','b0130'].includes(route().id)&&cabin().id==='3p';
    $('polarBowUpgradeWrap').classList.toggle('hide',!eligibleBow);
    if(!eligibleBow)$('polarBowUpgrade').checked=false;
-   const q=P.plan(route(),cabin(),num(),customer,stay,priceOverride(),today,atlasPromo,Number($('gaokaoCount').value||1),getAtlasOptions(),true,$('polarBowUpgrade').checked,{selfFlight:$('ponantSelfFlight').checked,visa:$('ponantVisaType').value,selfInsurance:$('ponantSelfInsurance').checked},$('polarAnniversaryOption').value),r=q.route,c=q.cabin;last=q;
+   const q=P.plan(route(),cabin(),num(),customer,stay,priceOverride(),today,atlasPromo,Number($('gaokaoCount').value||1),getAtlasOptions(),true,$('polarBowUpgrade').checked,{selfFlight:$('ponantSelfFlight').checked,visa:$('ponantVisaType').value,selfInsurance:$('ponantSelfInsurance').checked},$('polarAnniversaryOption').value,getShipOnlyOptions()),r=q.route,c=q.cabin;last=q;
    closeCopy();
    $('today').textContent='北京时间 · '+P.dateCN(today);
    const offDay=P.weekendCountdown(today);
@@ -1541,7 +1630,7 @@
    const flag=$('policyFlag');flag.textContent=q.policy.label;flag.classList.toggle('valid',q.policy.valid);flag.classList.toggle('invalid',!q.policy.valid);
    const cabinSummary=q.anniversaryUpgradeOnly?`${P.nameCabin(c)} → ${q.upgradeTarget}`:q.upgradeTarget?`${P.nameCabin(c)} · 免费升舱至${q.upgradeTarget}`:P.nameCabin(c);
    const staySummary=r.id==='c0708'&&q.stay==='triple'?'三/四人同舱':P.stayName(q.stay);
-   $('routeOverview').innerHTML=`<b>${esc(r.date.replaceAll('-','.'))}</b> ${esc(r.name)}<div class="underRoute">${esc(cabinSummary)} · ${Number.isFinite(q.people)?q.people:'—'}人 · ${customer==='old'?'老客户':'新客户'} · ${esc(staySummary)}</div>`;
+   $('routeOverview').innerHTML=`<b>${esc(r.date.replaceAll('-','.'))}</b> ${esc(r.name)}<div class="underRoute">${esc(cabinSummary)} · ${Number.isFinite(q.people)?q.people:'—'}人 · ${customer==='old'?'老客户':'新客户'} · ${esc(staySummary)}${q.shipOnly?' · 单船票':''}</div>`;
    const ready=q.status==='ready';
    $('palaceStatus').className='palaceStatus '+(ready?'success':'fail');
    $('palaceIcon').textContent=ready?'✦':'✧';$('palaceStatusTitle').textContent=ready?'报价成功':'报价失败';
@@ -1589,6 +1678,8 @@
    $('voyagePolicyDetails').addEventListener('toggle',()=>{$('voyagePolicyDetails').querySelector('.voyagePolicyArrow').textContent=$('voyagePolicyDetails').open?'收起 ↑':'展开全部 '+route().notes.length+' 条 ↓';});
    ['ponantSelfFlight','ponantSelfInsurance'].forEach(id=>$(id).addEventListener('change',render));
    $('ponantVisaType').addEventListener('change',render);
+   $('shipOnlyEnabled').addEventListener('change',render);
+   document.querySelectorAll('[data-ship-item]').forEach(input=>input.addEventListener('change',render));
    $('polarBowUpgrade').addEventListener('change',render);
    $('polarAnniversaryOption').addEventListener('change',render);
    $('atlasPromo').addEventListener('change',onAtlasPromoChange);$('gaokaoCount').addEventListener('input',render);document.querySelectorAll('#atlasDeductionsWrap input[type=checkbox]').forEach(el=>el.addEventListener('change',render));
