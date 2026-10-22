@@ -29,7 +29,7 @@
   tokens.repliesSeen=getStored(REPLIES_SEEN_KEY)||new Date().toISOString();
   setStored(CHAT_SEEN_KEY,tokens.chatSeen);
   setStored(REPLIES_SEEN_KEY,tokens.repliesSeen);
-  var currentTab='posts',openPost='',replyTarget=null;
+  var currentTab='posts',openPost='',replyTarget=null,threadExpanded=false;
   var feedBusy=false,threadBusy=false,sendBusy=false,commentBusy=false;
   var chatSignature='',lastThreadSignature='',feedData={chat:[],notifications:[],mentions:[],counts:{}};
   var firstFeed=true,prevCounts={chat:0,replies:0};
@@ -311,6 +311,7 @@
     markRepliesRead();
     renderNotices(feedData.notifications||[]);
     if(target.postId){
+      window.GanluBoardReveal?.(target.postId);
       var post=document.querySelector('#boardPosts [data-post="'+target.postId+'"]');
       if(post){
         if(openPost!==target.postId)openThread(target.postId);
@@ -432,8 +433,8 @@
       if(!box.querySelector('.socialCommentComposer'))loadThread(true);
     }
   }
-  function commentHtml(c){
-    return '<div class="socialCommentRow '+(c.mine?'mine':'')+'" data-social-comment="'+h(c.id)+'">'
+  function commentHtml(c,collapsed){
+    return '<div class="socialCommentRow '+(c.mine?'mine':'')+'" data-social-comment="'+h(c.id)+'"'+(collapsed?' hidden':'')+'>'
       +'<div class="socialCommentTop"><strong>'+h(c.nickname)+'</strong><time>'+h(readableTime(c.created_at))+'</time></div>'
       +'<p class="socialCommentBody">'+(c.parent_nickname?'<span class="socialCommentReplyTo">回复 @'+h(c.parent_nickname)+'：</span>':'')+h(c.body)+'</p>'
       +'<div class="socialCommentActions"><button type="button" class="socialReplyBtn" data-social-reply="'+h(c.id)+'" data-social-reply-name="'+h(c.nickname)+'">回复</button>'
@@ -451,8 +452,10 @@
       var items=Array.isArray(result.comments)?result.comments:[];
       var signature=openPost+':'+items.map(function(x){return x.id}).join('|');
       if(!force&&signature===lastThreadSignature)return;
+      var oldCount=Math.max(0,items.length-3);
       mount.innerHTML='<div class="socialThreadTitle">本帖评论 · '+Number(result.total||items.length)+' 条</div>'
-        +'<div class="socialThreadList">'+(items.length?items.map(commentHtml).join(''):'<div class="socialThreadEmpty">暂无评论，给这位小主留个言吧。</div>')+'</div>'
+        +'<div class="socialThreadList">'+(items.length?items.map(function(item,index){return commentHtml(item,!threadExpanded&&index<oldCount)}).join(''):'<div class="socialThreadEmpty">暂无评论，给这位小主留个言吧。</div>')+'</div>'
+        +(oldCount?'<button type="button" class="socialThreadMore" data-social-more-comments aria-expanded="'+String(threadExpanded)+'">'+(threadExpanded?'收起较早评论 ↑':'查看较早的 '+oldCount+' 条评论 ↓')+'</button>':'')
         +'<form class="socialCommentComposer" data-social-comment-form="'+h(openPost)+'">'
         +'<div class="socialReplyContext" id="socialReplyContext">'+(replyTarget?'回复 @'+h(replyTarget.nickname)+' <button type="button" class="socialReplyCancel" data-social-cancel-reply>取消</button>':'')+'</div>'
         +'<textarea name="comment" maxlength="240" required placeholder="友善回复这条吐槽，最多240字"></textarea>'
@@ -475,7 +478,7 @@
       var old=document.querySelector('#boardPosts [data-social-thread="'+openPost+'"]');
       if(old)old.hidden=true;
     }
-    openPost=postId;replyTarget=null;lastThreadSignature='';
+    openPost=postId;replyTarget=null;threadExpanded=false;lastThreadSignature='';
     var box=document.querySelector('#boardPosts [data-social-thread="'+postId+'"]');
     if(box){box.hidden=false;box.innerHTML='<div class="socialThreadEmpty">评论加载中……</div>';loadThread(true);}
   }
@@ -555,8 +558,9 @@
     setTab('posts');
     $('socialNoticePanel').hidden=true;
     markRepliesRead();
+    window.GanluBoardReveal?.(postId);
     var post=document.querySelector('#boardPosts [data-post="'+postId+'"]');
-    if(!post){msgText('boardStatus','这条吐槽较早或已撤回，暂无法从当前列表打开。');return;}
+    if(!post){msgText('boardStatus','这条心愿较早或已撤回，暂无法从当前列表打开。');return;}
     openThread(postId);
     post.scrollIntoView({behavior:'smooth',block:'center'});
   });
@@ -604,6 +608,18 @@
     finally{button.disabled=false;}
   });
   $('boardPosts').addEventListener('click',async function(ev){
+    var expand=ev.target.closest('[data-social-more-comments]');
+    if(expand){
+      threadExpanded=!threadExpanded;
+      var thread=expand.closest('.socialCommentMount');
+      if(thread){
+        var rows=Array.from(thread.querySelectorAll('.socialThreadList > .socialCommentRow'));
+        rows.forEach(function(row,index){row.hidden=!threadExpanded&&index<rows.length-3});
+        expand.textContent=threadExpanded?'收起较早评论 ↑':'查看较早的 '+Math.max(0,rows.length-3)+' 条评论 ↓';
+        expand.setAttribute('aria-expanded',String(threadExpanded));
+      }
+      return;
+    }
     var open=ev.target.closest('[data-social-open]');
     if(open){openThread(open.getAttribute('data-social-open'));return;}
     var cancel=ev.target.closest('[data-social-cancel-reply]');
