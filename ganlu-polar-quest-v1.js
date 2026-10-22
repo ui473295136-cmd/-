@@ -4,6 +4,66 @@ const root=document.getElementById('polarQuest');
 if(!root)return;
 const el=id=>document.getElementById(id);
 const STORE='ganlu-polar-quest-v1';
+const COMPLETIONS_API='https://wpfqcztbxxarsrruuuce.supabase.co/functions/v1/ganlu-polar-completions';
+const COMPLETION_BROWSER_ID='ganlu-polar-completion-browser-v1';
+const COMPLETION_RECEIPT='ganlu-polar-completion-registered-v1';
+let completionRequestInFlight=false;
+let completionRegistered=false;
+function browserId(){
+  try{
+    const existing=localStorage.getItem(COMPLETION_BROWSER_ID);
+    if(existing&&/^[0-9a-f-]{36}$/i.test(existing))return existing;
+    if(!crypto.randomUUID)return null;
+    const id=crypto.randomUUID();
+    localStorage.setItem(COMPLETION_BROWSER_ID,id);
+    return localStorage.getItem(COMPLETION_BROWSER_ID)===id?id:null;
+  }catch{return null;}
+}
+function updateCompletionCount(payload){
+  const value=payload&&payload.completed;
+  if(Number.isSafeInteger(value)&&value>=4){
+    const count=el('polarCompleteCountValue');
+    if(count)count.textContent=value.toLocaleString('zh-CN');
+  }
+}
+async function loadCompletionCount(){
+  if(document.hidden)return;
+  try{
+    const result=await fetch(COMPLETIONS_API,{method:'GET',mode:'cors',credentials:'omit',cache:'no-store'});
+    if(!result.ok)throw Error('count unavailable');
+    updateCompletionCount(await result.json());
+  }catch{/* Keep the unobtrusive initial display without blocking the quiz. */}
+}
+async function registerCompletion(){
+  if(state.index<total||completionRequestInFlight)return;
+  const id=browserId();
+  if(!id){await loadCompletionCount();return;}
+  if(completionRegistered||localStorage.getItem(COMPLETION_RECEIPT)===id){
+    completionRegistered=true;
+    await loadCompletionCount();return;
+  }
+  completionRequestInFlight=true;
+  try{
+    const response=await fetch(COMPLETIONS_API,{
+      method:'POST',mode:'cors',credentials:'omit',cache:'no-store',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({visitorId:id,completedQuestions:total})
+    });
+    if(!response.ok)throw Error('registration unavailable');
+    const payload=await response.json();
+    if(payload.registered===true&&Number.isSafeInteger(payload.completed)){
+      updateCompletionCount(payload);
+      localStorage.setItem(COMPLETION_RECEIPT,id);
+      completionRegistered=true;
+    }
+  }catch{/* Retry when the page becomes visible or is opened again. */}
+  finally{completionRequestInFlight=false;}
+}
+function syncCompletion(){
+  if(state.index===total&&!completionRegistered)registerCompletion();
+  else loadCompletionCount();
+}
+
 const chapters=[
   {title:'南美出发不迷路',tag:'航线识图',icon:'🧭',reward:'航线罗盘',desc:'记住出发城市和时差，给客户讲路线不打结。',rank:'极地路线学徒',
    questions:[
@@ -255,6 +315,7 @@ function next(){
  if(!questionCorrect)return;
  clearAdvance();
  state.index=Math.min(total,state.index+1);
+ if(state.index===total)registerCompletion();
  if(state.index%chapterSize!==0)justUnlocked=-1;
  state.pending=state.index%chapterSize===0;
  state.failed=false;state.failedChoice=null;
@@ -305,6 +366,17 @@ document.addEventListener('keydown',event=>{
  if(event.key==='Escape'&&!el('polarAtlasPreview').hidden)closeAtlasPreview();
 });
 render();
-// All answers and content are local; no scores, nicknames or public rankings are transmitted.
+syncCompletion();
+document.addEventListener('visibilitychange',()=>{
+  if(!document.hidden){
+    if(state.index===total&&!completionRegistered)registerCompletion();
+    else loadCompletionCount();
+  }
+});
+// Keep the shared number fresh without affecting answer progress.
+window.setInterval(()=>{
+  if(!document.hidden&&!completionRequestInFlight)loadCompletionCount();
+},120000);
+// Answers and progress remain local. Only an anonymous completion receipt is sent.
 window.GanluPolarQuest={chapters,total,rank,unlockedCount,getProgress:()=>({...state})};
 })();
