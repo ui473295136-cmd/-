@@ -6,7 +6,7 @@
 .ganluVisitorLatest{color:rgba(255,243,227,.72);font-size:10px;max-width:100%;overflow-wrap:anywhere}
 .ganluAdCarousel{position:relative;width:min(100%,660px);margin:12px 0 16px auto;display:flex;align-items:center;gap:10px}
 .ganluAdLabel{writing-mode:vertical-rl;color:#8f806c;font-size:9px;letter-spacing:.11em;text-orientation:mixed;white-space:nowrap;flex:0 0 auto}
-.ganluAdViewport{position:relative;overflow:hidden;width:100%;min-width:0;height:105px;border-radius:14px;border:1px solid rgba(182,151,104,.4);box-shadow:0 7px 23px rgba(75,53,30,.065);background:#e7e0d3}
+.ganluAdViewport{position:relative;overflow:hidden;width:100%;min-width:0;height:105px;border-radius:14px;border:1px solid rgba(182,151,104,.4);box-shadow:0 7px 23px rgba(75,53,30,.065);background:#e7e0d3;touch-action:pan-y;overscroll-behavior-x:contain;-webkit-user-select:none;user-select:none}
 .ganluAdSlide{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;gap:15px;padding:14px 20px 14px 23px;opacity:0;visibility:hidden;pointer-events:none;transform:translateX(14px);transition:opacity .48s ease,transform .48s ease,visibility .48s}
 .ganluAdSlide.is-active{opacity:1;visibility:visible;pointer-events:auto;transform:translateX(0)}
 .ganluAdSlide--gold{background:radial-gradient(circle at 80% 30%,rgba(255,251,227,.42),transparent 45%),linear-gradient(110deg,#f8f3e7,#e8dbc4)}
@@ -34,13 +34,13 @@
  .ganluVisitorPrimary strong{font-size:12px}
  .ganluVisitorLatest{font-size:9px}
  .ganluAdCarousel{gap:5px;margin-top:8px;margin-bottom:12px}
- .ganluAdViewport{height:91px;border-radius:12px}
- .ganluAdSlide{padding:12px 12px 12px 15px;gap:8px}
+ .ganluAdViewport{height:112px;border-radius:12px}
+ .ganluAdSlide{padding:10px 12px 10px 14px;gap:8px}
  .ganluAdIllustration{width:60px;height:69px}
- .ganluAdText strong{font-size:15px}
- .ganluAdText p{font-size:9px}
- .ganluAdControls{flex-basis:19px;gap:9px}
- .ganluAdArrow{width:19px;height:19px;font-size:14px}
+ .ganluAdText strong{font-size:clamp(13px,3.7vw,15px);line-height:1.38;white-space:normal;overflow-wrap:anywhere}
+ .ganluAdText p{font-size:10px;line-height:1.45;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+ .ganluAdControls{flex-basis:28px;gap:10px}
+ .ganluAdArrow{width:28px;height:28px;font-size:18px}
  .ganluAdLabel{font-size:8px}
 }
 @media(max-width:375px){.ganluAdIllustration{display:none}.ganluAdSlide{padding-right:8px}.ganluAdMeta{display:none}}
