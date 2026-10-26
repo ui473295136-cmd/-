@@ -108,6 +108,7 @@ function init(){
  ];
  for(const r of data){
   if(!ROUTES.has(r.id))continue;
+  r.notes=r.notes.map(note=>note.replace('常规全程单房差为原价的70%；未明确折扣与房差叠加时按常规单住价出价。','3–4层常规全程单房差为原价的70%；5层及以上独住适用本次25%全程房差专项，折扣叠加须核实。'));
   if(!r.notes.some(s=>s.includes('2026年10月26日新增｜仅5层及以上舱位'))){
    r.notes.unshift(...newNotes);
   }
