@@ -4,17 +4,42 @@ const $=id=>document.getElementById(id);
 const API='https://wpfqcztbxxarsrruuuce.supabase.co/functions/v1/ganlu-site-visitors';
 const count=$('ganluVisitCount'),latest=$('ganluVisitLatest');
 if(count&&latest){
-  function dateLabel(iso){
-    const dt=new Date(iso);
-    if(!iso||Number.isNaN(dt.getTime()))return '暂无其他访问记录';
-    return new Intl.DateTimeFormat('zh-CN',{
-      timeZone:'Asia/Shanghai',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit',hour12:false
-    }).format(dt);
+  // “政策更新时间”以线上网页的最后修改时间为准，不以访问记录或访客本地时间为准。
+  function beijingLabel(value){
+    const date=new Date(value);
+    if(!value||Number.isNaN(date.getTime()))return '';
+    const parts=Object.fromEntries(new Intl.DateTimeFormat('en-US',{
+      timeZone:'Asia/Shanghai',month:'2-digit',day:'2-digit',
+      hour:'2-digit',minute:'2-digit',hourCycle:'h23'
+    }).formatToParts(date).filter(x=>x.type!=='literal').map(x=>[x.type,x.value]));
+    return parts.month+'/'+parts.day+' '+parts.hour+':'+parts.minute;
+  }
+  async function refreshPolicyUpdatedAt(){
+    // Same-origin HTTP Last-Modified reflects the deployed ganlu-finance.html file.
+    // If unavailable, fall back to its latest GitHub commit's timestamp.
+    let updated='';
+    try{
+      const r=await fetch(window.location.pathname||'./ganlu-finance.html',{
+        method:'HEAD',cache:'no-store',credentials:'omit'
+      });
+      if(r.ok)updated=beijingLabel(r.headers.get('Last-Modified'));
+    }catch(_){}
+    if(!updated){
+      try{
+        const r=await fetch('https://api.github.com/repos/ui473295136-cmd/-/commits?path=ganlu-finance.html&per_page=1',{
+          method:'GET',cache:'no-store',credentials:'omit'
+        });
+        if(r.ok){
+          const commits=await r.json();
+          updated=beijingLabel(commits?.[0]?.commit?.committer?.date);
+        }
+      }catch(_){}
+    }
+    latest.textContent=updated?'政策更新时间：'+updated:'政策更新时间：暂不可用';
   }
   function update(stats){
     if(!stats||!Number.isInteger(stats.uniqueVisitors)||stats.uniqueVisitors<0)throw Error('no verified count');
     count.textContent=stats.uniqueVisitors.toLocaleString('zh-CN');
-    latest.textContent=stats.latestVisitAt?'最近访问：'+dateLabel(stats.latestVisitAt):'还没有访问时间记录';
   }
   let hasLoaded=false;
   async function refresh(isVisit){
@@ -31,9 +56,10 @@ if(count&&latest){
     }
   }
   refresh(true);
-  // A read-only update never creates extra visitor records or changes latest visit.
+  refreshPolicyUpdatedAt();
+  // 访客统计与政策更新时间相互独立：访客刷新不会改动政策更新时间。
   window.setInterval(()=>{if(!document.hidden)refresh(false)},120000);
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh(false)});
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden){refresh(false);refreshPolicyUpdatedAt();}});
 }
 const ad=$('ganluAdCarousel');
 if(!ad)return;
