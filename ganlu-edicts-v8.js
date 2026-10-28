@@ -53,6 +53,22 @@ function getQuote(){
  const quote=app.getResult();
  return quote?.status==='ready'&&Number.isFinite(quote.offer)?quote:null;
 }
+function drawQuoteBreakdown(ctx,q,y){
+ const d=q.southAmericaBreakdown;
+ if(!d)return fillTextWrap(ctx,'未打折舱位原价合计：'+money(q.standard),127,y,840,51,2)+10;
+ const line=t=>{y=fillTextWrap(ctx,t,127,y,840,51,3)+5;};
+ line('组合未优惠原价合计：'+money(q.standard));
+ line('南极原价：'+(Number.isFinite(d.antarcticOriginalTotal)?money(d.antarcticOriginalTotal):'待确认'));
+ if(Number.isFinite(d.antarcticDiscount)&&d.antarcticDiscount>0)line('南极优惠：减免'+money(d.antarcticDiscount));
+ else if(Number.isFinite(d.antarcticDiscount)&&d.antarcticDiscount<0)line('南极额外费用/调整：增加'+money(-d.antarcticDiscount));
+ else line('南极优惠：无额外减免');
+ line('南极优惠价：'+money(d.antarcticOffer));
+ line('南美延长线原价：'+money(d.extensionOriginalTotal));
+ line('南美优惠（95折）：减免'+money(d.extensionDiscount));
+ line('南美延长线折后价：'+money(d.extensionOffer));
+ line('组合计算：南极优惠价 '+money(d.antarcticOffer)+' + 南美延长线折后价 '+money(d.extensionOffer)+' = '+money(d.combinedOffer));
+ return y+5;
+}
 function drawSeal(ctx,x,y){
  ctx.save();ctx.translate(x,y);ctx.rotate(-.13);
  ctx.lineWidth=5;ctx.strokeStyle='#a65443';ctx.globalAlpha=.75;
@@ -94,7 +110,7 @@ function generateQuoteCanvas(q, forcedHeight){
  ctx.fillStyle='#864e2c';ctx.font='bold 68px "PingFang SC",sans-serif';ctx.fillText(money(q.offer),148,y+133);
  ctx.textAlign='right';ctx.fillStyle='#766149';ctx.font='25px sans-serif';ctx.fillText('约 '+money(q.offer/q.people)+' / 人',922,y+134);
  y+=264;ctx.textAlign='left';ctx.fillStyle='#715842';ctx.font='30px "PingFang SC",sans-serif';
- y=fillTextWrap(ctx,'未打折舱位原价合计：'+money(q.standard),127,y,840,51,2)+10;
+ y=drawQuoteBreakdown(ctx,q,y);
 
  // Share card intentionally omits the policy-expiry date and warning callout.
  // Keep the small, permanent no-lock-price statement at the bottom.
