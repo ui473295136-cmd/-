@@ -66,7 +66,7 @@ function init(){
  form.appendChild(field);
  const panel=document.createElement('section');
  panel.className='saExtensionResult saHide';panel.setAttribute('aria-live','polite');
- panel.innerHTML='<h3 id="saTitle">南美延长线</h3><div class="saCountries" id="saCountries"></div><div class="saLine" id="saUnit"></div><div class="saLine" id="saDiscount"></div><div class="saLine" id="saMain"></div><div class="saTotal"><span>南极＋南美延长线合计</span><strong id="saTotal"></strong></div><div class="saNote">南美延长线统一按原价95折计价；该优惠可与南极主行程优惠价共同享受。延长线不自动叠加未明确的其他优惠。</div>';
+ panel.innerHTML='<h3 id="saTitle">南极＋南美优惠明细</h3><div class="saCountries" id="saCountries"></div><div class="saLine" id="saAntarcticOriginal"></div><div class="saLine" id="saAntarcticDiscount"></div><div class="saLine" id="saAntarcticOffer"></div><div class="saLine" id="saUnit"></div><div class="saLine" id="saDiscount"></div><div class="saLine" id="saSouthOffer"></div><div class="saLine" id="saEquation"></div><div class="saTotal"><span>组合最终总价</span><strong id="saTotal"></strong></div><div class="saNote">先按南极航次政策计算主行程优惠，再将南美延长线统一95折后的金额相加。两部分优惠分别列示。</div>';
  grid.insertAdjacentElement('afterend',panel);
  const $=id=>document.getElementById(id),sel=$('southAmericaPlan');
  const rawGet=app.getResult.bind(app),rawText=P.customerText.bind(P);
@@ -89,9 +89,16 @@ function init(){
    const calc=calculate(q,ext);
    $('saTitle').textContent='南美延长线 · 方案'+ext.id;
    $('saCountries').textContent=ext.countries;
-   $('saUnit').textContent='延长线原价：'+money(ext.price)+'/人 × '+(q&&Number.isInteger(q.people)?q.people:'—')+'人 = '+money(calc.extensionOriginalTotal);
-   $('saDiscount').textContent='统一95折：折后'+money(calc.extensionUnitPrice)+'/人；优惠'+money(calc.extensionDiscount);
-   $('saMain').textContent='南极主行程优惠价：'+(q&&q.status==='ready'&&!q.anniversaryUpgradeOnly?money(q.offer):'待确认');
+   const antarcticOriginal=q&&Number.isFinite(q.standard)?q.standard:null;
+   const antarcticOffer=q&&q.status==='ready'&&!q.anniversaryUpgradeOnly&&Number.isFinite(q.offer)?q.offer:null;
+   const antarcticSaving=antarcticOriginal!==null&&antarcticOffer!==null?antarcticOriginal-antarcticOffer:null;
+   $('saAntarcticOriginal').textContent='南极原价：'+(antarcticOriginal!==null?money(antarcticOriginal):'待确认');
+   $('saAntarcticDiscount').textContent=antarcticSaving===null?'南极优惠：待确认':antarcticSaving>0?'南极优惠：减免'+money(antarcticSaving):antarcticSaving===0?'南极优惠：无额外减免':'南极额外费用/调整：增加'+money(-antarcticSaving);
+   $('saAntarcticOffer').textContent='南极优惠价：'+(antarcticOffer!==null?money(antarcticOffer):'待确认');
+   $('saUnit').textContent='南美延长线原价：'+money(ext.price)+'/人 × '+(q&&Number.isInteger(q.people)?q.people:'—')+'人 = '+money(calc.extensionOriginalTotal);
+   $('saDiscount').textContent='南美优惠（统一95折）：减免'+money(calc.extensionDiscount);
+   $('saSouthOffer').textContent='南美延长线折后价：'+money(calc.extensionUnitPrice)+'/人 × '+(q&&Number.isInteger(q.people)?q.people:'—')+'人 = '+money(calc.extensionTotal);
+   $('saEquation').textContent='组合计算：南极优惠价 '+(antarcticOffer!==null?money(antarcticOffer):'待确认')+' + 南美延长线折后价 '+money(calc.extensionTotal)+' = '+(Number.isFinite(calc.total)?money(calc.total):'待确认');
    $('saTotal').textContent=Number.isFinite(calc.total)?money(calc.total):'待确认：'+calc.reason;
   }
   const block=Boolean(ext&&calculate(q,ext).total===null);
@@ -106,13 +113,14 @@ function init(){
   const lines=basic.split('\n'),at=lines.findIndex(s=>s.startsWith('最终价格：'));
   if(at<0)return '';
   return lines.slice(0,at).concat([
+   '南极原价：'+exact(q.standard)+'元',
+   ...(q.standard>q.offer?['南极优惠：减免'+exact(q.standard-q.offer)+'元']:q.standard===q.offer?['南极优惠：无额外减免']:['南极额外费用/调整：增加'+exact(q.offer-q.standard)+'元']),
+   '南极优惠价：'+exact(q.offer)+'元',
    '南美延长线：方案'+ext.id+'（'+ext.countries+'）',
-   '延长线原价：'+exact(ext.price)+'元/人 × '+q.people+'人 = '+exact(calc.extensionOriginalTotal)+'元',
-   '南美延长线优惠：统一95折，减免'+exact(calc.extensionDiscount)+'元',
-   '延长线优惠价：'+exact(calc.extensionUnitPrice)+'元/人 × '+q.people+'人 = '+exact(calc.extensionTotal)+'元',
-   '南极主行程优惠价：'+exact(q.offer)+'元',
-   '优惠说明：南美延长线95折与南极主行程优惠价可共同享受。',
-   '',
+   '南美延长线原价：'+exact(ext.price)+'元/人 × '+q.people+'人 = '+exact(calc.extensionOriginalTotal)+'元',
+   '南美优惠（统一95折）：减免'+exact(calc.extensionDiscount)+'元',
+   '南美延长线折后价：'+exact(calc.extensionUnitPrice)+'元/人 × '+q.people+'人 = '+exact(calc.extensionTotal)+'元',
+   '组合计算：南极优惠价 '+exact(q.offer)+'元 + 南美延长线折后价 '+exact(calc.extensionTotal)+'元 = '+exact(calc.total)+'元',
    '最终价格：'+exact(calc.total)+'元'
   ]).join('\n');
  };
@@ -125,6 +133,16 @@ function init(){
   return Object.assign({},q,{
    offer:calc.total,
    standard:Number.isFinite(q.standard)?q.standard+calc.extensionOriginalTotal:q.standard,
+   southAmericaBreakdown:{
+    plan:ext.id,countries:ext.countries,people:q.people,
+    antarcticOriginalTotal:Number.isFinite(q.standard)?q.standard:null,
+    antarcticDiscount:Number.isFinite(q.standard)?q.standard-q.offer:null,
+    antarcticOffer:q.offer,
+    extensionOriginalTotal:calc.extensionOriginalTotal,
+    extensionDiscount:calc.extensionDiscount,
+    extensionOffer:calc.extensionTotal,
+    combinedOffer:calc.total
+   },
    policyName:(q.policyName||'常规报价')+'；南美延长线方案'+ext.id+'统一95折（与南极优惠同享）',
    route:Object.assign({},q.route,{name:q.route.name+'＋南美延长线'+ext.id+'（'+ext.countries+'）'})
   });
