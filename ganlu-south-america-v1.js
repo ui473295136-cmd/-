@@ -74,6 +74,43 @@ function init(){
  function selected(){
   return (OPTIONS[$('route').value]||[]).find(x=>x.id===sel.value)||null;
  }
+ function updatePriceCards(q,ext,calc){
+  if(!q)return;
+  const ready=q.status==='ready',people=Number.isInteger(q.people)&&q.people>0?q.people:null;
+  if(ext){
+   $('offerLabel').textContent='南极＋南美优惠价格';
+   $('normalLabel').textContent='南极＋南美原价';
+   const combinedReady=ready&&!q.anniversaryUpgradeOnly&&calc&&Number.isFinite(calc.total);
+   $('offerBadge').textContent=combinedReady?'南极优惠＋南美95折':'组合报价待确认';
+   $('offerBadge').classList.toggle('wait',!combinedReady||!q.policy.valid);
+   $('discountTotal').textContent=combinedReady?money(calc.total):'组合金额待确认';
+   $('discountAvg').textContent=combinedReady&&people?'平均约 '+money(calc.total/people)+'/人':'南极主行程金额待确认';
+   $('offerCaveat').textContent='南极按实际适用政策计算；南美延长线统一95折，与南极优惠价共同享受。';
+   if(q.anniversaryUpgradeOnly){
+    $('normalTotal').textContent='原合同金额待确认';
+    $('normalAvg').textContent='原合同金额未知';
+    $('normalContext').textContent='已报名升舱只计算补差价，原合同总价未知，暂不合并。';
+   }else{
+    const combinedStandard=Number.isFinite(q.standard)&&calc&&Number.isFinite(calc.extensionOriginalTotal)?q.standard+calc.extensionOriginalTotal:null;
+    $('normalTotal').textContent=combinedStandard!==null?money(combinedStandard):'原价待补充';
+    $('normalAvg').textContent=combinedStandard!==null&&people?'平均原价 '+money(combinedStandard/people)+'/人':'未提供明确原价';
+    $('normalContext').textContent='南极主行程原价＋南美延长线原价（未打折）';
+   }
+   $('miniPrice').textContent=combinedReady?money(calc.total):'金额待确认';
+   return;
+  }
+  $('normalLabel').textContent=q.anniversaryUpgradeOnly?'4层房型原价参考':'原价';
+  $('normalTotal').textContent=q.standard!==null?P.money(q.standard):Number.isFinite(q.price)?'人数待确认':'原价待补充';
+  $('normalAvg').textContent=Number.isFinite(q.price)?P.money(q.price)+'/人':'未提供明确原价';
+  $('normalContext').textContent=q.anniversaryUpgradeOnly?'仅供参考；不代表客户已报名合同金额，原合同价不重算':'行程册舱型基础原价 · 未打折'+(q.stay==='single'?'，未含单房差':'');
+  $('offerLabel').textContent=q.anniversaryUpgradeOnly?'升舱补差价':'优惠价格';
+  $('discountTotal').textContent=ready?P.money(q.offer):'金额待确认';
+  $('discountAvg').textContent=ready?'平均约 '+P.money(q.offer/q.people)+'/人':'补齐价格依据后自动出价';
+  $('offerBadge').textContent=!ready?'待核价':q.policy.code==='jan18porthole'?'0118舷窗专享 · 原价立减':q.policy.code==='anniversary'?'周年庆活动 · 名额有限':q.policy.code==='expired'?'政策过期 · 待确认':q.policy.code==='upcoming'?'未生效 · 试算':q.policy.code==='unknown'?'日期待确认':q.policy.code==='latest_unconfirmed'?'专项优惠 · 日期待确认':q.route.hasPolicy?'优惠试算':'常规价格';
+  $('offerBadge').classList.toggle('wait',!ready||!q.policy.valid);
+  $('offerCaveat').textContent=ready?(q.anniversaryUpgradeOnly?'仅升舱补差价，不含原合同团款':q.policy.code==='jan18porthole'?'原价减2000/人 · 不叠加折扣':q.policy.code==='anniversary'?'周年庆活动名额有限，额满即止':q.policy.code==='expired'?'按原优惠试算，报名价须确认':q.policyName):'请查看下方说明';
+  $('miniPrice').textContent=ready?P.money(q.offer):'金额待确认';
+ }
  function sync(){
   const id=$('route').value,list=OPTIONS[id]||[];
   if(id!==currentRoute){
@@ -82,11 +119,11 @@ function init(){
    sel.value='';
   }
   field.classList.toggle('saHide',!list.length);
-  const ext=selected(),q=rawGet();
+  const ext=selected(),q=rawGet(),calc=ext?calculate(q,ext):null;
+  updatePriceCards(q,ext,calc);
   $('southAmericaHint').textContent=ext?'方案'+ext.id+' · '+ext.duration+'（'+ext.period+'）：'+ext.countries+'。下方按原价计算统一95折，可与南极主行程优惠价共同享受。':'下拉框显示南美延长线原价；选择A/B/C后按统一95折计算，并显示行程日期、天数、优惠金额及组合总价。';
   panel.classList.toggle('saHide',!ext);
   if(ext){
-   const calc=calculate(q,ext);
    $('saTitle').textContent='南极＋南美优惠明细 · 方案'+ext.id;
    $('saCountries').textContent=ext.duration+' · '+ext.period+'\n'+ext.countries;
    const antarcticPolicyName=q&&q.policyName?q.policyName:'待确认';
