@@ -3,29 +3,29 @@
 'use strict';
 const OPTIONS={
  a1122:[
-  {id:'A',price:28800,countries:'智利（含复活节岛）、乌拉圭'},
-  {id:'B',price:128800,countries:'智利、阿根廷、乌拉圭、巴西、秘鲁、玻利维亚、哥伦比亚'},
-  {id:'C',price:108800,countries:'智利（无复活节岛）、阿根廷、乌拉圭、巴西、秘鲁、玻利维亚、哥伦比亚'}
+  {id:'A',price:38800,duration:'28天',period:'11月16日 → 12月13日',countries:'巴西、阿根廷、乌拉圭'},
+  {id:'B',price:99800,duration:'39天',period:'11月16日 → 12月24日',countries:'巴西、阿根廷、乌拉圭、智利、秘鲁、哥伦比亚'},
+  {id:'C',price:68800,duration:'33天',period:'11月22日 → 12月24日',countries:'智利、秘鲁、哥伦比亚'}
  ],
  a1204:[
-  {id:'A',price:28800,countries:'智利（含复活节岛）、乌拉圭'},
-  {id:'B',price:128800,countries:'智利、阿根廷、乌拉圭、巴西、秘鲁、玻利维亚、哥伦比亚'},
-  {id:'C',price:108800,countries:'智利（无复活节岛）、阿根廷、乌拉圭、巴西、秘鲁、玻利维亚、哥伦比亚'}
+  {id:'A',price:28800,duration:'22天',period:'11月30日 → 12月21日',countries:'智利（复活节岛）、阿根廷'},
+  {id:'B',price:128800,duration:'40天',period:'11月30日 → 1月08日',countries:'智利、阿根廷、乌拉圭、巴西、秘鲁、玻利维亚、哥伦比亚'},
+  {id:'C',price:108800,duration:'36天',period:'12月04日 → 1月08日',countries:'智利、阿根廷、乌拉圭、巴西、秘鲁、玻利维亚、哥伦比亚（无复活节岛）'}
  ],
  b0118:[
-  {id:'A',price:107800,countries:'哥伦比亚、秘鲁、玻利维亚、智利'},
-  {id:'B',price:136900,countries:'哥伦比亚、秘鲁、玻利维亚、智利、阿根廷、乌拉圭、巴西'},
-  {id:'C',price:34800,countries:'阿根廷、乌拉圭、巴西'}
+  {id:'A',price:34800,duration:'28天',period:'1月12日 → 2月08日',countries:'巴西、阿根廷、乌拉圭'},
+  {id:'B',price:122900,duration:'42天',period:'1月12日 → 2月22日',countries:'巴西、阿根廷、乌拉圭、智利、秘鲁、玻利维亚、哥伦比亚'},
+  {id:'C',price:93800,duration:'36天',period:'1月18日 → 2月22日',countries:'智利、秘鲁、玻利维亚、哥伦比亚'}
  ],
  b0130:[
-  {id:'A',price:34800,countries:'巴西、阿根廷、乌拉圭'},
-  {id:'B',price:122900,countries:'巴西、阿根廷、乌拉圭、智利、秘鲁、玻利维亚、哥伦比亚'},
-  {id:'C',price:93800,countries:'智利、秘鲁、玻利维亚、哥伦比亚'}
+  {id:'A',price:107800,duration:'35天',period:'1月12日 → 2月15日',countries:'哥伦比亚、秘鲁、玻利维亚、智利'},
+  {id:'B',price:136900,duration:'40天',period:'1月12日 → 2月20日',countries:'哥伦比亚、秘鲁、玻利维亚、智利、阿根廷、乌拉圭、巴西'},
+  {id:'C',price:34800,duration:'22天',period:'1月30日 → 2月20日',countries:'阿根廷、乌拉圭、巴西'}
  ],
  b0202:[
-  {id:'A',price:38800,countries:'阿根廷、乌拉圭、巴西、智利'},
-  {id:'B',price:129900,countries:'巴西、阿根廷、乌拉圭、智利、秘鲁、玻利维亚、哥伦比亚'},
-  {id:'C',price:96800,countries:'智利、秘鲁、玻利维亚、哥伦比亚'}
+  {id:'A',price:38800,duration:'21天',period:'1月26日 → 2月15日',countries:'阿根廷、乌拉圭、巴西、智利'},
+  {id:'B',price:129900,duration:'36天',period:'1月26日 → 3月02日',countries:'阿根廷、乌拉圭、巴西、智利、秘鲁、玻利维亚、哥伦比亚'},
+  {id:'C',price:96800,duration:'29天',period:'2月02日 → 3月02日',countries:'智利、秘鲁、玻利维亚、哥伦比亚'}
  ]
 };
 const money=n=>Number.isFinite(n)?'¥'+n.toLocaleString('zh-CN',{maximumFractionDigits:2}):'—';
@@ -83,12 +83,12 @@ function init(){
   }
   field.classList.toggle('saHide',!list.length);
   const ext=selected(),q=rawGet();
-  $('southAmericaHint').textContent=ext?'方案'+ext.id+'：'+ext.countries+'。统一95折，可与南极主行程优惠价共同享受。':'所有方案统一95折；选择A/B/C后显示折后延长线费用及组合总价。';
+  $('southAmericaHint').textContent=ext?'方案'+ext.id+' · '+ext.duration+'（'+ext.period+'）：'+ext.countries+'。下方按原价计算统一95折，可与南极主行程优惠价共同享受。':'下拉框显示南美延长线原价；选择A/B/C后按统一95折计算，并显示行程日期、天数、优惠金额及组合总价。';
   panel.classList.toggle('saHide',!ext);
   if(ext){
    const calc=calculate(q,ext);
    $('saTitle').textContent='南极＋南美优惠明细 · 方案'+ext.id;
-   $('saCountries').textContent=ext.countries;
+   $('saCountries').textContent=ext.duration+' · '+ext.period+'\n'+ext.countries;
    const antarcticPolicyName=q&&q.policyName?q.policyName:'待确认';
    const antarcticPolicyDetails=q&&Array.isArray(q.steps)?q.steps.filter(line=>!line.startsWith('基础原价：')&&!line.startsWith('本次报价合计：')):[];
    $('saAntarcticPolicy').textContent='南极适用政策：'+antarcticPolicyName;
@@ -122,7 +122,7 @@ function init(){
    '南极原价：'+exact(q.standard)+'元',
    ...(q.standard>q.offer?['南极优惠：减免'+exact(q.standard-q.offer)+'元']:q.standard===q.offer?['南极优惠：无额外减免']:['南极额外费用/调整：增加'+exact(q.offer-q.standard)+'元']),
    '南极优惠价：'+exact(q.offer)+'元',
-   '南美延长线：方案'+ext.id+'（'+ext.countries+'）',
+   '南美延长线：方案'+ext.id+'（'+ext.duration+'，'+ext.period+'；'+ext.countries+'）',
    '南美延长线原价：'+exact(ext.price)+'元/人 × '+q.people+'人 = '+exact(calc.extensionOriginalTotal)+'元',
    '南美优惠（统一95折）：减免'+exact(calc.extensionDiscount)+'元',
    '南美延长线折后价：'+exact(calc.extensionUnitPrice)+'元/人 × '+q.people+'人 = '+exact(calc.extensionTotal)+'元',
