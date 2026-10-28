@@ -58,6 +58,8 @@ function drawQuoteBreakdown(ctx,q,y){
  if(!d)return fillTextWrap(ctx,'未打折舱位原价合计：'+money(q.standard),127,y,840,51,2)+10;
  const line=t=>{y=fillTextWrap(ctx,t,127,y,840,51,3)+5;};
  line('组合未优惠原价合计：'+money(q.standard));
+ line('南极适用政策：'+(d.antarcticPolicyName||'待确认'));
+ (Array.isArray(d.antarcticPolicySteps)?d.antarcticPolicySteps:[]).forEach(detail=>line('南极优惠明细：'+detail));
  line('南极原价：'+(Number.isFinite(d.antarcticOriginalTotal)?money(d.antarcticOriginalTotal):'待确认'));
  if(Number.isFinite(d.antarcticDiscount)&&d.antarcticDiscount>0)line('南极优惠：减免'+money(d.antarcticDiscount));
  else if(Number.isFinite(d.antarcticDiscount)&&d.antarcticDiscount<0)line('南极额外费用/调整：增加'+money(-d.antarcticDiscount));
