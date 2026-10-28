@@ -66,7 +66,8 @@ function drawQuoteBreakdown(ctx,q,y){
  line('南美延长线原价：'+money(d.extensionOriginalTotal));
  line('南美优惠（95折）：减免'+money(d.extensionDiscount));
  line('南美延长线折后价：'+money(d.extensionOffer));
- line('组合计算：南极优惠价 '+money(d.antarcticOffer)+' + 南美延长线折后价 '+money(d.extensionOffer)+' = '+money(d.combinedOffer));
+ line('组合计算：南极优惠价 + 南美延长线折后价');
+ line(money(d.antarcticOffer)+' + '+money(d.extensionOffer)+' = '+money(d.combinedOffer));
  return y+5;
 }
 function drawSeal(ctx,x,y){
