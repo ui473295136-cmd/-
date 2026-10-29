@@ -1524,6 +1524,7 @@
        '不含项目：'+q.shipDeductionItems.map(x=>x.label).join('、')
      ]:[]),
      `优惠方案：${q.policyName||'暂无优惠方案'}`,
+     ...(q.children>0?q.steps.filter(line=>!line.startsWith('基础原价：')&&!line.startsWith('本次报价合计：')).map(line=>'优惠明细：'+line):[]),
      '',
      `最终价格：${amount(q.offer)}元`
    ].join('\n');
@@ -1594,7 +1595,7 @@
    const p=getPartyOptions(),r=route(),hint=$('partyPolicyHint');
    if(!hint)return;
    if(!(p.children>0)){hint.textContent='儿童计价按所选航次的明确政策处理；政策未明确时不会猜算。';return;}
-   if(['b0118','b0130'].includes(r.id))hint.textContent=['5o','6b','7s'].includes(cabin().id)?'儿童政策：仅5层及以上舱位适用；成人94折、儿童8折，不自动叠加多人优惠。':'儿童8折仅限5层及以上舱位，当前舱型不适用。';
+   if(['b0118','b0130'].includes(r.id))hint.textContent=['5o','6b','7s'].includes(cabin().id)?'儿童政策：仅5层及以上舱位适用；成人94折、儿童8折，不自动叠加多人优惠。'+(stay==='single'?'单人入住另加原价25%全程单房差。':''):'儿童8折仅限5层及以上舱位，当前舱型不适用。';
    else if(r.id==='c0708')hint.textContent=p.adults===1&&p.children===1?'Atlas已明确1大1小：成人早鸟93折，儿童8折；儿童优惠不叠加其他优惠。':'Atlas仅明确1位成人＋1位未满18岁儿童的组合；其他成人/儿童人数需产品部确认。';
    else if(r.id==='d1110')hint.textContent='庞洛政策：儿童与成人同价；如涉及同舱第3人，按第3人规则计价。';
    else hint.textContent='当前航次文件没有明确儿童计价规则，系统会暂停报价，不按成人价猜算。';
