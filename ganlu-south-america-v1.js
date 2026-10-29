@@ -33,6 +33,10 @@ const exact=n=>Number(n).toLocaleString('zh-CN',{useGrouping:false,maximumFracti
 function calculate(q,ext){
  if(!q||!ext)return {extensionUnitPrice:null,extensionOriginalTotal:null,extensionDiscount:null,extensionTotal:null,total:null,reason:'请选择有效的报价方案。'};
  if(!Number.isInteger(q.people)||q.people<1||q.people>100)return {extensionUnitPrice:null,extensionOriginalTotal:null,extensionDiscount:null,extensionTotal:null,total:null,reason:'人数无效。'};
+ if(q.children>0){
+  const reason=q.status!=='ready'||!Number.isFinite(q.offer)?'南极主行程儿童报价尚未确认，暂不能计算组合总价。':'南美延长线尚未明确儿童价及95折是否适用于儿童，暂不计算组合总价，请产品部确认。';
+  return {extensionUnitPrice:null,extensionOriginalTotal:null,extensionDiscount:null,extensionTotal:null,total:null,reason};
+ }
  const extensionUnitPrice=Math.round(ext.price*0.95);
  const extensionOriginalTotal=ext.price*q.people;
  const extensionTotal=extensionUnitPrice*q.people;
@@ -121,7 +125,7 @@ function init(){
   field.classList.toggle('saHide',!list.length);
   const ext=selected(),q=rawGet(),calc=ext?calculate(q,ext):null;
   updatePriceCards(q,ext,calc);
-  $('southAmericaHint').textContent=ext?'方案'+ext.id+' · '+ext.duration+'（'+ext.period+'）：'+ext.countries+'。下方按原价计算统一95折，可与南极主行程优惠价共同享受。':'下拉框显示南美延长线原价；选择A/B/C后按统一95折计算，并显示行程日期、天数、优惠金额及组合总价。';
+  $('southAmericaHint').textContent=ext?(q&&q.children>0?'南美延长线儿童价格及95折适用口径未明确，组合总价需产品部确认。':'方案'+ext.id+' · '+ext.duration+'（'+ext.period+'）：'+ext.countries+'。下方按原价计算统一95折，可与南极主行程优惠价共同享受。'):'下拉框显示南美延长线原价；选择A/B/C后按统一95折计算，并显示行程日期、天数、优惠金额及组合总价。';
   panel.classList.toggle('saHide',!ext);
   if(ext){
    $('saTitle').textContent='南极＋南美优惠明细 · 方案'+ext.id;
