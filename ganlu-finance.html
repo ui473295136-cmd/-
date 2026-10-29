@@ -620,7 +620,7 @@
       "仅0118/0130已报名客户邀约亲友政策：按原邀约专项规则另行核算；与周年庆A/B是否可叠加未明确，暂不自动叠加，需项目组确认。",
       "老客户本人及直系亲属原减5000元政策保留；与周年庆A/B、邀约等专项能否同享未明确，不自动叠加。",
       "4层三人房三人同报，同舱第三人同价。常规全程单房差为原价的70%；未明确折扣与房差叠加时按常规单住价出价。",
-      "未成年人专项：仅限5层及以上舱位，成人按市场优惠94折、儿童按原价80%计价；儿童8折不与4—7人2%多人优惠同享。8人及以上3%多人优惠与儿童8折的叠加口径未明确，暂不自动叠加；周年庆等专项方案不自动叠加。"
+      "5层及以上专项：单人入住全程（邮轮＋陆地）单房差按原价25%加收；未成年人按原价80%计价，成人按市场优惠94折。儿童8折不与4—7人2%多人优惠同享；8人及以上3%多人优惠与儿童8折的叠加口径未明确，暂不自动叠加；周年庆等专项方案不自动叠加。"
     ],
     "cabins": [
       {
@@ -698,7 +698,7 @@
       "仅0118/0130已报名客户邀约亲友政策：按原邀约专项规则另行核算；与周年庆A/B是否可叠加未明确，暂不自动叠加，需项目组确认。",
       "老客户本人及直系亲属原减5000元政策保留；与周年庆A/B、邀约等专项能否同享未明确，不自动叠加。",
       "4层三人房三人同报，同舱第三人同价。常规全程单房差为原价的70%；未明确折扣与房差叠加时按常规单住价出价。",
-      "未成年人专项：仅限5层及以上舱位，成人按市场优惠94折、儿童按原价80%计价；儿童8折不与4—7人2%多人优惠同享。8人及以上3%多人优惠与儿童8折的叠加口径未明确，暂不自动叠加；周年庆等专项方案不自动叠加。"
+      "5层及以上专项：单人入住全程（邮轮＋陆地）单房差按原价25%加收；未成年人按原价80%计价，成人按市场优惠94折。儿童8折不与4—7人2%多人优惠同享；8人及以上3%多人优惠与儿童8折的叠加口径未明确，暂不自动叠加；周年庆等专项方案不自动叠加。"
     ],
     "cabins": [
       {
@@ -1213,6 +1213,7 @@
    const ponantSelfFlight=ponant&&ponantExtras.selfFlight===true;
    const ponantSelfInsurance=ponant&&ponantExtras.selfInsurance===true;
    const haishen=['a1122','a1204','b0118','b0130','c0719'].includes(r.id);
+   const polarSpecialSingle25=['b0118','b0130'].includes(r.id)&&['5o','6b','7s'].includes(c.id);
    // The 22,350 RMB removal table covers flights and land services in
    // Santiago/Buenos Aires for the four Antarctica fly-and-cruise packages.
    // Do not apply that table to Arctic, Atlas, Silversea or Ponant routes.
@@ -1243,7 +1244,7 @@
    if(q.children>0){
      if(['b0118','b0130'].includes(r.id)){
        if(!['5o','6b','7s'].includes(c.id))return fail('0118／0130的儿童8折仅适用于5层及以上舱位；当前舱型没有明确儿童优惠，请联系产品部确认。');
-       if(stay!=='double')return fail('0118／0130的儿童8折暂按双人拼住规则计算；与单人入住、三人同舱的叠加口径未明确，请联系产品部确认。');
+       if(stay==='triple')return fail('0118／0130的儿童8折不适用于三人同舱；请改为双人拼住或单人入住。');
        if(anniversaryOption!=='none'||polarBowUpgrade||shipOnly)return fail('儿童8折与周年庆、免费升舱或单船票减免的叠加规则未明确，请先取消专项方案或联系产品部确认。');
      }else if(r.id==='c0708'){
        if(q.adults!==1||q.children!==1)return fail('Atlas文件目前只明确“1大1小”儿童方案；其他成人/儿童组合的计价政策未明确，不能自动套价。');
@@ -1313,17 +1314,20 @@
    if(q.children>0&&['b0118','b0130'].includes(r.id)){
      const adultSubtotal=price*q.adults*.94;
      const childSubtotal=price*q.children*.80;
+     const singleSupplement=stay==='single'?price*.25*n:0;
      const loyal=customer==='old'?(r.loyal||0)*n:0;
-     const raw=adultSubtotal+childSubtotal-loyal;
+     const raw=adultSubtotal+childSubtotal+singleSupplement-loyal;
      if(!Number.isFinite(raw)||raw<0)return fail('成人/儿童组合金额异常，请核对人数和舱型。');
-     q.rooms=Math.ceil(n/2);
-     q.policyName='成人市场优惠94折＋儿童专属8折（不自动叠加多人优惠）';
-     q.baseRate=.94;q.groupRate=0;q.groupSaving=0;q.loyalDeduction=loyal;
+     q.rooms=stay==='single'?n:Math.ceil(n/2);
+     q.policyName='成人市场优惠94折＋儿童专属8折'+(stay==='single'?'＋全程单房差原价25%':'')+'（不自动叠加多人优惠）';
+     q.baseRate=.94;q.groupRate=0;q.groupSaving=0;q.loyalDeduction=loyal;q.postAdd=singleSupplement;
+     q.singleSupplement=stay==='single'?singleSupplement:null;q.singleTotal=stay==='single'?price*n+singleSupplement:null;
      q.discounted=adultSubtotal+childSubtotal;q.rawOffer=raw;q.offer=Math.round(raw);
      q.status='ready';q.statusReason='按0118／0130成人及未成年人专项政策计算';q.copyOffer=true;q.offerValid=true;
      q.steps.push('基础原价：'+money(price)+'/人 × '+n+'人 = '+money(q.standard));
      q.steps.push('成人市场优惠94折：'+money(price)+'/人 × '+q.adults+'位成人 × 94% = '+money(adultSubtotal));
      q.steps.push('未成年人专属8折：'+money(price)+'/人 × '+q.children+'位儿童 × 80% = '+money(childSubtotal));
+     if(singleSupplement)q.steps.push('全程单房差：'+money(price)+'/人 × 25% × '+n+'人 = +'+money(singleSupplement)+'（邮轮＋陆地全程单间）');
      if(n>=4&&n<=7)q.steps.push('多人优惠：儿童8折不与4—7人2%多人优惠同享，本次不叠加。');
      if(n>=8&&(!r.groupRoom8||q.rooms>=4))q.warnings.push('8人及以上3%多人优惠与儿童8折的叠加口径未明确，本次未自动叠加，请产品部确认。');
      if(loyal)q.steps.push('老客户减免：'+money(r.loyal)+'/人 × '+n+'人 = −'+money(loyal));
@@ -1331,6 +1335,7 @@
      q.assumptions.push('仅适用于0118／0130的5层及以上舱位；成人按94折、儿童按原价80%计价。');
      q.assumptions.push('儿童专项不自动叠加周年庆、免费升舱、单船票减免；与多人优惠按政策明确范围处理。');
      if(customer==='old')q.assumptions.push('老客户减免按每位旅客5000元计算；请确认同行人均符合老客户本人或直系亲属资格。');
+     if(stay==='single')q.assumptions.push('5层及以上专项单房差按原价25%加收，覆盖邮轮与陆地全程。');
      return q;
    }
    if(fixedTriple){
@@ -1396,7 +1401,7 @@
      }else {ratePercent=Math.round(r.rate*100);name=`${r.id==='c0719'?'早鸟':'市场优惠'}${ratePercent}折`;}
    }
    if(stay==='single'){
-     const extraRate=haishen?.7:(ponant||silversea||atlas)?.5:null;
+     const extraRate=polarSpecialSingle25?.25:haishen?.7:(ponant||silversea||atlas)?.5:null;
      if(extraRate===null)return fail('文件未给出该航次的单房差金额。');
      q.singleSupplement=shipUnitPrice*extraRate*n;
      q.singleTotal=shipUnitPrice*n+q.singleSupplement;
@@ -1405,7 +1410,7 @@
        ratePercent=100;allowBenefits=false;name='常规单人入住 · 原价×150%';
        warnings.push('文件未明确单房差与早鸟、多人及老客优惠的叠加口径，本次按基础原价×150%计算。');
      }
-     if(haishen&&usePolicy&&!isLatest5o){
+     if(haishen&&usePolicy&&!isLatest5o&&!polarSpecialSingle25){
        // 文件给出常规单住总价，未说明70%房差如何与各优惠叠加；明确报价常规方案。
        ratePercent=100;allowBenefits=false;name='常规单人住 · 原价加70%房差';
        warnings.push('文件未明确单房差与优惠的叠加口径，本次按可确定的常规独住价报价。');
@@ -1485,7 +1490,7 @@
    }
    if(loyal)steps.push(`老客户减免：${money(r.loyal)}/人 × ${atlas&&stay==='triple'?n:q.regularPeople}人 = −${money(loyal)}`);
    if(bonus)steps.push(`3月3日前报名红包：¥888 × ${q.regularPeople}人 = −${money(bonus)}`);
-   if(postAdd)steps.push(`全程单房差：${money(shipUnitPrice)} × ${haishen?70:50}% × ${n}人 = +${money(postAdd)}`);
+   if(postAdd)steps.push(`全程单房差：${money(polarSpecialSingle25?price:shipUnitPrice)} × ${polarSpecialSingle25?25:haishen?70:50}% × ${n}人 = +${money(postAdd)}`);
    if(ponantVisaAdjustment)steps.push(`签证方案：${ponantVisa==='ownUS'?'已有美签减签证费':'代办美签'} ${ponantVisaAdjustment<0?'−':'+'}${money(Math.abs(ponantVisaAdjustment))}`);
    if(ponantInsuranceAdjustment)steps.push(`保险自理：−${money(-ponantInsuranceAdjustment)}`);
    for(const item of atlasDeductionItems)steps.push(`${item.label}：−${money(item.perPerson)}/人 × ${n}人 = −${money(item.perPerson*n)}`);
