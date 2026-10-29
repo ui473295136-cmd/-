@@ -4,7 +4,7 @@
   a1122:{
    total:16,
    cabins:[
-    ['海景房 4层三人间',1],['海景房 4层',1],['海景房 5层',13],['阳台房 6层',1],['船东套房 7层',0]
+    ['海景房 4层三人间',1,'4t'],['海景房 4层',1,'4o'],['海景房 5层',13,'5o'],['阳台房 6层',1,'6b'],['船东套房 7层',0,'7s']
    ],
    business:[['商务舱差价 · 上海往返',0]],
    extensions:['A：0人','B：2人','C：14人（单男待拼）'],
@@ -13,7 +13,7 @@
   a1204:{
    total:7,
    cabins:[
-    ['海景房 4层三人间',0],['海景房 4层',1],['海景房 5层',3],['阳台房 6层',2],['船东套房 7层',1]
+    ['海景房 4层三人间',0,'4t'],['海景房 4层',1,'4o'],['海景房 5层',3,'5o'],['阳台房 6层',2,'6b'],['船东套房 7层',1,'7s']
    ],
    business:[['商务舱差价 · 北京往返',0],['商务舱差价 · 上海往返',0]],
    extensions:['A：2人','B：18人','C：0人'],
@@ -22,7 +22,7 @@
   b0118:{
    total:41.5,
    cabins:[
-    ['海景房 4层三人间',0],['海景房 4层',9.5],['海景房 5层',19],['阳台房 6层',11],['船东套房 7层',2]
+    ['海景房 4层三人间',0,'4t'],['海景房 4层',9.5,'4o'],['海景房 5层',19,'5o'],['阳台房 6层',11,'6b'],['船东套房 7层',2,'7s']
    ],
    business:[['商务舱差价 · 记录1',3],['商务舱差价 · 记录2',4]],
    extensions:['A：4人','B：6人（占位2人）','C：0人'],
@@ -31,7 +31,7 @@
   b0130:{
    total:33.5,
    cabins:[
-    ['海景房 4层三人间',0],['海景房 4层',8],['海景房 5层',17.5],['阳台房 6层',8],['船东套房 7层',0]
+    ['海景房 4层三人间',0,'4t'],['海景房 4层',8,'4o'],['海景房 5层',17.5,'5o'],['阳台房 6层',8,'6b'],['船东套房 7层',0,'7s']
    ],
    business:[['商务舱差价 · 上海往返',0]],
    extensions:['A：0人','B：0人（占位1人）','C：4人'],
@@ -40,7 +40,7 @@
   b0202:{
    total:2.5,
    cabins:[
-    ['阳台套房 5层',0],['阳台套房 6层',2],['阳台套房 7/8层',0.5]
+    ['阳台套房 5层',0,'5v'],['阳台套房 6层',2,'6v'],['阳台套房 7/8层',0.5,'78v']
    ],
    business:[['商务舱差价 · 上海往返',0]],
    extensions:['A：0人','B：9人','C：0人'],
@@ -54,6 +54,7 @@
   return {cls:'green',label:'余舱充足'};
  };
  const fmt = function(n){return Number(n).toLocaleString('zh-CN',{maximumFractionDigits:1});};
+ const money = function(n){return '¥'+Number(n).toLocaleString('zh-CN',{maximumFractionDigits:0});};
  function init(){
   const app=window.ChuankeApp;
   const routeSelect=document.getElementById('route');
@@ -75,7 +76,7 @@
    '.ganluInventory{margin:0 0 12px;border:1px solid #d9e5d9;border-radius:12px;background:#fbfdf9;color:#33483d;font-size:12px;overflow:hidden}'+
    '.ganluInventory summary{display:flex;align-items:center;gap:8px;list-style:none;cursor:pointer;padding:10px 12px;min-height:38px;flex-wrap:wrap}'+
    '.ganluInventory summary::-webkit-details-marker{display:none}.giTitle{font-weight:700;color:#244d3c;font-size:13px}.giTotal{font-weight:700;color:#405b4c}.giBadge{border-radius:999px;padding:3px 8px;font-size:11px;font-weight:700}.giToggle{margin-left:auto;color:#7a8b80;font-size:11px}.ganluInventory[open] .giToggle{content:"";}'+
-   '.giBody{padding:0 12px 11px;border-top:1px solid #e4ece4}.giLegend{display:flex;gap:10px;flex-wrap:wrap;padding:9px 0 7px;color:#718076;font-size:10px}.giLegend span{display:inline-flex;align-items:center;gap:4px}.giDot{width:7px;height:7px;border-radius:50%;display:inline-block}.giSectionTitle{font-size:11px;font-weight:700;color:#637468;margin:8px 0 6px}.giGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.giItem{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:7px 8px;border:1px solid #e4eae4;border-radius:8px;background:#fff;min-width:0}.giName{overflow-wrap:anywhere;color:#5b6b60}.giCount{font-weight:700;white-space:nowrap;border-radius:6px;padding:2px 6px}.giExtensions{display:flex;gap:6px;flex-wrap:wrap}.giExt{border:1px solid #e3e8e3;border-radius:7px;background:#fff;padding:5px 8px;color:#5d6d62}.giNotes{display:grid;gap:5px;margin-top:7px}.giNote{border-radius:7px;background:#fff5df;border:1px solid #f0dfb7;color:#8a6525;padding:7px 8px}.giFoot{margin-top:9px;padding-top:7px;border-top:1px dashed #dce6dc;color:#89968b;font-size:10px;line-height:1.5}.giBadge.green,.giCount.green,.giDot.green{background:#dff3e5;color:#187447}.giBadge.yellow,.giCount.yellow{background:#fff0c7;color:#966400}.giBadge.red,.giCount.red{background:#ffe0df;color:#b42318}.giDot.yellow{background:#e5ad28}.giDot.red{background:#d94a43}'+
+   '.giBody{padding:0 12px 11px;border-top:1px solid #e4ece4}.giLegend{display:flex;gap:10px;flex-wrap:wrap;padding:9px 0 7px;color:#718076;font-size:10px}.giLegend span{display:inline-flex;align-items:center;gap:4px}.giDot{width:7px;height:7px;border-radius:50%;display:inline-block}.giSectionTitle{font-size:11px;font-weight:700;color:#637468;margin:8px 0 6px}.giGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.giItem{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:7px 8px;border:1px solid #e4eae4;border-radius:8px;background:#fff;min-width:0}.giName{overflow-wrap:anywhere;color:#5b6b60}.giCabinInfo{display:flex;flex-direction:column;gap:3px;min-width:0}.giPrice{font-size:10px;color:#8a7a67;white-space:nowrap}.giCount{font-weight:700;white-space:nowrap;border-radius:6px;padding:2px 6px}.giExtensions{display:flex;gap:6px;flex-wrap:wrap}.giExt{border:1px solid #e3e8e3;border-radius:7px;background:#fff;padding:5px 8px;color:#5d6d62}.giNotes{display:grid;gap:5px;margin-top:7px}.giNote{border-radius:7px;background:#fff5df;border:1px solid #f0dfb7;color:#8a6525;padding:7px 8px}.giFoot{margin-top:9px;padding-top:7px;border-top:1px dashed #dce6dc;color:#89968b;font-size:10px;line-height:1.5}.giBadge.green,.giCount.green,.giDot.green{background:#dff3e5;color:#187447}.giBadge.yellow,.giCount.yellow{background:#fff0c7;color:#966400}.giBadge.red,.giCount.red{background:#ffe0df;color:#b42318}.giDot.yellow{background:#e5ad28}.giDot.red{background:#d94a43}'+
    '@media(max-width:520px){.giGrid{grid-template-columns:1fr}.ganluInventory summary{gap:6px}.giToggle{width:100%;margin-left:0}.giLegend{gap:7px}}';
   document.head.appendChild(style);
   routeOverview.insertAdjacentElement('afterend',panel);
@@ -92,9 +93,13 @@
    const s=status(data.total);
    total.textContent='总余舱 '+fmt(data.total);
    badge.className='giBadge '+s.cls;badge.textContent=s.label;
+   const pricingRoutes=typeof app.getData==='function'?app.getData():[];
+   const pricingRoute=Array.isArray(pricingRoutes)?pricingRoutes.find(function(route){return route.id===id;}):null;
    cabins.innerHTML=data.cabins.map(function(item){
     const st=status(item[1]);
-    return '<div class="giItem"><span class="giName">'+esc(item[0])+'</span><span class="giCount '+st.cls+'">余 '+fmt(item[1])+'</span></div>';
+    const cabin=pricingRoute&&Array.isArray(pricingRoute.cabins)?pricingRoute.cabins.find(function(c){return c.id===item[2];}):null;
+    const price=cabin&&Number.isFinite(Number(cabin.price))?money(cabin.price):null;
+    return '<div class="giItem"><span class="giCabinInfo"><span class="giName">'+esc(item[0])+'</span><span class="giPrice">'+(price!==null?price+'/人':'价格待确认')+'</span></span><span class="giCount '+st.cls+'">余 '+fmt(item[1])+'</span></div>';
    }).join('');
    businessWrap.style.display=data.business.length?'':'none';
    business.innerHTML=data.business.map(function(item){
