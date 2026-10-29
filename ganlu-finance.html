@@ -103,7 +103,6 @@
 .voyagePolicyDetails[open]>summary{margin-bottom:8px}
 .voyagePolicyDetails .policynotes{margin:0;padding:3px 4px 7px 23px;color:#53675d;line-height:1.8}
 .voyagePolicyDetails .policynotes li{font-size:11px;padding:6px 1px;border-bottom:1px solid #dfeae2;overflow-wrap:anywhere}
-.voyagePolicySource{color:#83968b;font-size:10px;line-height:1.7;margin:9px 0}
 .voyageCabinPrices{border:1px solid #c7dacb;background:#fcfdf9;border-radius:10px;padding:10px;margin:10px 0 2px}
 .voyageCabinPrices summary{cursor:pointer;font-size:11px;font-weight:700;color:#4e7a62}
 .voyageCabinPrices #priceList{padding-top:8px}
@@ -154,7 +153,6 @@
  <div id="voyagePolicyPreview" class="voyagePolicyPreview" aria-live="polite"></div>
  <details id="voyagePolicyDetails" class="voyagePolicyDetails"><summary>查看全部政策细则 <span class="voyagePolicyArrow">展开查看 ↓</span></summary>
   <ul class="policynotes" id="notes"></ul>
-  <p class="voyagePolicySource" id="voyagePolicySource"></p>
   <details class="voyageCabinPrices"><summary>查看本航次全部房型原价</summary><div id="priceList"></div></details>
  </details>
 </section>
@@ -1667,7 +1665,6 @@
    $('notes').innerHTML=r.notes.map(s=>`<li>${esc(s)}</li>`).join('');
    $('voyagePolicyCount').textContent=r.notes.length+'条政策 · '+P.dateCN(r.deadline)+'截止';
    $('voyagePolicyPreview').innerHTML=r.notes.slice(0,2).map(s=>`<p>${esc(s)}</p>`).join('');
-   $('voyagePolicySource').textContent='资料来源：'+r.policySource;
    $('voyagePolicyDetails').querySelector('.voyagePolicyArrow').textContent=$('voyagePolicyDetails').open?'收起 ↑':'展开全部 '+r.notes.length+' 条 ↓';
    renderSign();
  }
