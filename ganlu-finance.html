@@ -1224,6 +1224,11 @@
    if(!['new','old'].includes(customer))return fail('请选择新客户或老客户。');
    if(!['double','single','triple'].includes(stay))return fail('请选择入住方式。');
    const fixedTriple=isFixedTriple(c),ponant=r.id==='d1110',silversea=r.id==='b0202',atlas=r.id==='c0708';
+   if(atlas){
+     if(q.adults===1&&q.children===1)atlasPromo='adult_child';
+     else if(atlasPromo==='adult_child')atlasPromo='earlybird';
+     q.atlasPromo=atlasPromo;q.gaokaoCount=atlasPromo==='gaokao'?gaokaoCount:null;
+   }
    const ponantVisa=ponant?(ponantExtras.visa||'included'):'included';
    if(!['included','ownUS','agencyUS'].includes(ponantVisa))return fail('请选择有效的庞洛签证方案。');
    const ponantSelfFlight=ponant&&ponantExtras.selfFlight===true;
@@ -1258,15 +1263,11 @@
    if(atlas&&atlasPromo==='adult_child'&&(n!==2||q.adults!==1||q.children!==1))return fail('Atlas儿童专属价仅适用于1位成人＋1位未满18岁的孩子。');
    if(atlas&&atlasPromo==='gaokao'&&(!Number.isInteger(gaokaoCount)||gaokaoCount<1||gaokaoCount>n))return fail('应届高考生人数需为1至出行总人数之间的整数。');
    if(q.children>0){
-     if(['b0118','b0130'].includes(r.id)){
-       if(!['5o','6b','7s'].includes(c.id))return fail('0118／0130的儿童8折仅适用于5层及以上舱位；当前舱型没有明确儿童优惠，请联系产品部确认。');
-       if(stay==='triple')return fail('0118／0130的儿童8折不适用于三人同舱；请改为双人拼住或单人入住。');
+     if(['b0118','b0130'].includes(r.id)&&['5o','6b','7s'].includes(c.id)){
+       if(stay==='triple')return fail('0118／0130的儿童8折专项仅适用于可确认的双人拼住或单人入住；当前入住方式请联系产品部确认。');
        if(anniversaryOption!=='none'||polarBowUpgrade||shipOnly)return fail('儿童8折与周年庆、免费升舱或单船票减免的叠加规则未明确，请先取消专项方案或联系产品部确认。');
-     }else if(r.id==='c0708'){
-       if(q.adults!==1||q.children!==1)return fail('Atlas文件目前只明确“1大1小”儿童方案；其他成人/儿童组合的计价政策未明确，不能自动套价。');
+     }else if(r.id==='c0708'&&q.adults===1&&q.children===1){
        if(atlasPromo!=='adult_child')return fail('Atlas的1大1小需选择“1大1小（孩子未满18岁）”专属方案。');
-     }else if(r.id!=='d1110'){
-       return fail('当前航次政策未明确儿童计价方式，不能直接按成人价或通用折扣估算；请向产品部确认后再报价。');
      }
    }else if(atlas&&atlasPromo==='adult_child')return fail('Atlas的1大1小专属方案需要填写1位成人和1位儿童。');
    // 右栏始终为所选舱型未打折的基础原价，不混入单房差。
@@ -1327,7 +1328,7 @@
    if(policy.code==='expired')warnings.push(`政策已于${dateCN(r.deadline)}截止。左侧仍按原优惠条款测算，能否按此价格报名须经产品部确认，不视为自动延期。`);
    if(policy.code==='upcoming')warnings.push(`优惠自${dateCN(r.validFrom)}起生效；左侧为提前试算价，报名时须确认是否适用。`);
    if(policy.code==='unknown')warnings.push('文件优惠有效期不完整，左侧仅为按已知优惠条款的试算价；报名须确认。');
-   if(q.children>0&&['b0118','b0130'].includes(r.id)){
+   if(q.children>0&&['b0118','b0130'].includes(r.id)&&['5o','6b','7s'].includes(c.id)){
      const adultSubtotal=price*q.adults*.94;
      const childSubtotal=price*q.children*.80;
      const singleSupplement=stay==='single'?price*.25*n:0;
@@ -1482,7 +1483,9 @@
    Object.assign(q,{baseRate:ratePercent/100,policyName:name,groupRate,groupSaving,loyalDeduction:loyal,postAdd,bonusDeduction:bonus,thirdCharge,discounted,atlasDeduction,atlasDeductionItems,ponantFlightSaving,ponantAdjustment,rawOffer:raw,offer:Math.round(raw),status:'ready',statusReason:'金额已计算',copyOffer:true,offerValid:true});
    if(customer==='old'&&loyal)assumptions.push(r.id==='c0719'?'老客减免按所有正常价旅客均为船客老客户本人计算。':'老客减免按所有正常价旅客均符合本人或直系亲属资格计算。');
    steps.push(`基础原价：${money(price)}/人 × ${n}人 = ${money(q.standard)}`);
-   if(ponant&&q.children>0)steps.push('庞洛政策：儿童与成人同价；如涉及同舱第3人，仍按第3人舱位规则计价。');
+   const childHasExplicitRate=(['b0118','b0130'].includes(r.id)&&['5o','6b','7s'].includes(c.id))||(atlas&&(atlasPromo==='adult_child'||atlasPromo==='gaokao'));
+   if(q.children>0&&!childHasExplicitRate)steps.push('儿童计价：本航次未设置单独儿童优惠，按成人同价计价，并适用本航次对应优惠政策。');
+   if(ponant&&q.children>0)steps.push('庞洛补充：如涉及同舱第3人，仍按第3人舱位规则计价。');
    if(shipOnly){
      steps.push(`单船票不含项目：${shipSelected.map(x=>x.label).join('、')}。`);
      steps.push(`折前减免：${money(shipDeductionPerPerson)}/人 × ${n}人 = −${money(shipDeductionPerPerson*n)}；每人折前基数 ${money(shipUnitPrice)}，此后再按当前政策享折扣。`);
@@ -1610,11 +1613,10 @@
  function updatePartyPolicyHint(){
    const p=getPartyOptions(),r=route(),hint=$('partyPolicyHint');
    if(!hint)return;
-   if(!(p.children>0)){hint.textContent='儿童计价按所选航次的明确政策处理；政策未明确时不会猜算。';return;}
-   if(['b0118','b0130'].includes(r.id))hint.textContent=['5o','6b','7s'].includes(cabin().id)?'儿童政策：仅5层及以上舱位适用；成人94折、儿童8折，不自动叠加多人优惠。'+(stay==='single'?'单人入住另加原价25%全程单房差。':''):'儿童8折仅限5层及以上舱位，当前舱型不适用。';
-   else if(r.id==='c0708')hint.textContent=p.adults===1&&p.children===1?'Atlas已明确1大1小：成人早鸟93折，儿童8折；儿童优惠不叠加其他优惠。':'Atlas仅明确1位成人＋1位未满18岁儿童的组合；其他成人/儿童人数需产品部确认。';
-   else if(r.id==='d1110')hint.textContent='庞洛政策：儿童与成人同价；如涉及同舱第3人，按第3人规则计价。';
-   else hint.textContent='当前航次文件没有明确儿童计价规则，系统会暂停报价，不按成人价猜算。';
+   if(!(p.children>0)){hint.textContent='默认儿童与成人同价；仅航次政策明确列出的儿童专项，才按专项优惠计价。';return;}
+   if(['b0118','b0130'].includes(r.id))hint.textContent=['5o','6b','7s'].includes(cabin().id)?'儿童专项：仅5层及以上舱位适用；成人94折、儿童8折。4—7人不叠加2%多人优惠；其他叠加条件按专项政策核实。'+(stay==='single'?'单人入住另加原价25%全程单房差。':''):'当前舱型不适用5层及以上儿童8折，儿童按成人同价，并按当前舱位优惠计算。';
+   else if(r.id==='c0708')hint.textContent=p.adults===1&&p.children===1?'Atlas明确1大1小专属方案：成人早鸟93折、儿童8折；按专属政策计算。':atlasPromo==='gaokao'?'Atlas当前按高考生专项计价；未单独列明儿童优惠，其他同行人按所选早鸟规则计价。':'当前组合不属于Atlas的1大1小专属优惠，儿童按成人同价，并按所选Atlas方案计算。';
+   else hint.textContent='当前航次未列单独儿童优惠，儿童按成人同价计价，并正常参与本航次适用的优惠政策。';
  }
  function updateAtlasPromoUI(){
    const atlas=route().id==='c0708';
@@ -1695,7 +1697,7 @@
    today=P.bjToday();
    const party=getPartyOptions();
    if(route().id==='c0708'&&party.adults===1&&party.children===1){atlasPromo='adult_child';$('atlasPromo').value='adult_child';}
-   else if(route().id==='c0708'&&party.children===0&&atlasPromo==='adult_child'){atlasPromo='earlybird';$('atlasPromo').value='earlybird';}
+   else if(route().id==='c0708'&&atlasPromo==='adult_child'){atlasPromo='earlybird';$('atlasPromo').value='earlybird';}
    num();updatePartyPolicyHint();
    updateAnniversaryUI();
    updateAtlasPromoUI();
