@@ -357,7 +357,7 @@ function updateProductSummary(){
  $("summaryDate").textContent=data.date||"待填写";
  const duration=(data.date||"").match(/(\\d+\\s*晚.{0,8}?\\d+\\s*天|\\d+\\s*天.{0,8}?\\d+\\s*晚)/);
  $("summaryDuration").textContent=duration?duration[1]:"以行程为准";
- $("summaryRoute").textContent=(data.route||"待填写").split("\\n")[0].slice(0,24);
+ $("summaryRoute").textContent=(data.route||"待填写").split("\n")[0].slice(0,24);
  $("summaryGroup").textContent=data.group||"待填写";
 }
 function getSize(){
@@ -416,13 +416,13 @@ function drawCover(c,w,h,im){
  c.strokeStyle="#c9bea7";c.lineWidth=2;c.beginPath();c.moveTo(pad,y+10);c.lineTo(w-pad,y+10);c.stroke();
  setFont(c,19,"600");c.fillStyle="#526157";y=wrap(c,data.route.split("\n")[0],pad,y+55,w-2*pad,30,1);
  setFont(c,17,"400");c.fillStyle="#6e786e";y=wrap(c,data.route.split("\n")[1]||"",pad,y+12,w-2*pad,28,2);
- const points=(data.highlights||"").split("\\n").filter(Boolean).slice(0,h<1400?1:3);
+ const points=(data.highlights||"").split("\n").filter(Boolean).slice(0,h<1400?1:3);
  points.forEach((t,i)=>{c.fillStyle="#b28d57";c.beginPath();c.arc(pad+5,y+28+i*29,4,0,Math.PI*2);c.fill();setFont(c,15,"500");c.fillStyle="#66736a";wrap(c,t,pad+20,y+33+i*29,w-2*pad-20,22,1)});
  const base=h-128;
  c.fillStyle="#e6decb";c.fillRect(pad,base-26,w-2*pad,1);
  setFont(c,18,"700");c.fillStyle="#1c3a2e";c.fillText(data.group,pad,base+18);
  setFont(c,16,"600");c.textAlign="right";c.fillStyle="#94764b";c.fillText(data.price+" 起 / 人",w-pad,base+18);c.textAlign="left";
- setFont(c,12,"500");c.fillStyle="#879187";c.fillText((data.route||"").split("\\n")[0].slice(0,48),pad,h-52);
+ setFont(c,12,"500");c.fillStyle="#879187";c.fillText((data.route||"").split("\n")[0].slice(0,48),pad,h-52);
  drawFrame(c,w,h,"#c1a879");
 }
 function drawRainforest(c,w,h,im){
@@ -453,7 +453,7 @@ function drawPrice(c,w,h,im){
  y+=178;c.strokeStyle="#c9bea7";c.beginPath();c.moveTo(x,y);c.lineTo(w-x,y);c.stroke();
  setFont(c,19,"700");c.fillStyle="#263a30";c.fillText("舱型与价格",x,y+42);
  y+=65;
- const cabins=(data.cabins||"").split("\\n").map(v=>v.trim()).filter(Boolean).slice(0,6);
+ const cabins=(data.cabins||"").split("\n").map(v=>v.trim()).filter(Boolean).slice(0,6);
  if(cabins.length){
   const rowH=Math.min(66,Math.max(48,Math.floor((h-y-155)/cabins.length)));
   cabins.forEach((line,i)=>{
@@ -496,12 +496,12 @@ function drawJourney(c,w,h,im){
  let y=heroH+78;
  setFont(c,15,"700");c.fillStyle="#94784c";c.fillText("THE JOURNEY",54,y);
  setFont(c,27,"700");c.fillStyle="#203b30";c.fillText(data.date||"出发日期待确认",54,y+54);
- const routeLines=(data.route||"").split("\\n").filter(Boolean);
+ const routeLines=(data.route||"").split("\n").filter(Boolean);
  setFont(c,17,"600");c.fillStyle="#354b3e";let routeY=y+104;
  routeLines.slice(0,3).forEach(line=>{routeY=wrap(c,line,54,routeY,w-108,27,2)+7});
  y=routeY+38;
- const itineraryLines=(data.itinerary||"").split("\\n").map(v=>v.trim()).filter(Boolean).slice(0,10);
- const points=itineraryLines.length?itineraryLines:(data.highlights||"").split("\\n").map(v=>v.trim()).filter(Boolean).slice(0,6);
+ const itineraryLines=(data.itinerary||"").split("\n").map(v=>v.trim()).filter(Boolean).slice(0,10);
+ const points=itineraryLines.length?itineraryLines:(data.highlights||"").split("\n").map(v=>v.trim()).filter(Boolean).slice(0,6);
  const label=itineraryLines.length?"ITINERARY  /  行程安排":"HIGHLIGHTS  /  核心体验";
  setFont(c,15,"700");c.fillStyle="#94784c";c.fillText(label,54,y);
  y+=36;
@@ -579,11 +579,11 @@ async function exportPDF(){
  win.document.open();win.document.write("<!doctype html><html><head><meta charset='utf-8'><title>船客海报</title><style>@page{margin:0}html,body{margin:0;padding:0;background:#fff}img{display:block;width:100%;height:auto;max-height:100vh;object-fit:contain} @media print{img{max-height:none}}</style></head><body><img src='"+url+"' onload='setTimeout(function(){window.print()},350)'></body></html>");win.document.close();
 }
 function buildPromoCopy(){
- const points=(data.highlights||"").split("\\n").map(x=>x.trim()).filter(Boolean);
+ const points=(data.highlights||"").split("\n").map(x=>x.trim()).filter(Boolean);
  return "【"+(data.title||"")+"｜"+(data.subtitle||"")+"】\\n\\n"+
  (data.date||"")+
- "\\n\\n目的地："+((data.route||"").split("\\n")[0]||"")+
- "\\n行程路线：\\n"+((data.route||"").split("\\n").slice(1).join("\\n")||"详见完整行程资料")+
+ "\\n\\n目的地："+((data.route||"").split("\n")[0]||"")+
+ "\\n行程路线：\\n"+((data.route||"").split("\n").slice(1).join("\\n")||"详见完整行程资料")+
  "\\n\\n行程亮点：\\n"+points.map((x,i)=>(i+1)+"、"+x).join("\\n")+
  "\\n\\n邮轮 / 核心载体："+(data.ship||"以最终行程为准")+
  "\\n团队规模："+(data.group||"以最终行程为准")+
@@ -653,68 +653,68 @@ function buildImportFindings(parsed){
  }
 }
 function parseProductText(source){
- const lines=source.split(/\\r?\\n/).map(v=>v.replace(/[ \\t]+/g," ").trim()).filter(Boolean);
- const all=source.replace(/[ \\t]+/g," ");
+ const lines=source.split(/\r?\n/).map(v=>v.replace(/[ \t]+/g," ").trim()).filter(Boolean);
+ const all=source.replace(/[ \t]+/g," ");
  const parsed={priceCandidates:[]};
  const labelled=(labels)=>{
-  const re=new RegExp("(?:^|[\\\\s：:])(?:"+labels+")[\\\\s：:：、-]{0,8}([^\\\\n]{2,100})","i");
+  const re=new RegExp("(?:^|[\\s：:])(?:"+labels+")[\\s：:、-]{0,8}([^\\n]{2,100})","i");
   const m=source.match(re);return m?m[1].trim():"";
  };
  const title=labelled("产品名称|线路名称|行程名称|产品主题");
  if(title)parsed.title=title.replace(/[；;，,。].*$/,"").trim();
  const subtitle=labelled("产品副标题|线路副标题|副标题");
  if(subtitle)parsed.subtitle=subtitle.replace(/[；;。].*$/,"").trim();
- const dateRe=/(20\\d{2})[年./-]\\s*(\\d{1,2})[月./-]\\s*(\\d{1,2})日?\\s*(?:—|–|-|至|到|~|～)\\s*(?:(20\\d{2})[年./-]\\s*)?(\\d{1,2})[月./-]\\s*(\\d{1,2})日?/;
+ const dateRe=/(20\d{2})[年./-]\s*(\d{1,2})[月./-]\s*(\d{1,2})日?\s*(?:—|–|-|至|到|~|～)\s*(?:(20\d{2})[年./-]\s*)?(\d{1,2})[月./-]\s*(\d{1,2})日?/;
  const date=all.match(dateRe);
  if(date){
   const endYear=date[4]||date[1];
   parsed.date=date[1]+"."+String(date[2]).padStart(2,"0")+"."+String(date[3]).padStart(2,"0")+" — "+(endYear!==date[1]?endYear+".":"")+String(date[5]).padStart(2,"0")+"."+String(date[6]).padStart(2,"0");
  }
- const duration=all.match(/(\\d+)\\s*晚.{0,12}?(\\d+)\\s*天/)||all.match(/(\\d+)\\s*天.{0,12}?(\\d+)\\s*晚/);
- if(duration)parsed.duration=duration[0].replace(/\\s+/g,"");
+ const duration=all.match(/(\d+)\s*晚.{0,12}?(\d+)\s*天/)||all.match(/(\d+)\s*天.{0,12}?(\d+)\s*晚/);
+ if(duration)parsed.duration=duration[0].replace(/\s+/g,"");
  if(parsed.date&&parsed.duration)parsed.date+="  ｜  "+parsed.duration;
  else if(!parsed.date&&parsed.duration)parsed.date=parsed.duration;
- const group=all.match(/(\\d{1,2}\\s*[+＋]\\s*\\d{1,2}\\s*人(?:精致|精品|小)?团|\\d{1,2}\\s*人小团)/);
- if(group)parsed.group=group[1].replace(/\\s+/g,"");
+ const group=all.match(/(\d{1,2}\s*[+＋]\s*\d{1,2}\s*人(?:精致|精品|小)?团|\d{1,2}\s*人小团)/);
+ if(group)parsed.group=group[1].replace(/\s+/g,"");
  const ship=labelled("邮轮名称|船名|邮轮|船只");
  if(ship)parsed.ship=ship.replace(/[；;，,。].*$/,"").trim();
- const routeLabel=/(?:行程路线|旅行路线|路线安排|目的地|途经国家)[\\s：:：、-]{0,8}([^\\n]{3,180})/i.exec(source);
+ const routeLabel=/(?:行程路线|旅行路线|路线安排|目的地|途经国家)[\s：:、-]{0,8}([^\n]{3,180})/i.exec(source);
  if(routeLabel)parsed.route=routeLabel[1].trim();
  const highlightStart=source.search(/(?:行程亮点|产品亮点|核心亮点|线路特色|产品特色)/);
  if(highlightStart>=0){
-  const tail=source.slice(highlightStart).split(/\\r?\\n/).slice(1);
+  const tail=source.slice(highlightStart).split(/\r?\n/).slice(1);
   const selected=[];
   for(const line of tail){
    const v=line.trim();
    if(!v){if(selected.length)break;continue}
    if(/^(?:行程安排|每日行程|费用包含|费用不含|价格说明|预订须知|舱型|房型)/.test(v))break;
-   if(/^[•·●▪◆◇*—-]/.test(v)||selected.length<5)selected.push(v.replace(/^[•·●▪◆◇*—-]+\\s*/,""));
+   if(/^[•·●▪◆◇*—-]/.test(v)||selected.length<5)selected.push(v.replace(/^[•·●▪◆◇*—-]+\s*/,""));
    if(selected.length>=8)break;
   }
-  if(selected.length)parsed.highlights=selected.join("\\n");
+  if(selected.length)parsed.highlights=selected.join("\n");
  }
- const dayLines=lines.filter(v=>/^(?:Day\\s*\\d+|DAY\\s*\\d+|D\\d+|第\\s*\\d+\\s*天|\\d{1,2}[.月/-]\\s*\\d{1,2}日?)/i.test(v));
- if(dayLines.length)parsed.itinerary=dayLines.slice(0,18).join("\\n");
+ const dayLines=lines.filter(v=>/^(?:Day\s*\d+|DAY\s*\d+|D\d+|第\s*\d+\s*天|\d{1,2}[.月/-]\s*\d{1,2}日?)/i.test(v));
+ if(dayLines.length)parsed.itinerary=dayLines.slice(0,18).join("\n");
  const priceMatches=[];
  lines.forEach(line=>{
-  if(/(?:¥|￥|RMB|人民币)\\s*[\\d,]{4,}|[\\d,]{4,}\\s*元/.test(line)){
-   const matches=line.match(/(?:¥|￥|RMB|人民币)\\s*[\\d,]{4,}|[\\d,]{4,}\\s*元/g)||[];
+  if(/(?:¥|￥|RMB|人民币)\s*[\d,]{4,}|[\d,]{4,}\s*元/.test(line)){
+   const matches=line.match(/(?:¥|￥|RMB|人民币)\s*[\d,]{4,}|[\d,]{4,}\s*元/g)||[];
    matches.forEach(m=>priceMatches.push(m.trim()+"（"+line.slice(0,65)+"）"));
   }
  });
  parsed.priceCandidates=[...new Set(priceMatches)].slice(0,12);
- const distinctAmounts=[...new Set(priceMatches.map(v=>(v.match(/[\\d,]{4,}/)||[""])[0].replace(/,/g,"")))].filter(Boolean);
+ const distinctAmounts=[...new Set(priceMatches.map(v=>(v.match(/[\d,]{4,}/)||[""])[0].replace(/,/g,"")))].filter(Boolean);
  if(distinctAmounts.length===1){
   const amount=distinctAmounts[0];
-  const priceLine=lines.find(v=>v.includes(amount)||v.includes(amount.replace(/\\B(?=(\\d{3})+(?!\\d))/g,",")))||"";
+  const priceLine=lines.find(v=>v.includes(amount)||v.includes(amount.replace(/\B(?=(\d{3})+(?!\d))/g,",")))||"";
   if(/起价|参考价|产品价格|成人价格|每人|单人价格|价格/.test(priceLine))parsed.price="¥"+Number(amount).toLocaleString("en-US");
  }
- const cabinLines=lines.filter(v=>/(舱|房型|房间)/.test(v)&&/(?:¥|￥|RMB|人民币|\\d{4,}\\s*元)/.test(v));
- if(cabinLines.length)parsed.cabins=cabinLines.slice(0,12).join("\\n");
+ const cabinLines=lines.filter(v=>/(舱|房型|房间)/.test(v)&&/(?:¥|￥|RMB|人民币|\d{4,}\s*元)/.test(v));
+ if(cabinLines.length)parsed.cabins=cabinLines.slice(0,12).join("\n");
  return parsed;
 }
 function showImportReview(parsed){
- $("sourcePreview").value=rawImportedText.slice(0,12000)+(rawImportedText.length>12000?"\\n……（原文较长，仅显示前 12000 字符）":"");
+ $("sourcePreview").value=rawImportedText.slice(0,12000)+(rawImportedText.length>12000?"\n……（原文较长，仅显示前 12000 字符）":"");
  $("importStatus").textContent="本地规则提取 · 需人工核对";
  buildImportFindings(parsed);
  $("importReview").classList.add("open");
@@ -735,7 +735,7 @@ async function extractFile(file){
      grouped.get(y).push(item.str);
     });
     const pageLines=[...grouped.entries()].sort((a,b)=>b[0]-a[0]).map(v=>v[1].join(" ").trim()).filter(Boolean);
-    extracted+=pageLines.join("\\n")+"\\n";
+    extracted+=pageLines.join("\n")+"\n";
    }
   }else if(name.endsWith(".docx")){
    if(!window.mammoth)await loadScript("https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js");
@@ -743,7 +743,7 @@ async function extractFile(file){
   }else{
    showModal("暂不支持该文件格式","当前版本支持可复制文本的 PDF、DOCX 和 TXT。图片版 PDF 需要 OCR，暂时无法自动识别。");return;
   }
-  extracted=extracted.replace(/\\r/g,"").replace(/[ \\t]+/g," ").replace(/\\n{3,}/g,"\\n\\n").trim();
+  extracted=extracted.replace(/\r/g,"").replace(/[ \t]+/g," ").replace(/\n{3,}/g,"\n\n").trim();
   if(extracted.length<40){
    showModal("文件已读取，但没有足够的可识别文字","文件可能是扫描图片版 PDF，或正文是图片。当前版本不会猜测价格和行程，请上传可复制文字的 PDF / DOCX / TXT，或手动填写资料。");return;
   }
