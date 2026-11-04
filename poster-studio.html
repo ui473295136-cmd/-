@@ -687,7 +687,7 @@ function parseProductText(source){
   for(const line of tail){
    const v=line.trim();
    if(!v){if(selected.length)break;continue}
-   if(/^(?:行程安排|每日行程|费用包含|费用不含|价格说明|预订须知|舱型|房型|Day\\s*\\d+|DAY\\s*\\d+|D\\d+|第\\s*\\d+\\s*天)/i.test(v))break;
+   if(/^(?:行程安排|每日行程|费用包含|费用不含|价格说明|预订须知|舱型|房型|Day\s*\d+|DAY\s*\d+|D\d+|第\s*\d+\s*天)/i.test(v))break;
    if(/^[•·●▪◆◇*—-]/.test(v)||selected.length<5)selected.push(v.replace(/^[•·●▪◆◇*—-]+\s*/,""));
    if(selected.length>=8)break;
   }
