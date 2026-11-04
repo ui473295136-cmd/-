@@ -665,7 +665,8 @@ function parseProductText(source){
  const subtitle=labelled("产品副标题|线路副标题|副标题");
  if(subtitle)parsed.subtitle=subtitle.replace(/[；;。].*$/,"").trim();
  const dateRe=/(20\d{2})[年./-]\s*(\d{1,2})[月./-]\s*(\d{1,2})日?\s*(?:—|–|-|至|到|~|～)\s*(?:(20\d{2})[年./-]\s*)?(\d{1,2})[月./-]\s*(\d{1,2})日?/;
- const date=all.match(dateRe);
+ const dateLine=lines.find(v=>/(出发日期|航期|发团日期|团期|旅行日期)/.test(v));
+ const date=(dateLine||all).match(dateRe);
  if(date){
   const endYear=date[4]||date[1];
   parsed.date=date[1]+"."+String(date[2]).padStart(2,"0")+"."+String(date[3]).padStart(2,"0")+" — "+(endYear!==date[1]?endYear+".":"")+String(date[5]).padStart(2,"0")+"."+String(date[6]).padStart(2,"0");
@@ -707,7 +708,7 @@ function parseProductText(source){
  if(distinctAmounts.length===1){
   const amount=distinctAmounts[0];
   const priceLine=lines.find(v=>v.includes(amount)||v.includes(amount.replace(/\B(?=(\d{3})+(?!\d))/g,",")))||"";
-  if(/起价|参考价|产品价格|成人价格|每人|单人价格|价格/.test(priceLine))parsed.price="¥"+Number(amount).toLocaleString("en-US");
+  if(/起价|参考价|产品价格|成人价格|每人|单人价格|价格/.test(priceLine)&&!/(舱|房型|房间)/.test(priceLine))parsed.price="¥"+Number(amount).toLocaleString("en-US");
  }
  const cabinLines=lines.filter(v=>/(舱|房型|房间)/.test(v)&&/(?:¥|￥|RMB|人民币|\d{4,}\s*元)/.test(v));
  if(cabinLines.length)parsed.cabins=cabinLines.slice(0,12).join("\n");
