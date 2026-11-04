@@ -105,6 +105,10 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .work-item small{font-size:10px;color:#87938a}
 .work-item button{border:0;background:#e9eee8;color:#466251;border-radius:8px;padding:7px 9px;font-size:10px}
 .empty-works{color:#98a198;font-size:11px;padding:10px 0}
+.copy-panel{margin-top:22px;padding:22px}
+.copy-textarea{width:100%;min-height:190px;border:1px solid #e2e6df;background:#fbfcfa;border-radius:12px;padding:14px;font-size:12px;line-height:1.8;color:#33443a;resize:vertical}
+.copy-actions{display:flex;gap:8px;align-items:center;justify-content:flex-end;margin-top:10px;flex-wrap:wrap}
+.copy-tip{font-size:10px;color:#929c94;margin-right:auto}
 .footer{padding:26px 4px 0;text-align:center;color:#9aa39b;font-size:10px}
 .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#19392f;color:#fff;padding:11px 16px;border-radius:99px;font-size:12px;box-shadow:0 8px 25px #10251d33;transition:.25s;z-index:20;max-width:90vw;text-align:center}
 .toast.show{opacity:1;transform:translate(-50%,0)}
@@ -120,6 +124,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="poster-studio-assets.js"></script>
 </head>
 <body>
@@ -217,6 +222,7 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
         <div class="export-buttons">
           <button class="btn btn-outline" id="saveWorkBtn">保存作品</button>
           <button class="btn btn-outline" id="pdfBtn">打印 / 保存 PDF</button>
+          <button class="btn btn-outline" id="packBtn">一键生成整套海报包</button>
           <button class="btn btn-gold" id="pngBtn">导出高清 PNG ↓</button>
         </div>
       </div>
@@ -247,14 +253,27 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
       </button>
       <button class="template-card" data-template="journey">
         <div class="template-thumb"><img data-thumb="amazon" alt=""><b>行程路线长图</b></div>
-        <div class="template-name">05 · 行程路线长图</div><p class="template-desc">时间轴 / 每日行程</p>
+        <div class="template-name">05 · 行程路线长图</div><p class="template-desc">路线概览 / 核心体验</p>
       </button>
+    </div>
+  </section>
+
+  <section class="panel copy-panel" id="promoCopy">
+    <div class="section-heading">
+      <div><div class="section-kicker">04 / CONTENT KIT</div><h3>配套宣传文案</h3></div>
+      <p>从当前产品资料生成可编辑文案，不额外编造行程卖点。</p>
+    </div>
+    <textarea class="copy-textarea" id="promoText" placeholder="点击“按当前资料生成文案”，自动整理标题、日期、路线、亮点和价格信息。"></textarea>
+    <div class="copy-actions">
+      <span class="copy-tip">文案可自行修改；价格、舱位和行程以最终确认资料为准。</span>
+      <button class="btn btn-secondary" id="makeCopyBtn">按当前资料生成文案</button>
+      <button class="btn btn-primary" id="copyTextBtn">复制文案</button>
     </div>
   </section>
 
   <section class="panel works-section" id="works">
     <div class="section-heading">
-      <div><div class="section-kicker">04 / MY CREATIONS</div><h3>最近保存的作品</h3></div>
+      <div><div class="section-kicker">05 / MY CREATIONS</div><h3>最近保存的作品</h3></div>
       <p>作品保存在当前浏览器中，不会自动上传到服务器。</p>
     </div>
     <div class="works-grid" id="worksGrid"><div class="empty-works">还没有保存的作品。生成满意的海报后，可以保存到这里。</div></div>
@@ -283,14 +302,6 @@ const original={
  ship:"Royal Galapagos Infinity 无限号",
  highlights:"加拉帕戈斯群岛7晚探险航程\n深入亚马逊热带雨林\n科托帕希火山与安第斯山脉\n穿行赤道线上的中南美洲三国"
 };
-const itinerary=[
- {day:"01—03",date:"08.01—08.03",place:"波哥大",desc:"抵达哥伦比亚首都，探索城市文化与历史街区"},
- {day:"04—05",date:"08.04—08.05",place:"基多 · 科托帕希",desc:"安第斯山脉、火山国家公园与高原风光"},
- {day:"06—09",date:"08.06—08.09",place:"亚马逊热带雨林",desc:"入住 La Selva Eco-Lodge，深入雨林探索"},
- {day:"10—17",date:"08.10—08.17",place:"加拉帕戈斯群岛",desc:"搭乘 Infinity 无限号，探索岛屿与海洋生物"},
- {day:"18",date:"08.18",place:"巴拿马城",desc:"参观巴拿马运河，感受连接两大洋的工程奇迹"},
- {day:"19—21",date:"08.19—08.21",place:"返程",desc:"巴拿马城出发，返回国内"}
-];
 const cabinRates=[
  ["一层阳台房","21—25㎡","¥159,800 / 人"],
  ["二层阳台房","23㎡","¥165,800 / 人"],
@@ -442,30 +453,35 @@ function drawShip(c,w,h,im){
 }
 function drawJourney(c,w,h,im){
  c.fillStyle="#f2eddf";c.fillRect(0,0,w,h);
- coverImage(c,im,0,0,w,550);
- gradient(c,0,320,w,230,[[0,"rgba(12,31,24,0)"],[1,"rgba(12,31,24,.88)"]],true);
+ const heroH=Math.min(560,Math.round(h*.19));
+ coverImage(c,im,0,0,w,heroH);
+ gradient(c,0,heroH*.52,w,heroH*.48,[[0,"rgba(12,31,24,0)"],[1,"rgba(12,31,24,.88)"]],true);
  setFont(c,15,"700");c.fillStyle="#f0dfbd";c.fillText("CHUANKE TRAVEL  /  ROUTE JOURNAL",54,62);
- setFont(c,57,"700");c.fillStyle="#fff";c.fillText(data.title,54,445);
- setFont(c,28,"500");c.fillStyle="#f2e6d1";c.fillText(data.subtitle,56,490);
- let y=620;
- setFont(c,15,"700");c.fillStyle="#94784c";c.fillText("17 NIGHTS · 21 DAYS",54,y);
- setFont(c,25,"700");c.fillStyle="#203b30";c.fillText("从安第斯山脉，走进亚马逊与太平洋",54,y+52);
- setFont(c,16,"400");c.fillStyle="#657168";wrap(c,data.route.replace("\n","  "),54,y+92,w-108,27,3);
- y+=205;
- c.strokeStyle="#bca77f";c.lineWidth=3;c.beginPath();c.moveTo(84,y);c.lineTo(84,h-300);c.stroke();
- itinerary.forEach((it,i)=>{
-  const yy=y+i*310;
-  c.fillStyle="#b38e58";c.beginPath();c.arc(84,yy+10,12,0,Math.PI*2);c.fill();
-  setFont(c,16,"700");c.fillStyle="#94784c";c.fillText("DAY "+it.day,126,yy+8);
-  setFont(c,14,"500");c.fillStyle="#8b948b";c.textAlign="right";c.fillText(it.date,w-56,yy+8);c.textAlign="left";
-  setFont(c,31,"700");c.fillStyle="#203a30";c.fillText(it.place,126,yy+64);
-  setFont(c,17,"400");c.fillStyle="#657168";wrap(c,it.desc,126,yy+105,w-190,27,3);
-  c.strokeStyle="#ded6c5";c.lineWidth=1;c.beginPath();c.moveTo(126,yy+180);c.lineTo(w-56,yy+180);c.stroke();
+ setFont(c,57,"700");c.fillStyle="#fff";c.fillText(data.title||"旅行路线",54,heroH-105);
+ setFont(c,28,"500");c.fillStyle="#f2e6d1";c.fillText(data.subtitle||"",56,heroH-55);
+ let y=heroH+90;
+ setFont(c,15,"700");c.fillStyle="#94784c";c.fillText("THE JOURNEY",54,y);
+ setFont(c,28,"700");c.fillStyle="#203b30";c.fillText(data.date||"",54,y+58);
+ const routeLines=(data.route||"").split("\\n").filter(Boolean);
+ setFont(c,18,"600");c.fillStyle="#354b3e";let routeY=y+116;
+ routeLines.slice(0,4).forEach((line)=>{routeY=wrap(c,line,54,routeY,w-108,30,2)+10});
+ y=routeY+70;
+ setFont(c,15,"700");c.fillStyle="#94784c";c.fillText("HIGHLIGHTS  /  核心体验",54,y);
+ const points=(data.highlights||"").split("\\n").map(x=>x.trim()).filter(Boolean).slice(0,5);
+ const rowH=Math.min(235,Math.max(145,Math.floor((h-y-460)/Math.max(points.length,1))));
+ points.forEach((point,i)=>{
+  const yy=y+54+i*rowH;
+  c.fillStyle="#e8e0cf";c.beginPath();c.roundRect(54,yy,w-108,rowH-18,14);c.fill();
+  c.fillStyle="#b28d57";c.beginPath();c.arc(90,yy+42,19,0,Math.PI*2);c.fill();
+  setFont(c,16,"700");c.fillStyle="#fff";c.textAlign="center";c.fillText(String(i+1).padStart(2,"0"),90,yy+48);c.textAlign="left";
+  setFont(c,22,"600");c.fillStyle="#294237";wrap(c,point,128,yy+48,w-220,31,3);
  });
- const by=h-180;
- setFont(c,17,"700");c.fillStyle="#8c724a";c.fillText("SAILING WITH INFINITY",54,by);
- setFont(c,28,"700");c.fillStyle="#203a30";c.fillText(data.price+" 起 / 人",54,by+52);
- setFont(c,15,"500");c.fillStyle="#69756b";c.fillText(data.group+"  ·  "+data.date,54,by+92);
+ const by=h-205;
+ c.strokeStyle="#cbbd9f";c.lineWidth=2;c.beginPath();c.moveTo(54,by-45);c.lineTo(w-54,by-45);c.stroke();
+ setFont(c,17,"700");c.fillStyle="#8c724a";c.fillText(data.ship||"TRAVEL WITH CHUANKE",54,by);
+ setFont(c,30,"700");c.fillStyle="#203a30";c.fillText((data.price||"")+(data.price?" 起 / 人":""),54,by+55);
+ setFont(c,16,"500");c.fillStyle="#69756b";c.fillText((data.group||"")+"  ·  "+(data.date||""),54,by+95);
+ setFont(c,13,"400");c.fillStyle="#879187";c.fillText("具体安排与价格以最终确认的行程资料为准",54,h-55);
 }
 async function render(){await drawPoster(canvas,1)}
 function setTemplate(t){
@@ -524,6 +540,57 @@ async function exportPDF(){
  const win=window.open("","_blank");if(!win){toast("浏览器拦截了新窗口，请允许弹窗后重试");return}
  win.document.open();win.document.write("<!doctype html><html><head><meta charset='utf-8'><title>船客海报</title><style>@page{margin:0}html,body{margin:0;padding:0;background:#fff}img{display:block;width:100%;height:auto;max-height:100vh;object-fit:contain} @media print{img{max-height:none}}</style></head><body><img src='"+url+"' onload='setTimeout(function(){window.print()},350)'></body></html>");win.document.close();
 }
+function buildPromoCopy(){
+ const points=(data.highlights||"").split("\\n").map(x=>x.trim()).filter(Boolean);
+ return "【"+(data.title||"")+"｜"+(data.subtitle||"")+"】\\n\\n"+
+ (data.date||"")+
+ "\\n\\n目的地："+((data.route||"").split("\\n")[0]||"")+
+ "\\n行程路线：\\n"+((data.route||"").split("\\n").slice(1).join("\\n")||"详见完整行程资料")+
+ "\\n\\n行程亮点：\\n"+points.map((x,i)=>(i+1)+"、"+x).join("\\n")+
+ "\\n\\n邮轮 / 核心载体："+(data.ship||"以最终行程为准")+
+ "\\n团队规模："+(data.group||"以最终行程为准")+
+ "\\n参考价格："+(data.price||"请咨询")+(data.price?" 起 / 人":"")+
+ "\\n\\n具体行程、舱位、价格及服务内容，以最终确认的产品资料为准。";
+}
+function makePromoCopy(){readFields();$("promoText").value=buildPromoCopy();toast("宣传文案已根据当前资料生成，可继续编辑")}
+async function exportPosterPack(){
+ readFields();
+ if(!window.JSZip){
+  try{await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js")}
+  catch(e){toast("压缩组件加载失败，请刷新页面后重试");return}
+ }
+ if(!window.JSZip){toast("压缩组件暂不可用，请稍后重试");return}
+ const oldTemplate=template,oldRatio=ratio,zip=new JSZip();
+ const standardRatio=(ratio==="long"?"3:4":ratio);
+ const tasks=[
+  {name:"01-自然博物志",template:"cover",ratio:standardRatio},
+  {name:"02-雨林探险",template:"rainforest",ratio:standardRatio},
+  {name:"03-价格与舱型",template:"price",ratio:standardRatio},
+  {name:"04-邮轮介绍",template:"ship",ratio:standardRatio},
+  {name:"05-行程路线长图",template:"journey",ratio:"long"}
+ ];
+ const button=$("packBtn");button.disabled=true;button.textContent="正在生成 0/5…";
+ try{
+  for(let i=0;i<tasks.length;i++){
+   const task=tasks[i];template=task.template;ratio=task.ratio;
+   const c=document.createElement("canvas");await drawPoster(c,1.25);
+   const blob=await new Promise(resolve=>c.toBlob(resolve,"image/png"));
+   if(!blob)throw new Error("PNG export failed");
+   zip.file(task.name+".png",blob);
+   button.textContent="正在生成 "+(i+1)+"/5…";
+  }
+  zip.file("产品宣传文案.txt",buildPromoCopy());
+  const blob=await zip.generateAsync({type:"blob",compression:"STORE"});
+  const safe=(data.title||"船客产品").replace(/[\\\\/:*?"<>|]/g,"_");
+  downloadBlob(blob,safe+"_整套海报包.zip");
+  toast("整套海报包已生成：5张海报 + 1份宣传文案");
+ }catch(e){toast("整套海报生成失败，请尝试单张导出")}
+ finally{
+  template=oldTemplate;ratio=oldRatio;$("ratioSelect").value=oldRatio;
+  document.querySelectorAll(".template-card").forEach(el=>el.classList.toggle("active",el.dataset.template===template));
+  button.disabled=false;button.textContent="一键生成整套海报包";await render();
+ }
+}
 function loadScript(src){return new Promise((resolve,reject)=>{const s=document.createElement("script");s.src=src;s.onload=resolve;s.onerror=reject;document.head.appendChild(s)})}
 async function extractFile(file){
  const name=file.name.toLowerCase();let text="";
@@ -557,6 +624,14 @@ $("saveProductBtn").addEventListener("click",saveProduct);
 $("saveWorkBtn").addEventListener("click",saveWork);
 $("pngBtn").addEventListener("click",exportPNG);
 $("pdfBtn").addEventListener("click",exportPDF);
+$("packBtn").addEventListener("click",exportPosterPack);
+$("makeCopyBtn").addEventListener("click",makePromoCopy);
+$("copyTextBtn").addEventListener("click",async()=>{
+ const text=$("promoText").value.trim();
+ if(!text){toast("请先生成或填写宣传文案");return}
+ try{await navigator.clipboard.writeText(text);toast("宣传文案已复制")}
+ catch(e){$("promoText").focus();$("promoText").select();toast("请使用 Ctrl+C 复制文案")}
+});
 $("jumpWorks").addEventListener("click",()=>$("works").scrollIntoView({behavior:"smooth"}));
 $("docFile").addEventListener("change",e=>{const f=e.target.files[0];if(f)extractFile(f);e.target.value=""});
 $("imageFile").addEventListener("change",e=>{
@@ -564,7 +639,7 @@ $("imageFile").addEventListener("change",e=>{
 });
 $("heroPhoto").src=AS.iguana||"";
 document.querySelectorAll("[data-thumb]").forEach(el=>{const key=el.dataset.thumb;el.src=AS[key]||AS.iguana||""});
-renderPhotoPicks();loadSaved();render();
+renderPhotoPicks();loadSaved();render();$("promoText").value=buildPromoCopy();
 })();
 </script>
 </body>
