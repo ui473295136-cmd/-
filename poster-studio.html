@@ -51,6 +51,16 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 .meta-cell small{display:block;color:#8b968e;font-size:10px}
 .meta-cell b{display:block;font-size:12px;margin-top:2px}
 .upload-strip{display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px dashed #cbd5cc;border-radius:12px;padding:10px 12px;margin:12px 0 18px}
+.import-review{display:none;margin:-5px 0 18px;padding:13px;background:#f7f8f3;border:1px solid #e4e9df;border-radius:12px}
+.import-review.open{display:block}
+.import-review-head{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:12px;font-weight:750}
+.import-status{font-size:10px;font-weight:500;color:#688071}
+.import-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:10px 0}
+.import-field{min-width:0;background:#fff;border:1px solid #edf0e9;border-radius:8px;padding:8px;font-size:11px;overflow-wrap:anywhere}
+.import-field b{display:block;color:#8c978e;font-size:10px;margin-bottom:3px}
+.import-field .missing{color:#a17a45}
+.import-raw{width:100%;height:120px;resize:vertical;border:1px solid #e1e7df;border-radius:9px;background:#fff;padding:9px;font-size:10px;line-height:1.6;color:#526057}
+.import-review-actions{display:flex;justify-content:flex-end;gap:7px;margin-top:8px;flex-wrap:wrap}
 .upload-strip span{font-size:11px;color:#7c8980}
 .upload-label{font-size:12px;color:#315e4b;font-weight:700;cursor:pointer}
 .field{margin:13px 0}
@@ -158,18 +168,28 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
       <div class="section-kicker">01 / PRODUCT DATA</div>
       <div class="panel-title">产品资料</div>
       <div class="product-card">
-        <div class="product-top"><strong id="productName">穿行赤道线 · 中南美洲三国之旅</strong><span class="product-chip">演示产品</span></div>
+        <div class="product-top"><strong id="productName">穿行赤道线 · 中南美洲三国之旅</strong><span class="product-chip" id="productChip">演示资料</span></div>
         <div class="product-meta">
-          <div class="meta-cell"><small>出发日期</small><b>2027.08.01</b></div>
-          <div class="meta-cell"><small>旅行时长</small><b>17晚 · 21天</b></div>
-          <div class="meta-cell"><small>目的地</small><b>中南美洲三国</b></div>
-          <div class="meta-cell"><small>团队规模</small><b>18+2人小团</b></div>
+          <div class="meta-cell"><small>出发日期</small><b id="summaryDate">2027.08.01</b></div>
+          <div class="meta-cell"><small>旅行时长</small><b id="summaryDuration">17晚 · 21天</b></div>
+          <div class="meta-cell"><small>目的地</small><b id="summaryRoute">中南美洲三国</b></div>
+          <div class="meta-cell"><small>团队规模</small><b id="summaryGroup">18+2人小团</b></div>
         </div>
       </div>
       <div class="upload-strip">
         <div><strong style="font-size:12px">导入行程文件</strong><br><span>PDF / DOCX / TXT · 本地读取</span></div>
         <label class="upload-label" for="docFile">选择文件 ＋</label>
         <input id="docFile" type="file" accept=".pdf,.docx,.txt" hidden>
+      </div>
+      <div class="import-review" id="importReview">
+        <div class="import-review-head"><span>资料提取结果 · 请核对</span><span class="import-status" id="importStatus">本地规则提取</span></div>
+        <div class="import-fields" id="importFindings"></div>
+        <label style="display:block;font-size:10px;color:#7e8a80;margin:6px 0">文件原文预览（只读）</label>
+        <textarea class="import-raw" id="sourcePreview" readonly></textarea>
+        <div class="import-review-actions">
+          <button class="btn btn-secondary" id="copySourceBtn" type="button">复制提取原文</button>
+          <button class="btn btn-secondary" id="closeReviewBtn" type="button">收起核对区</button>
+        </div>
       </div>
       <div class="field"><label for="titleInput">主标题 <small>海报第一视觉</small></label><input id="titleInput" value="穿行赤道线"></div>
       <div class="field"><label for="subtitleInput">副标题</label><input id="subtitleInput" value="中南美洲三国之旅"></div>
@@ -185,6 +205,8 @@ button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-vis
 深入亚马逊热带雨林
 科托帕希火山与安第斯山脉
 穿行赤道线上的中南美洲三国</textarea></div>
+      <div class="field"><label for="itineraryInput">详细行程 <small>每一天 / 每一段单独一行</small></label><textarea id="itineraryInput" placeholder="例如：Day 1｜北京出发，转机前往……"></textarea></div>
+      <div class="field"><label for="cabinsInput">舱型与价格 <small>只填写已确认的真实报价</small></label><textarea id="cabinsInput" placeholder="例如：四层海景房｜¥xx,xxx / 人"></textarea></div>
       <div class="field">
         <label>选择主视觉照片 <small>优先使用原始实拍</small></label>
         <div class="photo-picks" id="photoPicks"></div>
@@ -300,13 +322,10 @@ const original={
  route:"哥伦比亚 · 厄瓜多尔 · 巴拿马\n波哥大 → 基多 → 科托帕希 → 亚马逊雨林 → 加拉帕戈斯 → 巴拿马城",
  price:"¥159,800",group:"18+2人精致小团",
  ship:"Royal Galapagos Infinity 无限号",
- highlights:"加拉帕戈斯群岛7晚探险航程\n深入亚马逊热带雨林\n科托帕希火山与安第斯山脉\n穿行赤道线上的中南美洲三国"
+ highlights:"加拉帕戈斯群岛7晚探险航程\n深入亚马逊热带雨林\n科托帕希火山与安第斯山脉\n穿行赤道线上的中南美洲三国",
+ itinerary:"",
+ cabins:""
 };
-const cabinRates=[
- ["一层阳台房","21—25㎡","¥159,800 / 人"],
- ["二层阳台房","23㎡","¥165,800 / 人"],
- ["三层阳台套房","32㎡","¥169,800 / 人"]
-];
 let data=Object.assign({},original);
 let template="cover";
 let ratio="3:4";
@@ -315,10 +334,11 @@ let customImages=[];
 let activeSrc=AS.iguana||"";
 let loadedImages={};
 let works=[];
+let rawImportedText="";
 const canvas=document.getElementById("posterCanvas");
 const ctx=canvas.getContext("2d");
 const $=id=>document.getElementById(id);
-const fields=["title","subtitle","date","route","price","group","ship","highlights"];
+const fields=["title","subtitle","date","route","price","group","ship","highlights","itinerary","cabins"];
 const imageMap={iguana:{src:AS.iguana,label:"加拉帕戈斯鬣蜥"},amazon:{src:AS.amazon,label:"亚马逊雨林"},ship:{src:AS.ship,label:"Infinity 无限号"}};
 function toast(msg){const el=$("toast");el.textContent=msg;el.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("show"),2600)}
 function showModal(title,msg){$("modalTitle").textContent=title;$("modalText").textContent=msg;$("modal").classList.add("open")}
@@ -329,7 +349,17 @@ function getImage(src){
  return new Promise(resolve=>{const im=new Image();im.onload=()=>{loadedImages[src]=im;resolve(im)};im.onerror=()=>resolve(null);im.src=src});
 }
 function readFields(){fields.forEach(k=>{const el=$(k+"Input");if(el)data[k]=el.value.trim()})}
-function fillFields(){fields.forEach(k=>{const el=$(k+"Input");if(el)el.value=data[k]||""})}
+function fillFields(){fields.forEach(k=>{const el=$(k+"Input");if(el)el.value=data[k]||""});updateProductSummary()}
+function updateProductSummary(){
+ const title=[data.title,data.subtitle].filter(Boolean).join(" · ");
+ $("productName").textContent=title||"尚未填写产品名称";
+ $("productChip").textContent=rawImportedText?"已导入 · 待核对":"演示资料";
+ $("summaryDate").textContent=data.date||"待填写";
+ const duration=(data.date||"").match(/(\\d+\\s*晚.{0,8}?\\d+\\s*天|\\d+\\s*天.{0,8}?\\d+\\s*晚)/);
+ $("summaryDuration").textContent=duration?duration[1]:"以行程为准";
+ $("summaryRoute").textContent=(data.route||"待填写").split("\\n")[0].slice(0,24);
+ $("summaryGroup").textContent=data.group||"待填写";
+}
 function getSize(){
  if(ratio==="1:1")return [1200,1200];
  if(ratio==="9:16")return [900,1600];
@@ -377,11 +407,11 @@ function drawCover(c,w,h,im){
  const photoH=Math.round(h*.59);coverImage(c,im,0,0,w,photoH);
  gradient(c,0,photoH*.55,w,photoH*.45,[[0,"rgba(13,31,25,0)"],[1,"rgba(12,28,23,.82)"]],true);
  setFont(c,19,"700");c.fillStyle="#f1dfb9";c.fillText("CHUANKE TRAVEL  /  EXPEDITION COLLECTION",58,66);
- setFont(c,17,"500");c.fillStyle="#fff";c.fillText("CENTRAL & SOUTH AMERICA",58,105);
+ setFont(c,17,"500");c.fillStyle="#fff";c.fillText("EXPEDITION COLLECTION",58,105);
  setFont(c,66,"700");c.fillStyle="#fff";c.fillText(data.title||"穿行赤道线",58,photoH-120);
  setFont(c,30,"500");c.fillStyle="#f3e7d0";c.fillText(data.subtitle||"中南美洲三国之旅",60,photoH-68);
  const pad=58;let y=photoH+74;
- setFont(c,14,"700");c.fillStyle="#8c754d";c.fillText("TRAVERSE THE EQUATOR",pad,y);
+ setFont(c,14,"700");c.fillStyle="#8c754d";c.fillText("THE JOURNEY",pad,y);
  setFont(c,29,"700");c.fillStyle="#1b352b";y=wrap(c,data.date,pad,y+54,w-2*pad,40,2);
  c.strokeStyle="#c9bea7";c.lineWidth=2;c.beginPath();c.moveTo(pad,y+10);c.lineTo(w-pad,y+10);c.stroke();
  setFont(c,19,"600");c.fillStyle="#526157";y=wrap(c,data.route.split("\n")[0],pad,y+55,w-2*pad,30,1);
@@ -392,15 +422,15 @@ function drawCover(c,w,h,im){
  c.fillStyle="#e6decb";c.fillRect(pad,base-26,w-2*pad,1);
  setFont(c,18,"700");c.fillStyle="#1c3a2e";c.fillText(data.group,pad,base+18);
  setFont(c,16,"600");c.textAlign="right";c.fillStyle="#94764b";c.fillText(data.price+" 起 / 人",w-pad,base+18);c.textAlign="left";
- setFont(c,12,"500");c.fillStyle="#879187";c.fillText("哥伦比亚  ·  厄瓜多尔  ·  巴拿马",pad,h-52);
+ setFont(c,12,"500");c.fillStyle="#879187";c.fillText((data.route||"").split("\\n")[0].slice(0,48),pad,h-52);
  drawFrame(c,w,h,"#c1a879");
 }
 function drawRainforest(c,w,h,im){
  c.fillStyle="#152c24";c.fillRect(0,0,w,h);coverImage(c,im,0,0,w,h);
  gradient(c,0,0,w,h,[[0,"rgba(9,28,21,.5)"],[.48,"rgba(12,34,24,.08)"],[1,"rgba(8,26,20,.92)"]],true);
  c.strokeStyle="#d4bd8e";c.lineWidth=2;c.strokeRect(42,42,w-84,h-84);
- setFont(c,16,"700");c.fillStyle="#e2cfaa";c.fillText("FIELD NOTES  /  2027",78,100);
- setFont(c,18,"500");c.fillStyle="#f2eadb";c.fillText("AN EXPEDITION THROUGH THE EQUATOR",78,142);
+ setFont(c,16,"700");c.fillStyle="#e2cfaa";c.fillText("FIELD NOTES  /  CHUANKE TRAVEL",78,100);
+ setFont(c,18,"500");c.fillStyle="#f2eadb";c.fillText("A JOURNEY BEYOND THE ORDINARY",78,142);
  const y=h*.62;
  setFont(c,72,"700");c.fillStyle="#fff";c.fillText(data.title||"穿行赤道线",78,y);
  setFont(c,33,"500");c.fillStyle="#e6d6b4";c.fillText(data.subtitle||"中南美洲三国之旅",80,y+56);
@@ -413,43 +443,47 @@ function drawPrice(c,w,h,im){
  c.fillStyle="#f3eddf";c.fillRect(0,0,w,h);
  const ph=Math.round(h*.42);coverImage(c,im,0,0,w,ph);
  gradient(c,0,ph*.55,w,ph*.45,[[0,"rgba(13,31,25,0)"],[1,"rgba(13,31,25,.65)"]],true);
- setFont(c,16,"700");c.fillStyle="#fff0d3";c.fillText("2027  /  SMALL GROUP EXPEDITION",54,62);
- setFont(c,58,"700");c.fillStyle="#fff";c.fillText(data.title,54,ph-80);
- setFont(c,27,"500");c.fillStyle="#f5e8ce";c.fillText(data.subtitle,56,ph-38);
+ setFont(c,16,"700");c.fillStyle="#fff0d3";c.fillText("CHUANKE TRAVEL  /  PRICE DETAILS",54,62);
+ setFont(c,58,"700");c.fillStyle="#fff";c.fillText(data.title||"产品价格",54,ph-80);
+ setFont(c,27,"500");c.fillStyle="#f5e8ce";c.fillText(data.subtitle||"",56,ph-38);
  const x=58;let y=ph+74;
- setFont(c,15,"700");c.fillStyle="#98794b";c.fillText("PRICE FROM",x,y);
- setFont(c,74,"700");c.fillStyle="#1b3b2f";c.fillText(data.price,x,y+92);
- setFont(c,19,"500");c.fillStyle="#68756b";c.fillText("人民币 / 人 · 双人入住参考价",x,y+130);
- y+=180;c.strokeStyle="#c9bea7";c.beginPath();c.moveTo(x,y);c.lineTo(w-x,y);c.stroke();
- setFont(c,19,"700");c.fillStyle="#263a30";c.fillText("邮轮舱型参考价格",x,y+42);
- y+=76;
- cabinRates.forEach((r,i)=>{
-   c.fillStyle=i%2===0?"#e9e2d2":"#f8f4ea";c.fillRect(x,y+i*76,w-2*x,64);
-   setFont(c,19,"700");c.fillStyle="#294237";c.fillText(r[0],x+16,y+27+i*76);
-   setFont(c,15,"400");c.fillStyle="#7c867d";c.fillText(r[1],x+16,y+50+i*76);
-   setFont(c,19,"700");c.fillStyle="#8a6d42";c.textAlign="right";c.fillText(r[2],w-x-16,y+38+i*76);c.textAlign="left";
- });
- const foot=h-78;setFont(c,16,"600");c.fillStyle="#4f6055";c.fillText(data.date,x,foot);
- setFont(c,13,"400");c.fillStyle="#899187";c.fillText("价格以最终确认的产品报价为准",x,foot+28);
+ setFont(c,15,"700");c.fillStyle="#98794b";c.fillText("PRICE REFERENCE",x,y);
+ setFont(c,70,"700");c.fillStyle="#1b3b2f";c.fillText(data.price||"以最终报价为准",x,y+88);
+ setFont(c,17,"500");c.fillStyle="#68756b";c.fillText(data.price?"人民币 / 人 · 具体适用条件以报价单为准":"尚未从资料中确认统一参考价",x,y+126);
+ y+=178;c.strokeStyle="#c9bea7";c.beginPath();c.moveTo(x,y);c.lineTo(w-x,y);c.stroke();
+ setFont(c,19,"700");c.fillStyle="#263a30";c.fillText("舱型与价格",x,y+42);
+ y+=65;
+ const cabins=(data.cabins||"").split("\\n").map(v=>v.trim()).filter(Boolean).slice(0,6);
+ if(cabins.length){
+  const rowH=Math.min(66,Math.max(48,Math.floor((h-y-155)/cabins.length)));
+  cabins.forEach((line,i)=>{
+   const yy=y+i*rowH;
+   c.fillStyle=i%2===0?"#e9e2d2":"#f8f4ea";c.fillRect(x,yy,w-2*x,rowH-5);
+   setFont(c,17,"600");c.fillStyle="#294237";wrap(c,line,x+14,yy+Math.min(30,rowH/2+4),w-2*x-28,23,2);
+  });
+ }else{
+  setFont(c,16,"500");c.fillStyle="#8a938a";c.fillText("尚未录入已确认的舱型报价",x,y+28);
+ }
+ const foot=h-78;setFont(c,15,"600");c.fillStyle="#4f6055";c.fillText(data.date||"出发日期待确认",x,foot);
+ setFont(c,13,"400");c.fillStyle="#899187";c.fillText("报价、舱位及优惠条件以最终确认的产品资料为准",x,foot+28);
 }
 function drawShip(c,w,h,im){
  c.fillStyle="#102b32";c.fillRect(0,0,w,h);
  const ph=Math.round(h*.48);coverImage(c,im,0,0,w,ph);
  gradient(c,0,ph*.55,w,ph*.45,[[0,"rgba(11,30,34,0)"],[1,"rgba(11,30,34,.9)"]],true);
- setFont(c,17,"700");c.fillStyle="#ead6ad";c.fillText("THE EXPEDITION YACHT",58,62);
- setFont(c,68,"700");c.fillStyle="#fff";c.fillText("INFINITY",58,ph-75);
- setFont(c,24,"500");c.fillStyle="#ead9b8";c.fillText("Royal Galapagos Infinity 无限号",60,ph-32);
+ setFont(c,17,"700");c.fillStyle="#ead6ad";c.fillText("CHUANKE TRAVEL  /  EXPEDITION VESSEL",58,62);
+ setFont(c,58,"700");c.fillStyle="#fff";wrap(c,data.ship||"探险邮轮介绍",58,ph-85,w-116,66,2);
+ setFont(c,24,"500");c.fillStyle="#ead9b8";c.fillText(data.subtitle||"船舶与航程信息",60,ph-28);
  let y=ph+80;
- setFont(c,17,"700");c.fillStyle="#c9b58c";c.fillText("GALÁPAGOS ISLANDS  /  7 NIGHTS",58,y);
- setFont(c,36,"700");c.fillStyle="#fff";y=wrap(c,data.ship,58,y+65,w-116,48,2);
- c.strokeStyle="#547078";c.beginPath();c.moveTo(58,y+18);c.lineTo(w-58,y+18);c.stroke();
- const points=[["7晚","加拉帕戈斯群岛航程"],["18+2","精致小团规模"],["3国","哥伦比亚 · 厄瓜多尔 · 巴拿马"]];
+ setFont(c,17,"700");c.fillStyle="#c9b58c";c.fillText("VOYAGE INFORMATION",58,y);
+ const points=[[data.date||"待确认","出发日期"],[data.group||"待确认","团队规模"],[data.price||"以最终报价为准","参考价格"]];
  points.forEach((p,i)=>{
   const xx=58+i*((w-116)/3);
-  setFont(c,38,"700");c.fillStyle="#e4c99a";c.fillText(p[0],xx,y+90);
-  setFont(c,14,"500");c.fillStyle="#d5ded7";wrap(c,p[1],xx,y+125,(w-116)/3-12,22,2);
+  setFont(c,25,"700");c.fillStyle="#e4c99a";wrap(c,p[0],xx,y+75,(w-116)/3-14,32,2);
+  setFont(c,14,"500");c.fillStyle="#d5ded7";c.fillText(p[1],xx,y+145);
  });
- setFont(c,17,"500");c.fillStyle="#e4e8de";c.fillText(data.date,58,h-84);
+ c.strokeStyle="#547078";c.beginPath();c.moveTo(58,y+180);c.lineTo(w-58,y+180);c.stroke();
+ setFont(c,17,"600");c.fillStyle="#e4e8de";wrap(c,(data.route||"").replace("\\n","  "),58,y+225,w-116,30,4);
 }
 function drawJourney(c,w,h,im){
  c.fillStyle="#f2eddf";c.fillRect(0,0,w,h);
@@ -459,31 +493,35 @@ function drawJourney(c,w,h,im){
  setFont(c,15,"700");c.fillStyle="#f0dfbd";c.fillText("CHUANKE TRAVEL  /  ROUTE JOURNAL",54,62);
  setFont(c,57,"700");c.fillStyle="#fff";c.fillText(data.title||"旅行路线",54,heroH-105);
  setFont(c,28,"500");c.fillStyle="#f2e6d1";c.fillText(data.subtitle||"",56,heroH-55);
- let y=heroH+90;
+ let y=heroH+78;
  setFont(c,15,"700");c.fillStyle="#94784c";c.fillText("THE JOURNEY",54,y);
- setFont(c,28,"700");c.fillStyle="#203b30";c.fillText(data.date||"",54,y+58);
+ setFont(c,27,"700");c.fillStyle="#203b30";c.fillText(data.date||"出发日期待确认",54,y+54);
  const routeLines=(data.route||"").split("\\n").filter(Boolean);
- setFont(c,18,"600");c.fillStyle="#354b3e";let routeY=y+116;
- routeLines.slice(0,4).forEach((line)=>{routeY=wrap(c,line,54,routeY,w-108,30,2)+10});
- y=routeY+70;
- setFont(c,15,"700");c.fillStyle="#94784c";c.fillText("HIGHLIGHTS  /  核心体验",54,y);
- const points=(data.highlights||"").split("\\n").map(x=>x.trim()).filter(Boolean).slice(0,5);
- const rowH=Math.min(235,Math.max(145,Math.floor((h-y-460)/Math.max(points.length,1))));
+ setFont(c,17,"600");c.fillStyle="#354b3e";let routeY=y+104;
+ routeLines.slice(0,3).forEach(line=>{routeY=wrap(c,line,54,routeY,w-108,27,2)+7});
+ y=routeY+38;
+ const itineraryLines=(data.itinerary||"").split("\\n").map(v=>v.trim()).filter(Boolean).slice(0,10);
+ const points=itineraryLines.length?itineraryLines:(data.highlights||"").split("\\n").map(v=>v.trim()).filter(Boolean).slice(0,6);
+ const label=itineraryLines.length?"ITINERARY  /  行程安排":"HIGHLIGHTS  /  核心体验";
+ setFont(c,15,"700");c.fillStyle="#94784c";c.fillText(label,54,y);
+ y+=36;
+ const bottom=h-260;
+ const rowH=Math.max(100,Math.min(190,Math.floor((bottom-y)/Math.max(points.length,1))));
  points.forEach((point,i)=>{
-  const yy=y+54+i*rowH;
-  c.fillStyle="#e8e0cf";c.beginPath();c.roundRect(54,yy,w-108,rowH-18,14);c.fill();
-  c.fillStyle="#b28d57";c.beginPath();c.arc(90,yy+42,19,0,Math.PI*2);c.fill();
-  setFont(c,16,"700");c.fillStyle="#fff";c.textAlign="center";c.fillText(String(i+1).padStart(2,"0"),90,yy+48);c.textAlign="left";
-  setFont(c,22,"600");c.fillStyle="#294237";wrap(c,point,128,yy+48,w-220,31,3);
+  const yy=y+i*rowH;
+  c.fillStyle=i%2===0?"#e8e0cf":"#eee8da";c.beginPath();c.roundRect(54,yy,w-108,rowH-10,12);c.fill();
+  c.fillStyle="#b28d57";c.beginPath();c.arc(88,yy+35,17,0,Math.PI*2);c.fill();
+  setFont(c,13,"700");c.fillStyle="#fff";c.textAlign="center";c.fillText(String(i+1).padStart(2,"0"),88,yy+40);c.textAlign="left";
+  setFont(c,19,"600");c.fillStyle="#294237";wrap(c,point,122,yy+39,w-200,27,Math.max(2,Math.floor((rowH-24)/27)));
  });
- const by=h-205;
- c.strokeStyle="#cbbd9f";c.lineWidth=2;c.beginPath();c.moveTo(54,by-45);c.lineTo(w-54,by-45);c.stroke();
- setFont(c,17,"700");c.fillStyle="#8c724a";c.fillText(data.ship||"TRAVEL WITH CHUANKE",54,by);
- setFont(c,30,"700");c.fillStyle="#203a30";c.fillText((data.price||"")+(data.price?" 起 / 人":""),54,by+55);
- setFont(c,16,"500");c.fillStyle="#69756b";c.fillText((data.group||"")+"  ·  "+(data.date||""),54,by+95);
- setFont(c,13,"400");c.fillStyle="#879187";c.fillText("具体安排与价格以最终确认的行程资料为准",54,h-55);
+ const by=h-185;
+ c.strokeStyle="#cbbd9f";c.lineWidth=2;c.beginPath();c.moveTo(54,by-38);c.lineTo(w-54,by-38);c.stroke();
+ setFont(c,16,"700");c.fillStyle="#8c724a";c.fillText(data.ship||"CHUANKE TRAVEL",54,by);
+ setFont(c,28,"700");c.fillStyle="#203a30";c.fillText((data.price||"")+(data.price?" 起 / 人":""),54,by+48);
+ setFont(c,14,"500");c.fillStyle="#69756b";c.fillText((data.group||"")+"  ·  "+(data.date||""),54,by+82);
+ setFont(c,12,"400");c.fillStyle="#879187";c.fillText("具体安排与价格以最终确认的产品资料为准",54,h-42);
 }
-async function render(){await drawPoster(canvas,1)}
+async function render(){updateProductSummary();await drawPoster(canvas,1)}
 function setTemplate(t){
  template=t;
  document.querySelectorAll(".template-card").forEach(el=>el.classList.toggle("active",el.dataset.template===t));
@@ -529,7 +567,7 @@ function saveWork(){
 function saveProduct(){
  readFields();try{localStorage.setItem("ck-poster-product",JSON.stringify(data));toast("当前产品资料已保存在本浏览器")}catch(e){toast("保存失败，请检查浏览器存储")}
 }
-function resetProduct(){data=Object.assign({},original);fillFields();render();toast("已恢复行程资料原始版本")}
+function resetProduct(){data=Object.assign({},original);rawImportedText="";$("importReview").classList.remove("open");fillFields();render();toast("已恢复演示资料原始版本")}
 function downloadBlob(blob,name){const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500)}
 async function exportPNG(){
  readFields();const c=document.createElement("canvas");await drawPoster(c,2);
@@ -592,28 +630,132 @@ async function exportPosterPack(){
  }
 }
 function loadScript(src){return new Promise((resolve,reject)=>{const s=document.createElement("script");s.src=src;s.onload=resolve;s.onerror=reject;document.head.appendChild(s)})}
+function buildImportFindings(parsed){
+ const rows=[
+  ["产品名称",data.title],["副标题",data.subtitle],["出发日期 / 天数",data.date],
+  ["目的地 / 路线",data.route],["价格",data.price],["团队规模",data.group],
+  ["邮轮 / 载体",data.ship],["核心亮点",data.highlights],["详细行程",data.itinerary],
+  ["舱型与价格",data.cabins]
+ ];
+ const box=$("importFindings");box.innerHTML="";
+ rows.forEach(([label,value])=>{
+  const item=document.createElement("div");item.className="import-field";
+  const name=document.createElement("b");name.textContent=label;
+  const val=document.createElement("span");val.textContent=value||"未识别，请人工填写";if(!value)val.className="missing";
+  item.append(name,val);box.appendChild(item);
+ });
+ const prices=parsed.priceCandidates||[];
+ if(prices.length>1){
+  const item=document.createElement("div");item.className="import-field";
+  const name=document.createElement("b");name.textContent="发现多个价格（未自动选择）";
+  const val=document.createElement("span");val.textContent=prices.join("；");
+  item.append(name,val);box.appendChild(item);
+ }
+}
+function parseProductText(source){
+ const lines=source.split(/\\r?\\n/).map(v=>v.replace(/[ \\t]+/g," ").trim()).filter(Boolean);
+ const all=source.replace(/[ \\t]+/g," ");
+ const parsed={priceCandidates:[]};
+ const labelled=(labels)=>{
+  const re=new RegExp("(?:^|[\\\\s：:])(?:"+labels+")[\\\\s：:：、-]{0,8}([^\\\\n]{2,100})","i");
+  const m=source.match(re);return m?m[1].trim():"";
+ };
+ const title=labelled("产品名称|线路名称|行程名称|产品主题");
+ if(title)parsed.title=title.replace(/[；;，,。].*$/,"").trim();
+ const subtitle=labelled("产品副标题|线路副标题|副标题");
+ if(subtitle)parsed.subtitle=subtitle.replace(/[；;。].*$/,"").trim();
+ const dateRe=/(20\\d{2})[年./-]\\s*(\\d{1,2})[月./-]\\s*(\\d{1,2})日?\\s*(?:—|–|-|至|到|~|～)\\s*(?:(20\\d{2})[年./-]\\s*)?(\\d{1,2})[月./-]\\s*(\\d{1,2})日?/;
+ const date=all.match(dateRe);
+ if(date){
+  const endYear=date[4]||date[1];
+  parsed.date=date[1]+"."+String(date[2]).padStart(2,"0")+"."+String(date[3]).padStart(2,"0")+" — "+(endYear!==date[1]?endYear+".":"")+String(date[5]).padStart(2,"0")+"."+String(date[6]).padStart(2,"0");
+ }
+ const duration=all.match(/(\\d+)\\s*晚.{0,12}?(\\d+)\\s*天/)||all.match(/(\\d+)\\s*天.{0,12}?(\\d+)\\s*晚/);
+ if(duration)parsed.duration=duration[0].replace(/\\s+/g,"");
+ if(parsed.date&&parsed.duration)parsed.date+="  ｜  "+parsed.duration;
+ else if(!parsed.date&&parsed.duration)parsed.date=parsed.duration;
+ const group=all.match(/(\\d{1,2}\\s*[+＋]\\s*\\d{1,2}\\s*人(?:精致|精品|小)?团|\\d{1,2}\\s*人小团)/);
+ if(group)parsed.group=group[1].replace(/\\s+/g,"");
+ const ship=labelled("邮轮名称|船名|邮轮|船只");
+ if(ship)parsed.ship=ship.replace(/[；;，,。].*$/,"").trim();
+ const routeLabel=/(?:行程路线|旅行路线|路线安排|目的地|途经国家)[\\s：:：、-]{0,8}([^\\n]{3,180})/i.exec(source);
+ if(routeLabel)parsed.route=routeLabel[1].trim();
+ const highlightStart=source.search(/(?:行程亮点|产品亮点|核心亮点|线路特色|产品特色)/);
+ if(highlightStart>=0){
+  const tail=source.slice(highlightStart).split(/\\r?\\n/).slice(1);
+  const selected=[];
+  for(const line of tail){
+   const v=line.trim();
+   if(!v){if(selected.length)break;continue}
+   if(/^(?:行程安排|每日行程|费用包含|费用不含|价格说明|预订须知|舱型|房型)/.test(v))break;
+   if(/^[•·●▪◆◇*—-]/.test(v)||selected.length<5)selected.push(v.replace(/^[•·●▪◆◇*—-]+\\s*/,""));
+   if(selected.length>=8)break;
+  }
+  if(selected.length)parsed.highlights=selected.join("\\n");
+ }
+ const dayLines=lines.filter(v=>/^(?:Day\\s*\\d+|DAY\\s*\\d+|D\\d+|第\\s*\\d+\\s*天|\\d{1,2}[.月/-]\\s*\\d{1,2}日?)/i.test(v));
+ if(dayLines.length)parsed.itinerary=dayLines.slice(0,18).join("\\n");
+ const priceMatches=[];
+ lines.forEach(line=>{
+  if(/(?:¥|￥|RMB|人民币)\\s*[\\d,]{4,}|[\\d,]{4,}\\s*元/.test(line)){
+   const matches=line.match(/(?:¥|￥|RMB|人民币)\\s*[\\d,]{4,}|[\\d,]{4,}\\s*元/g)||[];
+   matches.forEach(m=>priceMatches.push(m.trim()+"（"+line.slice(0,65)+"）"));
+  }
+ });
+ parsed.priceCandidates=[...new Set(priceMatches)].slice(0,12);
+ const distinctAmounts=[...new Set(priceMatches.map(v=>(v.match(/[\\d,]{4,}/)||[""])[0].replace(/,/g,"")))].filter(Boolean);
+ if(distinctAmounts.length===1){
+  const amount=distinctAmounts[0];
+  const priceLine=lines.find(v=>v.includes(amount)||v.includes(amount.replace(/\\B(?=(\\d{3})+(?!\\d))/g,",")))||"";
+  if(/起价|参考价|产品价格|成人价格|每人|单人价格|价格/.test(priceLine))parsed.price="¥"+Number(amount).toLocaleString("en-US");
+ }
+ const cabinLines=lines.filter(v=>/(舱|房型|房间)/.test(v)&&/(?:¥|￥|RMB|人民币|\\d{4,}\\s*元)/.test(v));
+ if(cabinLines.length)parsed.cabins=cabinLines.slice(0,12).join("\\n");
+ return parsed;
+}
+function showImportReview(parsed){
+ $("sourcePreview").value=rawImportedText.slice(0,12000)+(rawImportedText.length>12000?"\\n……（原文较长，仅显示前 12000 字符）":"");
+ $("importStatus").textContent="本地规则提取 · 需人工核对";
+ buildImportFindings(parsed);
+ $("importReview").classList.add("open");
+}
 async function extractFile(file){
- const name=file.name.toLowerCase();let text="";
+ const name=file.name.toLowerCase();let extracted="";
  try{
-  if(name.endsWith(".txt"))text=await file.text();
+  if(name.endsWith(".txt"))extracted=await file.text();
   else if(name.endsWith(".pdf")){
    if(!window.pdfjsLib)await loadScript("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js");
    pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
    const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;
-   for(let p=1;p<=Math.min(pdf.numPages,45);p++){const page=await pdf.getPage(p);const tc=await page.getTextContent();text+=tc.items.map(x=>x.str).join(" ")+"\n"}
+   for(let p=1;p<=Math.min(pdf.numPages,60);p++){
+    const page=await pdf.getPage(p);const tc=await page.getTextContent();const grouped=new Map();
+    tc.items.forEach(item=>{
+     const y=Math.round(item.transform&&item.transform[5]||0);
+     if(!grouped.has(y))grouped.set(y,[]);
+     grouped.get(y).push(item.str);
+    });
+    const pageLines=[...grouped.entries()].sort((a,b)=>b[0]-a[0]).map(v=>v[1].join(" ").trim()).filter(Boolean);
+    extracted+=pageLines.join("\\n")+"\\n";
+   }
   }else if(name.endsWith(".docx")){
    if(!window.mammoth)await loadScript("https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js");
-   const result=await mammoth.extractRawText({arrayBuffer:await file.arrayBuffer()});text=result.value||"";
-  }else{showModal("暂不支持该文件格式","当前版本支持 PDF、DOCX 和 TXT。图片版 PDF 需要 OCR，暂时无法自动识别。");return}
-  text=text.replace(/\s+/g," ").trim();
-  if(text.length<40){showModal("文件已读取，但没有可用文本","这份文件可能是扫描图片版 PDF，暂时无法直接提取文字。当前演示产品信息已经预置，你可以直接修改左侧字段，或上传清晰的产品图片。");return}
-  const date=text.match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日\s*[—–\-至到]+\s*(?:\1年)?\s*(\d{1,2})月\s*(\d{1,2})日/);
-  if(date){data.date=date[1]+"."+String(date[2]).padStart(2,"0")+"."+String(date[3]).padStart(2,"0")+" — "+String(date[4]).padStart(2,"0")+"."+String(date[5]).padStart(2,"0")}
-  const duration=text.match(/(\d+)晚\s*(\d+)天/);if(duration)data.date+="  ｜  "+duration[1]+"晚"+duration[2]+"天";
-  const price=text.match(/(?:RMB|人民币|¥|￥)\s*([\d,]{5,})/i);if(price)data.price="¥"+price[1].replace(/,/g,"");
-  const ship=text.match(/(?:Royal Galapagos Infinity|Infinity\s*无限号|无限号)/i);if(ship)data.ship="Royal Galapagos Infinity 无限号";
-  fillFields();render();showModal("文件读取完成","已从文件中读取约 "+text.length+" 个文本字符，并尝试识别日期、天数、价格和邮轮信息。请核对左侧字段后再生成海报。");
- }catch(e){showModal("文件读取失败","浏览器无法解析该文件。可以尝试导出为 TXT / DOCX，或直接在左侧修改产品资料。")}
+   const result=await mammoth.extractRawText({arrayBuffer:await file.arrayBuffer()});extracted=result.value||"";
+  }else{
+   showModal("暂不支持该文件格式","当前版本支持可复制文本的 PDF、DOCX 和 TXT。图片版 PDF 需要 OCR，暂时无法自动识别。");return;
+  }
+  extracted=extracted.replace(/\\r/g,"").replace(/[ \\t]+/g," ").replace(/\\n{3,}/g,"\\n\\n").trim();
+  if(extracted.length<40){
+   showModal("文件已读取，但没有足够的可识别文字","文件可能是扫描图片版 PDF，或正文是图片。当前版本不会猜测价格和行程，请上传可复制文字的 PDF / DOCX / TXT，或手动填写资料。");return;
+  }
+  rawImportedText=extracted;
+  const parsed=parseProductText(extracted);
+  data={title:parsed.title||"",subtitle:parsed.subtitle||"",date:parsed.date||"",route:parsed.route||"",price:parsed.price||"",group:parsed.group||"",ship:parsed.ship||"",highlights:parsed.highlights||"",itinerary:parsed.itinerary||"",cabins:parsed.cabins||""};
+  fillFields();render();showImportReview(parsed);
+  const identified=fields.filter(k=>data[k]).length;
+  showModal("行程文件读取完成","已提取约 "+extracted.length+" 个文字字符，识别到 "+identified+" 项产品字段。请逐项核对；未识别的内容保持空白，不会自动补造。");
+ }catch(e){
+  showModal("文件读取失败","浏览器无法解析该文件。可以尝试导出为可复制文字的 PDF / DOCX / TXT，或直接在左侧修改产品资料。");
+ }
 }
 fields.forEach(k=>{const el=$(k+"Input");el.addEventListener("input",()=>{readFields();render()})});
 $("ratioSelect").addEventListener("change",e=>{ratio=e.target.value;render()});
@@ -634,6 +776,11 @@ $("copyTextBtn").addEventListener("click",async()=>{
 });
 $("jumpWorks").addEventListener("click",()=>$("works").scrollIntoView({behavior:"smooth"}));
 $("docFile").addEventListener("change",e=>{const f=e.target.files[0];if(f)extractFile(f);e.target.value=""});
+$("closeReviewBtn").addEventListener("click",()=>$("importReview").classList.remove("open"));
+$("copySourceBtn").addEventListener("click",async()=>{
+ try{await navigator.clipboard.writeText(rawImportedText);toast("提取原文已复制")}
+ catch(e){$("sourcePreview").focus();$("sourcePreview").select();toast("请使用 Ctrl+C 复制原文")}
+});
 $("imageFile").addEventListener("change",e=>{
  const files=Array.from(e.target.files||[]);files.slice(0,8).forEach(file=>{const reader=new FileReader();reader.onload=()=>{const item={name:file.name.replace(/\.[^.]+$/,"").slice(0,8)||"自定义照片",src:reader.result};customImages.push(item);if(customImages.length>8)customImages.shift();const idx=customImages.length-1;selectedImage="custom-"+idx;activeSrc=item.src;renderPhotoPicks();render();toast("已加入自定义摄影素材")};reader.readAsDataURL(file)});e.target.value="";
 });
