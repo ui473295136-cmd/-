@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#172b26">
+<title>船客 · 智能海报工坊</title>
+<meta name="description" content="船客旅行专属海报设计工作台：产品资料、版式模板、真实摄影、高清导出。">
+<style>
+:root{--ink:#1b2824;--muted:#718078;--line:#e6e9e2;--paper:#fff;--bg:#f3f4ef;--forest:#17372f;--forest2:#244b40;--gold:#b8955e;--cream:#f2ecdc;--shadow:0 18px 55px rgba(26,43,35,.08);--radius:20px}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.55}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid rgba(184,149,94,.3);outline-offset:2px}
+.app{max-width:1500px;margin:0 auto;padding:0 28px 64px}
+.topbar{height:76px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e2e6df}
+.brand{display:flex;align-items:center;gap:11px}
+.brand-mark{width:40px;height:40px;border-radius:13px;background:var(--forest);color:#f6f1e5;display:grid;place-items:center;font-family:serif;font-size:22px;box-shadow:0 6px 16px #17372f24}
+.brand-name{font-size:19px;font-weight:750;letter-spacing:2px}
+.brand-sub{font-size:9px;letter-spacing:2.3px;color:#85918a;margin-top:1px}
+.top-right{display:flex;align-items:center;gap:12px}
+.status{font-size:11px;color:#557263;background:#e6eee8;border:1px solid #d6e3d9;padding:7px 11px;border-radius:99px}
+.text-btn{border:0;background:transparent;color:#53625a;font-size:13px;padding:8px 10px}
+.hero{margin:24px 0 22px;border-radius:25px;overflow:hidden;min-height:245px;background:linear-gradient(115deg,#132a25 0%,#1e4035 64%,#29483d 100%);color:#fff;display:grid;grid-template-columns:1.2fr .8fr;position:relative;box-shadow:var(--shadow)}
+.hero-copy{padding:32px 38px;position:relative;z-index:1}
+.eyebrow{font-size:10px;letter-spacing:2.8px;color:#c8b58d;font-weight:700}
+.hero h1{font-family:"Songti SC","Noto Serif SC",serif;font-size:clamp(30px,4vw,47px);line-height:1.22;font-weight:500;letter-spacing:1px;margin:15px 0 12px}
+.hero h1 em{font-style:normal;color:#d9c49c}
+.hero p{color:#d4ded7;font-size:13px;max-width:520px;margin:0}
+.hero-tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}
+.hero-tags span{font-size:10px;color:#e9e6da;border:1px solid #ffffff35;border-radius:99px;padding:6px 10px}
+.hero-visual{position:relative;min-height:245px;overflow:hidden}
+.hero-visual img{position:absolute;width:100%;height:100%;object-fit:cover;inset:0;opacity:.75;mix-blend-mode:screen}
+.hero-visual:before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,#1c3b31 0%,transparent 45%),linear-gradient(0deg,#1a382f44,transparent)}
+.hero-note{position:absolute;z-index:2;right:24px;bottom:20px;text-align:right;color:#f4ead5}
+.hero-note strong{display:block;font-family:Georgia,serif;font-size:32px;font-weight:400;letter-spacing:1px}
+.hero-note small{font-size:9px;letter-spacing:2px;color:#e0d7c2}
+.workspace{display:grid;grid-template-columns:360px minmax(0,1fr);gap:20px;align-items:start}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 8px 28px rgba(30,48,39,.035)}
+.controls{padding:22px;position:sticky;top:16px}
+.section-kicker{font-size:10px;letter-spacing:2px;color:#9a835b;font-weight:800}
+.panel-title{font-size:17px;font-weight:750;margin:5px 0 17px}
+.product-card{background:#f4f5f0;border:1px solid #e7e9e2;border-radius:14px;padding:13px;margin-bottom:18px}
+.product-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.product-top strong{font-size:13px}
+.product-chip{font-size:10px;color:#486c5b;background:#e2ece4;padding:5px 8px;border-radius:99px;white-space:nowrap}
+.product-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}
+.meta-cell{background:#fff;border-radius:9px;padding:8px}
+.meta-cell small{display:block;color:#8b968e;font-size:10px}
+.meta-cell b{display:block;font-size:12px;margin-top:2px}
+.upload-strip{display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px dashed #cbd5cc;border-radius:12px;padding:10px 12px;margin:12px 0 18px}
+.upload-strip span{font-size:11px;color:#7c8980}
+.upload-label{font-size:12px;color:#315e4b;font-weight:700;cursor:pointer}
+.field{margin:13px 0}
+.field label{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:700;margin-bottom:6px}
+.field label small{font-size:10px;font-weight:400;color:#99a19b}
+.field input,.field textarea,.field select{width:100%;border:1px solid #e2e6df;background:#fbfcfa;border-radius:10px;padding:10px 11px;color:#27352e;font-size:12px;transition:.18s}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:#8fae9b;outline:none;background:#fff}
+.field textarea{min-height:78px;resize:vertical;line-height:1.65}
+.two-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.photo-picks{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.photo-pick{width:70px;height:58px;border:2px solid transparent;border-radius:10px;overflow:hidden;padding:0;background:#eee;position:relative}
+.photo-pick img{width:100%;height:100%;object-fit:cover;display:block}
+.photo-pick.active{border-color:var(--gold);box-shadow:0 0 0 2px #b8955e22}
+.photo-pick span{position:absolute;left:0;right:0;bottom:0;background:#10251dcc;color:#fff;font-size:9px;padding:2px 3px;text-align:center}
+.control-foot{display:flex;gap:8px;margin-top:18px}
+.btn{border:0;border-radius:11px;padding:11px 14px;font-size:12px;font-weight:750;transition:transform .15s,filter .15s}
+.btn:hover{filter:brightness(1.04);transform:translateY(-1px)}
+.btn-primary{background:var(--forest);color:#fff;flex:1}
+.btn-secondary{background:#eef1eb;color:#506258}
+.stage{padding:20px 22px 22px;min-width:0}
+.stage-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:16px}
+.stage-head h2{font-size:19px;margin:4px 0 0}
+.stage-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.ratio-select{border:1px solid var(--line);background:#fbfcfa;border-radius:10px;padding:9px 10px;font-size:11px;color:#53635a}
+.preview-zone{background:#eef0eb;border-radius:16px;min-height:600px;display:flex;align-items:center;justify-content:center;padding:24px;position:relative;overflow:hidden}
+.preview-zone:before{content:"";position:absolute;inset:0;background-image:radial-gradient(#aeb8ad 0.7px,transparent .7px);background-size:17px 17px;opacity:.35}
+.canvas-wrap{position:relative;z-index:1;max-height:690px;max-width:100%;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 16px 24px rgba(20,34,27,.2))}
+#posterCanvas{display:block;max-height:690px;max-width:100%;width:auto;height:auto;background:#f1eadb;border-radius:2px}
+.preview-hint{position:absolute;bottom:12px;right:16px;font-size:10px;color:#7d8980;z-index:2}
+.export-row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:14px}
+.export-note{font-size:10px;color:#8a958d}
+.export-buttons{display:flex;gap:8px}
+.btn-outline{background:#fff;border:1px solid #dce2da;color:#4d6256}
+.btn-gold{background:#b28d57;color:#fff}
+.template-section,.works-section{margin-top:22px;padding:22px}
+.section-heading{display:flex;align-items:end;justify-content:space-between;gap:12px;margin-bottom:15px}
+.section-heading h3{font-size:17px;margin:4px 0 0}
+.section-heading p{font-size:11px;color:#87938a;margin:0}
+.templates{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:11px}
+.template-card{border:1px solid #e6e9e2;background:#fbfcfa;border-radius:13px;padding:8px;text-align:left;transition:.18s;min-width:0}
+.template-card:hover{transform:translateY(-2px);border-color:#c6d0c5}
+.template-card.active{border:2px solid var(--gold);padding:7px;background:#fffaf1;box-shadow:0 7px 20px #b8955e18}
+.template-thumb{height:112px;border-radius:8px;overflow:hidden;position:relative;background:#17372f}
+.template-thumb img{width:100%;height:100%;object-fit:cover;opacity:.85}
+.template-thumb:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#10251dcc,transparent 70%)}
+.template-thumb b{position:absolute;z-index:1;left:9px;bottom:8px;color:#fff;font-family:"Songti SC",serif;font-size:16px;font-weight:500}
+.template-name{font-size:11px;font-weight:750;margin:9px 2px 2px}
+.template-desc{font-size:9px;color:#8b958e;margin:0 2px 3px}
+.works-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.work-item{border:1px solid #e8ebe5;border-radius:12px;padding:12px;background:#fbfcfa;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.work-item strong{font-size:12px;display:block}
+.work-item small{font-size:10px;color:#87938a}
+.work-item button{border:0;background:#e9eee8;color:#466251;border-radius:8px;padding:7px 9px;font-size:10px}
+.empty-works{color:#98a198;font-size:11px;padding:10px 0}
+.footer{padding:26px 4px 0;text-align:center;color:#9aa39b;font-size:10px}
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);opacity:0;pointer-events:none;background:#19392f;color:#fff;padding:11px 16px;border-radius:99px;font-size:12px;box-shadow:0 8px 25px #10251d33;transition:.25s;z-index:20;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.modal-backdrop{position:fixed;inset:0;background:#0c1b16aa;display:none;align-items:center;justify-content:center;padding:20px;z-index:30}
+.modal-backdrop.open{display:flex}
+.modal{width:min(480px,100%);background:#fff;border-radius:18px;padding:22px;box-shadow:0 24px 70px #0004}
+.modal h3{margin:0 0 8px;font-size:17px}
+.modal p{font-size:12px;color:#6f7d74;line-height:1.7}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}
+@media(max-width:1050px){.workspace{grid-template-columns:320px minmax(0,1fr)}.templates{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:760px){.app{padding:0 14px 40px}.topbar{height:64px}.status{display:none}.hero{grid-template-columns:1fr;margin-top:16px}.hero-copy{padding:25px 23px}.hero-visual{min-height:150px}.hero-note strong{font-size:25px}.workspace{grid-template-columns:1fr}.controls{position:static}.stage{padding:16px}.stage-head{align-items:flex-start;flex-direction:column}.preview-zone{min-height:440px;padding:14px}.canvas-wrap{max-height:570px}#posterCanvas{max-height:570px}.export-row{align-items:flex-start;flex-direction:column}.templates{grid-template-columns:repeat(2,1fr)}.template-thumb{height:100px}.works-grid{grid-template-columns:1fr}.section-heading{align-items:flex-start;flex-direction:column}}
+@media print{body{background:#fff}.app,.toast,.modal-backdrop{display:none!important}}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js"></script>
+<script src="poster-studio-assets.js"></script>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark">船</div>
+      <div><div class="brand-name">船客旅行</div><div class="brand-sub">CHUANKE CREATIVE STUDIO</div></div>
+    </div>
+    <div class="top-right">
+      <span class="status">● 本地设计工作台已就绪</span>
+      <button class="text-btn" id="jumpWorks">我的作品 ↗</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-copy">
+      <div class="eyebrow">PRODUCT TO POSTER · ONE CLICK DESIGN</div>
+      <h1>让每条好行程，<br><em>都有一套好海报。</em></h1>
+      <p>读取船客产品资料，匹配旅行画册式版面。真实摄影、清晰信息、可编辑文字，一次制作，多种发布尺寸。</p>
+      <div class="hero-tags"><span>真实摄影优先</span><span>价格日期可编辑</span><span>高清 PNG 导出</span><span>适配手机阅读</span></div>
+    </div>
+    <div class="hero-visual">
+      <img id="heroPhoto" alt="加拉帕戈斯鬣蜥摄影">
+      <div class="hero-note"><strong>EXPLORE</strong><small>BEYOND THE ORDINARY</small></div>
+    </div>
+  </section>
+
+  <section class="workspace">
+    <aside class="panel controls">
+      <div class="section-kicker">01 / PRODUCT DATA</div>
+      <div class="panel-title">产品资料</div>
+      <div class="product-card">
+        <div class="product-top"><strong id="productName">穿行赤道线 · 中南美洲三国之旅</strong><span class="product-chip">演示产品</span></div>
+        <div class="product-meta">
+          <div class="meta-cell"><small>出发日期</small><b>2027.08.01</b></div>
+          <div class="meta-cell"><small>旅行时长</small><b>17晚 · 21天</b></div>
+          <div class="meta-cell"><small>目的地</small><b>中南美洲三国</b></div>
+          <div class="meta-cell"><small>团队规模</small><b>18+2人小团</b></div>
+        </div>
+      </div>
+      <div class="upload-strip">
+        <div><strong style="font-size:12px">导入行程文件</strong><br><span>PDF / DOCX / TXT · 本地读取</span></div>
+        <label class="upload-label" for="docFile">选择文件 ＋</label>
+        <input id="docFile" type="file" accept=".pdf,.docx,.txt" hidden>
+      </div>
+      <div class="field"><label for="titleInput">主标题 <small>海报第一视觉</small></label><input id="titleInput" value="穿行赤道线"></div>
+      <div class="field"><label for="subtitleInput">副标题</label><input id="subtitleInput" value="中南美洲三国之旅"></div>
+      <div class="field"><label for="dateInput">出发日期 · 行程天数</label><input id="dateInput" value="2027.08.01 — 08.21  ｜  17晚21天"></div>
+      <div class="field"><label for="routeInput">目的地 / 路线</label><textarea id="routeInput">哥伦比亚 · 厄瓜多尔 · 巴拿马
+波哥大 → 基多 → 科托帕希 → 亚马逊雨林 → 加拉帕戈斯 → 巴拿马城</textarea></div>
+      <div class="two-fields">
+        <div class="field"><label for="priceInput">参考起价</label><input id="priceInput" value="¥159,800"></div>
+        <div class="field"><label for="groupInput">团队规模</label><input id="groupInput" value="18+2人精致小团"></div>
+      </div>
+      <div class="field"><label for="shipInput">邮轮 / 核心载体</label><input id="shipInput" value="Royal Galapagos Infinity 无限号"></div>
+      <div class="field"><label for="highlightInput">核心亮点 <small>每行一条</small></label><textarea id="highlightInput">加拉帕戈斯群岛7晚探险航程
+深入亚马逊热带雨林
+科托帕希火山与安第斯山脉
+穿行赤道线上的中南美洲三国</textarea></div>
+      <div class="field">
+        <label>选择主视觉照片 <small>优先使用原始实拍</small></label>
+        <div class="photo-picks" id="photoPicks"></div>
+        <div class="upload-strip" style="margin-bottom:0">
+          <span>也可以上传自己的高清照片</span>
+          <label class="upload-label" for="imageFile">上传图片 ＋</label>
+          <input id="imageFile" type="file" accept="image/*" multiple hidden>
+        </div>
+      </div>
+      <div class="control-foot">
+        <button class="btn btn-secondary" id="resetBtn">恢复资料</button>
+        <button class="btn btn-primary" id="saveProductBtn">保存当前资料</button>
+      </div>
+    </aside>
+
+    <main class="panel stage">
+      <div class="stage-head">
+        <div><div class="section-kicker">02 / DESIGN PREVIEW</div><h2>海报设计预览</h2></div>
+        <div class="stage-tools">
+          <select class="ratio-select" id="ratioSelect" aria-label="海报尺寸">
+            <option value="3:4">3:4 小红书封面</option>
+            <option value="1:1">1:1 朋友圈方图</option>
+            <option value="9:16">9:16 视频号竖版</option>
+            <option value="long">长图行程版</option>
+          </select>
+          <button class="btn btn-primary" id="generateBtn">重新生成 ↻</button>
+        </div>
+      </div>
+      <div class="preview-zone">
+        <div class="canvas-wrap"><canvas id="posterCanvas" width="1200" height="1600"></canvas></div>
+        <div class="preview-hint">预览为适配显示 · 导出时重新高清渲染</div>
+      </div>
+      <div class="export-row">
+        <div class="export-note">高清 PNG：3:4 为 2400 × 3200 px；长图为 2160 px 宽。默认样图为资料页缩略图，正式使用建议上传原始大图。</div>
+        <div class="export-buttons">
+          <button class="btn btn-outline" id="saveWorkBtn">保存作品</button>
+          <button class="btn btn-outline" id="pdfBtn">打印 / 保存 PDF</button>
+          <button class="btn btn-gold" id="pngBtn">导出高清 PNG ↓</button>
+        </div>
+      </div>
+    </main>
+  </section>
+
+  <section class="panel template-section" id="templates">
+    <div class="section-heading">
+      <div><div class="section-kicker">03 / DESIGN COLLECTION</div><h3>选择设计风格</h3></div>
+      <p>同一份产品资料，可以生成不同视觉方向。</p>
+    </div>
+    <div class="templates" id="templateGrid">
+      <button class="template-card active" data-template="cover">
+        <div class="template-thumb"><img data-thumb="iguana" alt=""><b>自然博物志</b></div>
+        <div class="template-name">01 · 自然博物志</div><p class="template-desc">旅行画册 / 真实摄影</p>
+      </button>
+      <button class="template-card" data-template="rainforest">
+        <div class="template-thumb"><img data-thumb="amazon" alt=""><b>雨林探险</b></div>
+        <div class="template-name">02 · 雨林探险</div><p class="template-desc">丛林绿 / 复古探索</p>
+      </button>
+      <button class="template-card" data-template="price">
+        <div class="template-thumb"><img data-thumb="iguana" alt=""><b>价格与舱型</b></div>
+        <div class="template-name">03 · 价格与舱型</div><p class="template-desc">价格清晰 / 方便销售</p>
+      </button>
+      <button class="template-card" data-template="ship">
+        <div class="template-thumb"><img data-thumb="ship" alt=""><b>邮轮介绍</b></div>
+        <div class="template-name">04 · 邮轮介绍</div><p class="template-desc">船舶主视觉 / 参数信息</p>
+      </button>
+      <button class="template-card" data-template="journey">
+        <div class="template-thumb"><img data-thumb="amazon" alt=""><b>行程路线长图</b></div>
+        <div class="template-name">05 · 行程路线长图</div><p class="template-desc">时间轴 / 每日行程</p>
+      </button>
+    </div>
+  </section>
+
+  <section class="panel works-section" id="works">
+    <div class="section-heading">
+      <div><div class="section-kicker">04 / MY CREATIONS</div><h3>最近保存的作品</h3></div>
+      <p>作品保存在当前浏览器中，不会自动上传到服务器。</p>
+    </div>
+    <div class="works-grid" id="worksGrid"><div class="empty-works">还没有保存的作品。生成满意的海报后，可以保存到这里。</div></div>
+  </section>
+  <div class="footer">船客旅行 · 智能海报工坊　｜　只讲亲历，不夸大　｜　产品资料请以最终确认版本为准</div>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="modal-backdrop" id="modal">
+  <div class="modal">
+    <h3 id="modalTitle">文件导入提示</h3>
+    <p id="modalText"></p>
+    <div class="modal-actions"><button class="btn btn-primary" id="modalOk">知道了</button></div>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+const AS=window.CK_POSTER_ASSETS||{};
+const original={
+ title:"穿行赤道线",subtitle:"中南美洲三国之旅",
+ date:"2027.08.01 — 08.21  ｜  17晚21天",
+ route:"哥伦比亚 · 厄瓜多尔 · 巴拿马\n波哥大 → 基多 → 科托帕希 → 亚马逊雨林 → 加拉帕戈斯 → 巴拿马城",
+ price:"¥159,800",group:"18+2人精致小团",
+ ship:"Royal Galapagos Infinity 无限号",
+ highlights:"加拉帕戈斯群岛7晚探险航程\n深入亚马逊热带雨林\n科托帕希火山与安第斯山脉\n穿行赤道线上的中南美洲三国"
+};
+const itinerary=[
+ {day:"01—03",date:"08.01—08.03",place:"波哥大",desc:"抵达哥伦比亚首都，探索城市文化与历史街区"},
+ {day:"04—05",date:"08.04—08.05",place:"基多 · 科托帕希",desc:"安第斯山脉、火山国家公园与高原风光"},
+ {day:"06—09",date:"08.06—08.09",place:"亚马逊热带雨林",desc:"入住 La Selva Eco-Lodge，深入雨林探索"},
+ {day:"10—17",date:"08.10—08.17",place:"加拉帕戈斯群岛",desc:"搭乘 Infinity 无限号，探索岛屿与海洋生物"},
+ {day:"18",date:"08.18",place:"巴拿马城",desc:"参观巴拿马运河，感受连接两大洋的工程奇迹"},
+ {day:"19—21",date:"08.19—08.21",place:"返程",desc:"巴拿马城出发，返回国内"}
+];
+const cabinRates=[
+ ["一层阳台房","21—25㎡","¥159,800 / 人"],
+ ["二层阳台房","23㎡","¥165,800 / 人"],
+ ["三层阳台套房","32㎡","¥169,800 / 人"]
+];
+let data=Object.assign({},original);
+let template="cover";
+let ratio="3:4";
+let selectedImage="iguana";
+let customImages=[];
+let activeSrc=AS.iguana||"";
+let loadedImages={};
+let works=[];
+const canvas=document.getElementById("posterCanvas");
+const ctx=canvas.getContext("2d");
+const $=id=>document.getElementById(id);
+const fields=["title","subtitle","date","route","price","group","ship","highlights"];
+const imageMap={iguana:{src:AS.iguana,label:"加拉帕戈斯鬣蜥"},amazon:{src:AS.amazon,label:"亚马逊雨林"},ship:{src:AS.ship,label:"Infinity 无限号"}};
+function toast(msg){const el=$("toast");el.textContent=msg;el.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("show"),2600)}
+function showModal(title,msg){$("modalTitle").textContent=title;$("modalText").textContent=msg;$("modal").classList.add("open")}
+$("modalOk").addEventListener("click",()=>$("modal").classList.remove("open"));
+function getImage(src){
+ if(!src)return Promise.resolve(null);
+ if(loadedImages[src])return Promise.resolve(loadedImages[src]);
+ return new Promise(resolve=>{const im=new Image();im.onload=()=>{loadedImages[src]=im;resolve(im)};im.onerror=()=>resolve(null);im.src=src});
+}
+function readFields(){fields.forEach(k=>{const el=$(k+"Input");if(el)data[k]=el.value.trim()})}
+function fillFields(){fields.forEach(k=>{const el=$(k+"Input");if(el)el.value=data[k]||""})}
+function getSize(){
+ if(ratio==="1:1")return [1200,1200];
+ if(ratio==="9:16")return [900,1600];
+ if(ratio==="long")return [1080,3000];
+ return [1200,1600];
+}
+function coverImage(c,im,x,y,w,h){
+ if(!im){c.fillStyle="#315044";c.fillRect(x,y,w,h);return}
+ const iw=im.naturalWidth||im.width,ih=im.naturalHeight||im.height;
+ const s=Math.max(w/iw,h/ih),dw=iw*s,dh=ih*s;
+ c.drawImage(im,x+(w-dw)/2,y+(h-dh)/2,dw,dh);
+}
+function gradient(c,x,y,w,h,stops,vertical){
+ const g=vertical?c.createLinearGradient(x,y,x,y+h):c.createLinearGradient(x,y,x+w,y);
+ stops.forEach(s=>g.addColorStop(s[0],s[1]));c.fillStyle=g;c.fillRect(x,y,w,h);
+}
+function setFont(c,size,weight){c.font=(weight||"400")+" "+size+"px 'Microsoft YaHei','PingFang SC',sans-serif"}
+function wrap(c,text,x,y,maxWidth,lineHeight,maxLines,color){
+ c.fillStyle=color||"#26352d";const str=String(text||"");let lines=[],line="";
+ for(const ch of str){if(ch==="\n"){lines.push(line);line="";continue}const test=line+ch;if(c.measureText(test).width>maxWidth&&line){lines.push(line);line=ch}else line=test}
+ if(line)lines.push(line);
+ if(maxLines&&lines.length>maxLines){lines=lines.slice(0,maxLines);lines[maxLines-1]=lines[maxLines-1].slice(0,Math.max(1,lines[maxLines-1].length-1))+"…"}
+ lines.forEach((v,i)=>c.fillText(v,x,y+i*lineHeight));
+ return y+lines.length*lineHeight;
+}
+function pill(c,text,x,y,bg,fg){
+ setFont(c,18,"600");const w=c.measureText(text).width+30;c.fillStyle=bg;c.beginPath();c.roundRect(x,y,w,34,17);c.fill();c.fillStyle=fg;c.fillText(text,x+15,y+23);return w;
+}
+function drawFrame(c,w,h,color){
+ c.strokeStyle=color||"#b9955f";c.lineWidth=2;c.strokeRect(32,32,w-64,h-64);
+}
+async function drawPoster(target,scale){
+ const dims=getSize(),w=dims[0],h=dims[1];target.width=w*scale;target.height=h*scale;
+ const c=target.getContext("2d");c.setTransform(scale,0,0,scale,0,0);
+ c.imageSmoothingEnabled=true;c.imageSmoothingQuality="high";
+ const im=await getImage(activeSrc);
+ if(template==="journey")drawJourney(c,w,h,im);
+ else if(template==="price")drawPrice(c,w,h,im);
+ else if(template==="ship")drawShip(c,w,h,im);
+ else if(template==="rainforest")drawRainforest(c,w,h,im);
+ else drawCover(c,w,h,im);
+}
+function drawCover(c,w,h,im){
+ c.fillStyle="#f1ecdf";c.fillRect(0,0,w,h);
+ const photoH=Math.round(h*.59);coverImage(c,im,0,0,w,photoH);
+ gradient(c,0,photoH*.55,w,photoH*.45,[[0,"rgba(13,31,25,0)"],[1,"rgba(12,28,23,.82)"]],true);
+ setFont(c,19,"700");c.fillStyle="#f1dfb9";c.fillText("CHUANKE TRAVEL  /  EXPEDITION COLLECTION",58,66);
+ setFont(c,17,"500");c.fillStyle="#fff";c.fillText("CENTRAL & SOUTH AMERICA",58,105);
+ setFont(c,66,"700");c.fillStyle="#fff";c.fillText(data.title||"穿行赤道线",58,photoH-120);
+ setFont(c,30,"500");c.fillStyle="#f3e7d0";c.fillText(data.subtitle||"中南美洲三国之旅",60,photoH-68);
+ const pad=58;let y=photoH+74;
+ setFont(c,14,"700");c.fillStyle="#8c754d";c.fillText("TRAVERSE THE EQUATOR",pad,y);
+ setFont(c,29,"700");c.fillStyle="#1b352b";y=wrap(c,data.date,pad,y+54,w-2*pad,40,2);
+ c.strokeStyle="#c9bea7";c.lineWidth=2;c.beginPath();c.moveTo(pad,y+10);c.lineTo(w-pad,y+10);c.stroke();
+ setFont(c,19,"600");c.fillStyle="#526157";y=wrap(c,data.route.split("\n")[0],pad,y+55,w-2*pad,30,1);
+ setFont(c,17,"400");c.fillStyle="#6e786e";y=wrap(c,data.route.split("\n")[1]||"",pad,y+12,w-2*pad,28,2);
+ const base=h-128;
+ c.fillStyle="#e6decb";c.fillRect(pad,base-26,w-2*pad,1);
+ setFont(c,18,"700");c.fillStyle="#1c3a2e";c.fillText(data.group,pad,base+18);
+ setFont(c,16,"600");c.textAlign="right";c.fillStyle="#94764b";c.fillText(data.price+" 起 / 人",w-pad,base+18);c.textAlign="left";
+ setFont(c,12,"500");c.fillStyle="#879187";c.fillText("哥伦比亚  ·  厄瓜多尔  ·  巴拿马",pad,h-52);
+ drawFrame(c,w,h,"#c1a879");
+}
+function drawRainforest(c,w,h,im){
+ c.fillStyle="#152c24";c.fillRect(0,0,w,h);coverImage(c,im,0,0,w,h);
+ gradient(c,0,0,w,h,[[0,"rgba(9,28,21,.5)"],[.48,"rgba(12,34,24,.08)"],[1,"rgba(8,26,20,.92)"]],true);
+ c.strokeStyle="#d4bd8e";c.lineWidth=2;c.strokeRect(42,42,w-84,h-84);
+ setFont(c,16,"700");c.fillStyle="#e2cfaa";c.fillText("FIELD NOTES  /  2027",78,100);
+ setFont(c,18,"500");c.fillStyle="#f2eadb";c.fillText("AN EXPEDITION THROUGH THE EQUATOR",78,142);
+ const y=h*.62;
+ setFont(c,72,"700");c.fillStyle="#fff";c.fillText(data.title||"穿行赤道线",78,y);
+ setFont(c,33,"500");c.fillStyle="#e6d6b4";c.fillText(data.subtitle||"中南美洲三国之旅",80,y+56);
+ c.fillStyle="#d7c59c";c.fillRect(80,y+96,100,3);
+ setFont(c,21,"500");c.fillStyle="#fff";wrap(c,data.date,80,y+148,w-160,34,2);
+ setFont(c,18,"400");c.fillStyle="#e4e6d9";wrap(c,data.route.split("\n")[0],80,y+245,w-160,30,1);
+ setFont(c,16,"500");c.fillStyle="#e4e6d9";wrap(c,data.group+"  ·  "+data.price+" 起/人",80,h-112,w-160,28,1);
+}
+function drawPrice(c,w,h,im){
+ c.fillStyle="#f3eddf";c.fillRect(0,0,w,h);
+ const ph=Math.round(h*.42);coverImage(c,im,0,0,w,ph);
+ gradient(c,0,ph*.55,w,ph*.45,[[0,"rgba(13,31,25,0)"],[1,"rgba(13,31,25,.65)"]],true);
+ setFont(c,16,"700");c.fillStyle="#fff0d3";c.fillText("2027  /  SMALL GROUP EXPEDITION",54,62);
+ setFont(c,58,"700");c.fillStyle="#fff";c.fillText(data.title,54,ph-80);
+ setFont(c,27,"500");c.fillStyle="#f5e8ce";c.fillText(data.subtitle,56,ph-38);
+ const x=58;let y=ph+74;
+ setFont(c,15,"700");c.fillStyle="#98794b";c.fillText("PRICE FROM",x,y);
+ setFont(c,74,"700");c.fillStyle="#1b3b2f";c.fillText(data.price,x,y+92);
+ setFont(c,19,"500");c.fillStyle="#68756b";c.fillText("人民币 / 人 · 双人入住参考价",x,y+130);
+ y+=180;c.strokeStyle="#c9bea7";c.beginPath();c.moveTo(x,y);c.lineTo(w-x,y);c.stroke();
+ setFont(c,19,"700");c.fillStyle="#263a30";c.fillText("邮轮舱型参考价格",x,y+42);
+ y+=76;
+ cabinRates.forEach((r,i)=>{
+   c.fillStyle=i%2===0?"#e9e2d2":"#f8f4ea";c.fillRect(x,y+i*76,w-2*x,64);
+   setFont(c,19,"700");c.fillStyle="#294237";c.fillText(r[0],x+16,y+27+i*76);
+   setFont(c,15,"400");c.fillStyle="#7c867d";c.fillText(r[1],x+16,y+50+i*76);
+   setFont(c,19,"700");c.fillStyle="#8a6d42";c.textAlign="right";c.fillText(r[2],w-x-16,y+38+i*76);c.textAlign="left";
+ });
+ const foot=h-78;setFont(c,16,"600");c.fillStyle="#4f6055";c.fillText(data.date,x,foot);
+ setFont(c,13,"400");c.fillStyle="#899187";c.fillText("价格以最终确认的产品报价为准",x,foot+28);
+}
+function drawShip(c,w,h,im){
+ c.fillStyle="#102b32";c.fillRect(0,0,w,h);
+ const ph=Math.round(h*.48);coverImage(c,im,0,0,w,ph);
+ gradient(c,0,ph*.55,w,ph*.45,[[0,"rgba(11,30,34,0)"],[1,"rgba(11,30,34,.9)"]],true);
+ setFont(c,17,"700");c.fillStyle="#ead6ad";c.fillText("THE EXPEDITION YACHT",58,62);
+ setFont(c,68,"700");c.fillStyle="#fff";c.fillText("INFINITY",58,ph-75);
+ setFont(c,24,"500");c.fillStyle="#ead9b8";c.fillText("Royal Galapagos Infinity 无限号",60,ph-32);
+ let y=ph+80;
+ setFont(c,17,"700");c.fillStyle="#c9b58c";c.fillText("GALÁPAGOS ISLANDS  /  7 NIGHTS",58,y);
+ setFont(c,36,"700");c.fillStyle="#fff";y=wrap(c,data.ship,58,y+65,w-116,48,2);
+ c.strokeStyle="#547078";c.beginPath();c.moveTo(58,y+18);c.lineTo(w-58,y+18);c.stroke();
+ const points=[["7晚","加拉帕戈斯群岛航程"],["18+2","精致小团规模"],["3国","哥伦比亚 · 厄瓜多尔 · 巴拿马"]];
+ points.forEach((p,i)=>{
+  const xx=58+i*((w-116)/3);
+  setFont(c,38,"700");c.fillStyle="#e4c99a";c.fillText(p[0],xx,y+90);
+  setFont(c,14,"500");c.fillStyle="#d5ded7";wrap(c,p[1],xx,y+125,(w-116)/3-12,22,2);
+ });
+ setFont(c,17,"500");c.fillStyle="#e4e8de";c.fillText(data.date,58,h-84);
+}
+function drawJourney(c,w,h,im){
+ c.fillStyle="#f2eddf";c.fillRect(0,0,w,h);
+ coverImage(c,im,0,0,w,550);
+ gradient(c,0,320,w,230,[[0,"rgba(12,31,24,0)"],[1,"rgba(12,31,24,.88)"]],true);
+ setFont(c,15,"700");c.fillStyle="#f0dfbd";c.fillText("CHUANKE TRAVEL  /  ROUTE JOURNAL",54,62);
+ setFont(c,57,"700");c.fillStyle="#fff";c.fillText(data.title,54,445);
+ setFont(c,28,"500");c.fillStyle="#f2e6d1";c.fillText(data.subtitle,56,490);
+ let y=620;
+ setFont(c,15,"700");c.fillStyle="#94784c";c.fillText("17 NIGHTS · 21 DAYS",54,y);
+ setFont(c,25,"700");c.fillStyle="#203b30";c.fillText("从安第斯山脉，走进亚马逊与太平洋",54,y+52);
+ setFont(c,16,"400");c.fillStyle="#657168";wrap(c,data.route.replace("\n","  "),54,y+92,w-108,27,3);
+ y+=205;
+ c.strokeStyle="#bca77f";c.lineWidth=3;c.beginPath();c.moveTo(84,y);c.lineTo(84,h-300);c.stroke();
+ itinerary.forEach((it,i)=>{
+  const yy=y+i*310;
+  c.fillStyle="#b38e58";c.beginPath();c.arc(84,yy+10,12,0,Math.PI*2);c.fill();
+  setFont(c,16,"700");c.fillStyle="#94784c";c.fillText("DAY "+it.day,126,yy+8);
+  setFont(c,14,"500");c.fillStyle="#8b948b";c.textAlign="right";c.fillText(it.date,w-56,yy+8);c.textAlign="left";
+  setFont(c,31,"700");c.fillStyle="#203a30";c.fillText(it.place,126,yy+64);
+  setFont(c,17,"400");c.fillStyle="#657168";wrap(c,it.desc,126,yy+105,w-190,27,3);
+  c.strokeStyle="#ded6c5";c.lineWidth=1;c.beginPath();c.moveTo(126,yy+180);c.lineTo(w-56,yy+180);c.stroke();
+ });
+ const by=h-180;
+ setFont(c,17,"700");c.fillStyle="#8c724a";c.fillText("SAILING WITH INFINITY",54,by);
+ setFont(c,28,"700");c.fillStyle="#203a30";c.fillText(data.price+" 起 / 人",54,by+52);
+ setFont(c,15,"500");c.fillStyle="#69756b";c.fillText(data.group+"  ·  "+data.date,54,by+92);
+}
+async function render(){await drawPoster(canvas,1)}
+function setTemplate(t){
+ template=t;
+ document.querySelectorAll(".template-card").forEach(el=>el.classList.toggle("active",el.dataset.template===t));
+ if(t==="journey"&&ratio!=="long"){ratio="long";$("ratioSelect").value="long"}
+ render();
+}
+function renderPhotoPicks(){
+ const wrapEl=$("photoPicks");wrapEl.innerHTML="";
+ Object.keys(imageMap).forEach(key=>{
+  const item=imageMap[key];if(!item.src)return;
+  const b=document.createElement("button");b.type="button";b.className="photo-pick"+(selectedImage===key?" active":"");
+  const im=document.createElement("img");im.src=item.src;im.alt=item.label;b.appendChild(im);
+  const sp=document.createElement("span");sp.textContent=item.label;b.appendChild(sp);
+  b.addEventListener("click",()=>{selectedImage=key;activeSrc=item.src;renderPhotoPicks();render()});wrapEl.appendChild(b);
+ });
+ customImages.forEach((item,index)=>{
+  const b=document.createElement("button");b.type="button";b.className="photo-pick"+(selectedImage==="custom-"+index?" active":"");
+  const im=document.createElement("img");im.src=item.src;im.alt=item.name;b.appendChild(im);
+  const sp=document.createElement("span");sp.textContent=item.name;b.appendChild(sp);
+  b.addEventListener("click",()=>{selectedImage="custom-"+index;activeSrc=item.src;renderPhotoPicks();render()});wrapEl.appendChild(b);
+ });
+}
+function loadSaved(){
+ try{const v=JSON.parse(localStorage.getItem("ck-poster-works")||"[]");works=Array.isArray(v)?v:[]}catch(e){works=[]}
+ renderWorks();
+ try{const p=JSON.parse(localStorage.getItem("ck-poster-product")||"null");if(p&&p.title){data=Object.assign({},original,p);fillFields()}}catch(e){}
+}
+function renderWorks(){
+ const el=$("worksGrid");el.innerHTML="";
+ if(!works.length){const d=document.createElement("div");d.className="empty-works";d.textContent="还没有保存的作品。生成满意的海报后，可以保存到这里。";el.appendChild(d);return}
+ works.slice(0,6).forEach((w,i)=>{
+  const item=document.createElement("div");item.className="work-item";
+  const info=document.createElement("div");const strong=document.createElement("strong");strong.textContent=w.title||"未命名海报";const small=document.createElement("small");small.textContent=(w.templateName||"海报")+" · "+(w.savedAt||"");info.append(strong,small);
+  const btn=document.createElement("button");btn.textContent="继续编辑";btn.addEventListener("click",()=>{data=Object.assign({},original,w.data||{});fillFields();template=w.template||"cover";ratio=w.ratio||"3:4";$("ratioSelect").value=ratio;activeSrc=w.imageSrc||AS.iguana;selectedImage=w.imageKey||"iguana";setTemplate(template);renderPhotoPicks();toast("已载入作品")});
+  item.append(info,btn);el.appendChild(item);
+ });
+}
+function saveWork(){
+ readFields();const item={title:data.title+" · "+data.subtitle,template:template,templateName:document.querySelector(".template-card.active .template-name")?.textContent||template,ratio:ratio,data:Object.assign({},data),imageKey:selectedImage,imageSrc:activeSrc,savedAt:new Date().toLocaleString("zh-CN",{month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"})};
+ works.unshift(item);works=works.slice(0,6);
+ try{localStorage.setItem("ck-poster-works",JSON.stringify(works));renderWorks();toast("作品已保存到当前浏览器")}catch(e){toast("浏览器存储空间不足，请减少上传图片后重试")}
+}
+function saveProduct(){
+ readFields();try{localStorage.setItem("ck-poster-product",JSON.stringify(data));toast("当前产品资料已保存在本浏览器")}catch(e){toast("保存失败，请检查浏览器存储")}
+}
+function resetProduct(){data=Object.assign({},original);fillFields();render();toast("已恢复行程资料原始版本")}
+function downloadBlob(blob,name){const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500)}
+async function exportPNG(){
+ readFields();const c=document.createElement("canvas");await drawPoster(c,2);
+ c.toBlob(blob=>{if(blob){const safe=(data.title||"船客海报").replace(/[\\/:*?"<>|]/g,"_");downloadBlob(blob,safe+"_"+ratio.replace(":","x")+".png");toast("高清 PNG 已开始下载")}else toast("导出失败，请重试")},"image/png");
+}
+async function exportPDF(){
+ readFields();const c=document.createElement("canvas");await drawPoster(c,2);const url=c.toDataURL("image/png");
+ const win=window.open("","_blank");if(!win){toast("浏览器拦截了新窗口，请允许弹窗后重试");return}
+ win.document.open();win.document.write("<!doctype html><html><head><meta charset='utf-8'><title>船客海报</title><style>@page{margin:0}html,body{margin:0;padding:0;background:#fff}img{display:block;width:100%;height:auto;max-height:100vh;object-fit:contain} @media print{img{max-height:none}}</style></head><body><img src='"+url+"' onload='setTimeout(function(){window.print()},350)'></body></html>");win.document.close();
+}
+function loadScript(src){return new Promise((resolve,reject)=>{const s=document.createElement("script");s.src=src;s.onload=resolve;s.onerror=reject;document.head.appendChild(s)})}
+async function extractFile(file){
+ const name=file.name.toLowerCase();let text="";
+ try{
+  if(name.endsWith(".txt"))text=await file.text();
+  else if(name.endsWith(".pdf")){
+   if(!window.pdfjsLib)await loadScript("https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js");
+   pdfjsLib.GlobalWorkerOptions.workerSrc="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+   const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer()}).promise;
+   for(let p=1;p<=Math.min(pdf.numPages,45);p++){const page=await pdf.getPage(p);const tc=await page.getTextContent();text+=tc.items.map(x=>x.str).join(" ")+"\n"}
+  }else if(name.endsWith(".docx")){
+   if(!window.mammoth)await loadScript("https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.8.0/mammoth.browser.min.js");
+   const result=await mammoth.extractRawText({arrayBuffer:await file.arrayBuffer()});text=result.value||"";
+  }else{showModal("暂不支持该文件格式","当前版本支持 PDF、DOCX 和 TXT。图片版 PDF 需要 OCR，暂时无法自动识别。");return}
+  text=text.replace(/\s+/g," ").trim();
+  if(text.length<40){showModal("文件已读取，但没有可用文本","这份文件可能是扫描图片版 PDF，暂时无法直接提取文字。当前演示产品信息已经预置，你可以直接修改左侧字段，或上传清晰的产品图片。");return}
+  const date=text.match(/(20\d{2})年\s*(\d{1,2})月\s*(\d{1,2})日\s*[—–\-至到]+\s*(?:\1年)?\s*(\d{1,2})月\s*(\d{1,2})日/);
+  if(date){data.date=date[1]+"."+String(date[2]).padStart(2,"0")+"."+String(date[3]).padStart(2,"0")+" — "+String(date[4]).padStart(2,"0")+"."+String(date[5]).padStart(2,"0")}
+  const duration=text.match(/(\d+)晚\s*(\d+)天/);if(duration)data.date+="  ｜  "+duration[1]+"晚"+duration[2]+"天";
+  const price=text.match(/(?:RMB|人民币|¥|￥)\s*([\d,]{5,})/i);if(price)data.price="¥"+price[1].replace(/,/g,"");
+  const ship=text.match(/(?:Royal Galapagos Infinity|Infinity\s*无限号|无限号)/i);if(ship)data.ship="Royal Galapagos Infinity 无限号";
+  fillFields();render();showModal("文件读取完成","已从文件中读取约 "+text.length+" 个文本字符，并尝试识别日期、天数、价格和邮轮信息。请核对左侧字段后再生成海报。");
+ }catch(e){showModal("文件读取失败","浏览器无法解析该文件。可以尝试导出为 TXT / DOCX，或直接在左侧修改产品资料。")}
+}
+fields.forEach(k=>{const el=$(k+"Input");el.addEventListener("input",()=>{readFields();render()})});
+$("ratioSelect").addEventListener("change",e=>{ratio=e.target.value;render()});
+document.querySelectorAll(".template-card").forEach(el=>el.addEventListener("click",()=>setTemplate(el.dataset.template)));
+$("generateBtn").addEventListener("click",()=>{readFields();render();toast("海报已重新排版")});
+$("resetBtn").addEventListener("click",resetProduct);
+$("saveProductBtn").addEventListener("click",saveProduct);
+$("saveWorkBtn").addEventListener("click",saveWork);
+$("pngBtn").addEventListener("click",exportPNG);
+$("pdfBtn").addEventListener("click",exportPDF);
+$("jumpWorks").addEventListener("click",()=>$("works").scrollIntoView({behavior:"smooth"}));
+$("docFile").addEventListener("change",e=>{const f=e.target.files[0];if(f)extractFile(f);e.target.value=""});
+$("imageFile").addEventListener("change",e=>{
+ const files=Array.from(e.target.files||[]);files.slice(0,8).forEach(file=>{const reader=new FileReader();reader.onload=()=>{const item={name:file.name.replace(/\.[^.]+$/,"").slice(0,8)||"自定义照片",src:reader.result};customImages.push(item);if(customImages.length>8)customImages.shift();const idx=customImages.length-1;selectedImage="custom-"+idx;activeSrc=item.src;renderPhotoPicks();render();toast("已加入自定义摄影素材")};reader.readAsDataURL(file)});e.target.value="";
+});
+$("heroPhoto").src=AS.iguana||"";
+document.querySelectorAll("[data-thumb]").forEach(el=>{const key=el.dataset.thumb;el.src=AS[key]||AS.iguana||""});
+renderPhotoPicks();loadSaved();render();
+})();
+</script>
+</body>
+</html>
