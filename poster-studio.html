@@ -687,7 +687,7 @@ function parseProductText(source){
   for(const line of tail){
    const v=line.trim();
    if(!v){if(selected.length)break;continue}
-   if(/^(?:行程安排|每日行程|费用包含|费用不含|价格说明|预订须知|舱型|房型)/.test(v))break;
+   if(/^(?:行程安排|每日行程|费用包含|费用不含|价格说明|预订须知|舱型|房型|Day\\s*\\d+|DAY\\s*\\d+|D\\d+|第\\s*\\d+\\s*天)/i.test(v))break;
    if(/^[•·●▪◆◇*—-]/.test(v)||selected.length<5)selected.push(v.replace(/^[•·●▪◆◇*—-]+\s*/,""));
    if(selected.length>=8)break;
   }
@@ -757,7 +757,7 @@ async function extractFile(file){
   showModal("文件读取失败","浏览器无法解析该文件。可以尝试导出为可复制文字的 PDF / DOCX / TXT，或直接在左侧修改产品资料。");
  }
 }
-fields.forEach(k=>{const el=$(k+"Input");el.addEventListener("input",()=>{readFields();render()})});
+fields.forEach(k=>{const el=$(k+"Input");el.addEventListener("input",()=>{readFields();if($("importReview").classList.contains("open"))buildImportFindings({priceCandidates:[]});render()})});
 $("ratioSelect").addEventListener("change",e=>{ratio=e.target.value;render()});
 document.querySelectorAll(".template-card").forEach(el=>el.addEventListener("click",()=>setTemplate(el.dataset.template)));
 $("generateBtn").addEventListener("click",()=>{readFields();render();toast("海报已重新排版")});
