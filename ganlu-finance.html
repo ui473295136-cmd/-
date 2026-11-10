@@ -2822,6 +2822,24 @@
  const priceOverride=()=>null;
  const getPartyOptions=()=>{const read=id=>{const v=$(id).value.trim();return /^\d+$/.test(v)?Number(v):NaN};return {adults:read('adultCount'),children:read('childCount')}};
  const num=()=>{const p=getPartyOptions(),n=p.adults+p.children;if(!Number.isInteger(p.adults)||p.adults<1||!Number.isInteger(p.children)||p.children<0||!Number.isInteger(n)||n<1||n>100){$('people').value='';$('partyTotal').textContent='请检查成人与儿童人数（总人数须为1—100）';return NaN;}$('people').value=String(n);$('partyTotal').textContent=`合计${n}人（成人${p.adults}人，儿童${p.children}人）`;return n};
+ const formatRouteTitle=r=>{
+   // Name normalization affects display only; original product names and policy data stay intact.
+   let title=String(r.name||'').trim()
+     .replace(/\s*·\s*/g,'·')
+     .replace(/·?\s*\d{1,2}月\d{1,2}日（售罄）$/,'')
+     .replace(/·?\s*\d{1,2}月\d{1,2}日$/,'')
+     .replace(/（\d{1,2}月\d{1,2}日）$/,'')
+     .replace(/\s*[-—]\s*\d+\s*天$/,'')
+     .replace(/\s+\d+\s*天$/,'')
+     .replace(/·+$/,'')
+     .trim();
+   const start=P.dayNumber(r.date),end=P.dayNumber(r.end);
+   const days=Number.isFinite(start)&&Number.isFinite(end)&&end>=start&&end-start<180?end-start+1:null;
+   const titleDays=String(r.name||'').match(/(\d+)\s*天$/);
+   const duration=days|| (titleDays?Number(titleDays[1]):null);
+   return String(r.date||'').replaceAll('-','.')+'·'+title+(duration?'-'+duration+'天':'');
+ };
+ const formatRouteOption=r=>formatRouteTitle(r)+(r.soldOut?'（已售罄）':r.policyOnly&&!r.webCabinsVerified?'（价格待补）':'');
  function renderDestinationFilter(){
    const nOf=d=>d==='全部'?data.length:data.filter(r=>r.destinationGroup===d).length;
    $('destinationTabs').innerHTML=DESTINATIONS.map(d=>'<button type="button" data-destination="'+esc(d)+'" class="destinationTab'+(d===activeDestination?' active':'')+'" aria-pressed="'+(d===activeDestination)+'">'+(d==='全部'?'全部航次':esc(d))+' <small>'+nOf(d)+'</small></button>').join('');
@@ -2833,7 +2851,7 @@
    const filtered=data.filter(r=>(activeDestination==='全部'||r.destinationGroup===activeDestination)&&(activeYear==='全部'||r.date.slice(0,4)===activeYear)).sort((a,b)=>a.date.localeCompare(b.date,'zh-CN'));
    if(!filtered.length)throw Error('当前目的地/年份分类没有匹配航次。');
    const old=$('route').value;
-   $('route').innerHTML=filtered.map(r=>'<option value="'+esc(r.id)+'">'+esc(r.date.replaceAll('-','.'))+(P.weekdayCN(r.date)?' '+P.weekdayCN(r.date):'')+' · '+esc(r.name)+(r.soldOut?'（已售罄）':r.policyOnly&&!r.webCabinsVerified?'（价格待补）':'')+'</option>').join('');
+   $('route').innerHTML=filtered.map(r=>'<option value="'+esc(r.id)+'">'+esc(formatRouteOption(r))+'</option>').join('');
    $('route').value=preserve&&filtered.some(r=>r.id===old)?old:(filtered.some(r=>r.id==='a1204')&&activeDestination==='全部'&&activeYear==='全部'?'a1204':filtered[0].id);
    $('destinationPickerCount').textContent='当前显示 '+filtered.length+' 条航次 · '+(activeDestination==='全部'?'全部目的地':activeDestination)+(activeYear==='全部'?'':' · '+activeYear+'年');
  }
@@ -2975,7 +2993,7 @@
    const flag=$('policyFlag');flag.textContent=q.policy.label;flag.classList.toggle('valid',q.policy.valid);flag.classList.toggle('invalid',!q.policy.valid);
    const cabinSummary=q.anniversaryUpgradeOnly?`${P.nameCabin(c)} → ${q.upgradeTarget}`:q.upgradeTarget?`${P.nameCabin(c)} · 免费升舱至${q.upgradeTarget}`:P.nameCabin(c);
    const staySummary=r.id==='c0708'&&q.stay==='triple'?'三/四人同舱':P.stayName(q.stay);
-   $('routeOverview').innerHTML=`<b>${esc(r.date.replaceAll('-','.'))}${P.weekdayCN(r.date)?' '+P.weekdayCN(r.date):''}</b> ${esc(r.name)}<div class="underRoute">${esc(cabinSummary)} · ${Number.isFinite(q.people)?q.people:'—'}人（成人${Number.isFinite(q.adults)?q.adults:'—'}，儿童${Number.isFinite(q.children)?q.children:'—'}） · ${customer==='old'?'老客户':'新客户'} · ${esc(staySummary)}${q.shipOnly?' · 单船票':''}</div>`;
+   $('routeOverview').innerHTML=`<b>${esc(formatRouteTitle(r))}</b><div class="underRoute">${esc(cabinSummary)} · ${Number.isFinite(q.people)?q.people:'—'}人（成人${Number.isFinite(q.adults)?q.adults:'—'}，儿童${Number.isFinite(q.children)?q.children:'—'}） · ${customer==='old'?'老客户':'新客户'} · ${esc(staySummary)}${q.shipOnly?' · 单船票':''}</div>`;
    const ready=q.status==='ready';
    $('palaceStatus').className='palaceStatus '+(ready?'success':'fail');
    $('palaceIcon').textContent=ready?'✦':'✧';$('palaceStatusTitle').textContent=ready?(q.publishedFare?'官网金额已计算':'报价成功'):r.soldOut?'本航次已售罄':r.policyOnly&&r.webCabinsVerified?'官网金额已录入':'报价失败';
