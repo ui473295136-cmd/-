@@ -2817,7 +2817,7 @@
      $('discountTotal').textContent=routeMoney(r,Math.round(c.price*n*rate*groupRate*100)/100);
    }
    $('discountAvg').textContent='价格按'+currency+'计价，船司确认后成交';
-   $('offerBadge').textContent=expired?'政策已过期':'原币政策报价';
+   $('offerBadge').textContent=c.soldOut?'已售罄':c.waitlist?'候补':expired?'政策已过期':'原币政策报价';
    $('offerCaveat').textContent=expired?'按原优惠计算 · 政策已过期':'按政策优惠试算 · 需确认实时库存';
    $('miniPrice').textContent=referenceTotal!==null?routeMoney(r,Math.round(referenceTotal*(currency==='EUR'?(q.customer==='old'?.85:.90):(q.customer==='old'?.93:.95))*(currency==='USD'&&n>=4?.98:1)*100)/100):'待确认';
  }
@@ -3224,6 +3224,6 @@
 <script defer src="./ganlu-polar-quest-v1.js?v=20261022-completions1"></script>
 <script defer src="./ganlu-mini-banner-v1.js?v=20261026-policy-updated1"></script>
 
-<script defer src="./ganlu-south-america-v1.js?v=20261110-published-price1"></script><script defer src="./ganlu-inventory-v1.js?v=20261105-stock3"></script>
+<script defer src="./ganlu-south-america-v1.js?v=20261110-expired-policy2"></script><script defer src="./ganlu-inventory-v1.js?v=20261105-stock3"></script>
 
 </body></html>
