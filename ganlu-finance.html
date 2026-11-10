@@ -2728,7 +2728,7 @@
        '不含项目：'+q.shipDeductionItems.map(x=>x.label).join('、')
      ]:[]),
      `优惠方案：${q.policyName||'暂无优惠方案'}`,
-     ...(q.children>0?q.steps.filter(line=>!line.startsWith('基础原价：')&&!line.startsWith('本次报价合计：')).map(line=>'优惠明细：'+line):[]),
+     ...(q.publishedFare?['报价性质：官网公示价或用户确认团费的参考计算；非实时锁舱成交价。',...q.steps.map(line=>'计算明细：'+line),'最终价格请以产品部实时余位及正式合同确认为准。']:q.children>0?q.steps.filter(line=>!line.startsWith('基础原价：')&&!line.startsWith('本次报价合计：')).map(line=>'优惠明细：'+line):[]),
      '',
      `最终价格：${amount(q.offer)}元`
    ].join('\n');
@@ -2789,7 +2789,7 @@
    lines.push('<p>官网公示船客价：<span class="fxNumber">'+(c.waitlist?'候补':routeMoney(r,c.price)+'/人')+'</span></p>');
    if(currency==='USD')lines.push('<p>船司官方原价：'+(c.officialPrice?routeMoney(r,c.officialPrice)+'/人':'候补')+'</p>');
    if(!baseValid){
-     lines.push('<p class="fxWarning">'+(c.soldOut?'该舱型官网标注已售罄，不可出价':c.waitlist?'当前仅接受候补，不可出价':'仅在双人入住且人数有效时列示船票金额；其它入住规则需产品部确认')+'</p>');
+     lines.push('<p class="fxWarning">'+(c.soldOut?'该舱型官网标注已售罄，不可出价':c.waitlist?'当前仅接受候补，不可出价':'双人入住以外的附加费用尚未核实，仍可查看官网每人价格')+'</p>');
    }else{
      lines.push('<p>本次'+n+'人船票参考小计：<span class="fxNumber">'+routeMoney(r,referenceTotal)+'</span></p>');
      if(currency==='USD'&&!expired){
@@ -2798,7 +2798,7 @@
        lines.push('<p>船客价 × '+(rate*100)+'%'+(n>=4?' × 98%（4人及以上）':'')+' = <span class="fxNumber">'+routeMoney(r,discounted)+'</span></p>');
        lines.push('<p class="fxWarning">以上为截至'+esc(r.deadline)+'的美元政策试算，最终价格及库存需船司书面确认。</p>');
      }else{
-       lines.push('<p class="fxWarning">原有'+(currency==='EUR'?'新客9折／老客85折':'新客95折／老客93折')+'优惠截至'+esc(r.deadline)+'，已失效；不自动按过期政策生成优惠总价。</p>');
+       lines.push('<p class="fxWarning">历史'+(currency==='EUR'?'新客9折／老客85折':'新客95折／老客93折')+'优惠截至'+esc(r.deadline)+'，已过期；本次展示官网船客/舱型价 '+routeMoney(r,referenceTotal)+'，不再额外打折。</p>');
      }
    }
    if(currency==='EUR')lines.push('<p class="fxNote">如选择跟团服务包：另加人民币 ¥10,000/人，与欧元船票分别结算，不做跨币种合计。</p>');
@@ -2811,16 +2811,16 @@
    $('normalTotal').textContent=currency==='USD'?(c.officialPrice&&validPeople&&q.stay==='double'?routeMoney(r,c.officialPrice*n):'待确认'):(referenceTotal!==null?routeMoney(r,referenceTotal):c.soldOut?'已售罄':'待确认');
    $('normalAvg').textContent=currency==='USD'?(c.officialPrice?routeMoney(r,c.officialPrice)+'/人':'候补'):(c.price?routeMoney(r,c.price)+'/人':'候补');
    $('normalContext').textContent='官网参考原币价格，不兑换人民币';
-   $('offerLabel').textContent='原币优惠参考（'+currency+'）';
+   $('offerLabel').textContent=expired?'官网原币参考价（'+currency+'）':'原币优惠参考（'+currency+'）';
    if(!baseValid)$('discountTotal').textContent=c.soldOut?'已售罄':c.waitlist?'候补':'请确认入住';
-   else if(expired)$('discountTotal').textContent='优惠已到期';
+   else if(expired)$('discountTotal').textContent=routeMoney(r,referenceTotal);
    else{
      const rate=q.customer==='old'?.93:.95,groupRate=n>=4?.98:1;
      $('discountTotal').textContent=routeMoney(r,Math.round(c.price*n*rate*groupRate*100)/100);
    }
    $('discountAvg').textContent='价格按'+currency+'计价，船司确认后成交';
-   $('offerBadge').textContent=expired?'原优惠到期 · 待核':'原币参考试算';
-   $('offerCaveat').textContent=expired?'不可按已到期优惠对外承诺':'仅供参考 · 需确认实时库存';
+   $('offerBadge').textContent=expired?'过期折扣未计入':'原币参考试算';
+   $('offerCaveat').textContent=expired?'此金额为官网参考价格；已过期优惠不叠加':'仅供参考 · 需确认实时库存';
    $('miniPrice').textContent=referenceTotal!==null?routeMoney(r,referenceTotal):'待确认';
  }
 
@@ -2983,19 +2983,19 @@
    $('routeOverview').innerHTML=`<b>${esc(r.date.replaceAll('-','.'))}</b> ${esc(r.name)}<div class="underRoute">${esc(cabinSummary)} · ${Number.isFinite(q.people)?q.people:'—'}人（成人${Number.isFinite(q.adults)?q.adults:'—'}，儿童${Number.isFinite(q.children)?q.children:'—'}） · ${customer==='old'?'老客户':'新客户'} · ${esc(staySummary)}${q.shipOnly?' · 单船票':''}</div>`;
    const ready=q.status==='ready';
    $('palaceStatus').className='palaceStatus '+(ready?'success':'fail');
-   $('palaceIcon').textContent=ready?'✦':'✧';$('palaceStatusTitle').textContent=ready?'报价成功':r.soldOut?'本航次已售罄':r.policyOnly?'政策已录入 · 待补价':'报价失败';
+   $('palaceIcon').textContent=ready?'✦':'✧';$('palaceStatusTitle').textContent=ready?(q.publishedFare?'官网金额已计算':'报价成功'):r.soldOut?'本航次已售罄':r.policyOnly&&r.webCabinsVerified?'官网金额已录入':'报价失败';
    $('palaceStatusText').textContent=ready?'你离回宫又近了一步~':q.statusReason;
    $('normalLabel').textContent=q.anniversaryUpgradeOnly?'4层房型原价参考':r.policyOnly?'官网/团费参考原价':'原价';
    $('normalTotal').textContent=q.standard!==null?P.money(q.standard):r.webCabinsVerified&&Number.isFinite(c.price)?P.money(c.price)+'/人':Number.isFinite(q.price)?'人数待确认':'原价待补充';
    $('normalAvg').textContent=Number.isFinite(q.price)?`${P.money(q.price)}/人`:'未提供明确原价';
    $('normalContext').textContent=q.anniversaryUpgradeOnly?'仅供参考；不代表客户已报名合同金额，原合同价不重算':r.policyOnly?'仅展示每人参考价；未确认优惠、单间差及库存':'行程册舱型基础原价 · 未打折'+(q.stay==='single'?'，未含单房差':'');
-   $('offerLabel').textContent=q.anniversaryUpgradeOnly?'升舱补差价':'优惠价格';
-   $('discountTotal').textContent=ready?P.money(q.offer):r.webCabinsVerified?'优惠总价待核验':'金额待确认';
-   $('discountAvg').textContent=ready?`平均约 ${P.money(q.offer/q.people)}/人`:'补齐价格依据后自动出价';
-   $('offerBadge').textContent=!ready?(r.soldOut?'已售罄':r.policyOnly?(r.webCabinsVerified?'原价已录 · 待核价':'房型/价格待补充'):'待核价'):q.policy.code==='jan18porthole'?'0118舷窗专享 · 原价立减':q.policy.code==='anniversary'?'周年庆活动 · 名额有限':q.policy.code==='expired'?'政策过期 · 待确认':q.policy.code==='upcoming'?'未生效 · 试算':q.policy.code==='unknown'?'日期待确认':q.policy.code==='latest_unconfirmed'?'专项优惠 · 日期待确认':q.route.hasPolicy?'优惠试算':'常规价格';
+   $('offerLabel').textContent=q.anniversaryUpgradeOnly?'升舱补差价':r.soldOut?'已售罄·历史价格':q.publishedFare?(ready?'官网金额参考':'已知原价小计'):'优惠价格';
+   $('discountTotal').textContent=ready?P.money(q.offer):r.soldOut&&Number.isFinite(q.standard)?P.money(q.standard):r.webCabinsVerified&&Number.isFinite(q.standard)?P.money(q.standard):r.webCabinsVerified?'原价待确认':'金额待确认';
+   $('discountAvg').textContent=ready?`平均约 ${P.money(q.offer/q.people)}/人`:Number.isFinite(q.standard)&&q.people?`原价约 ${P.money(q.standard/q.people)}/人（未完成最终核算）`:'补齐价格依据后自动出价';
+   $('offerBadge').textContent=!ready?(r.soldOut?'已售罄':r.policyOnly?(r.webCabinsVerified?'已知金额 · 待核附加费':'房型/价格待补充'):'待核价'):q.publishedFare?(q.publishedFareActive?'官网政策试算':'官网原价参考'):q.policy.code==='jan18porthole'?'0118舷窗专享 · 原价立减':q.policy.code==='anniversary'?'周年庆活动 · 名额有限':q.policy.code==='expired'?'政策过期 · 待确认':q.policy.code==='upcoming'?'未生效 · 试算':q.policy.code==='unknown'?'日期待确认':q.policy.code==='latest_unconfirmed'?'专项优惠 · 日期待确认':q.route.hasPolicy?'优惠试算':'常规价格';
    $('offerBadge').classList.toggle('wait',!ready||!q.policy.valid);
-   $('offerCaveat').textContent=ready?(q.anniversaryUpgradeOnly?'仅升舱补差价，不含原合同团款':q.policy.code==='jan18porthole'?'原价减2000/人 · 不叠加折扣':q.policy.code==='anniversary'?'周年庆活动名额有限，额满即止':q.policy.code==='expired'?'按原优惠试算，报名价须确认':q.policyName):'请查看下方说明';
-   $('miniPrice').textContent=ready?P.money(q.offer):'金额待确认';
+   $('offerCaveat').textContent=ready?(q.publishedFare?'官网/已确认团费参考；实际舱位及签约价以产品部为准':q.anniversaryUpgradeOnly?'仅升舱补差价，不含原合同团款':q.policy.code==='jan18porthole'?'原价减2000/人 · 不叠加折扣':q.policy.code==='anniversary'?'周年庆活动名额有限，额满即止':q.policy.code==='expired'?'按原优惠试算，报名价须确认':q.policyName):r.soldOut?'已售罄 · 仅展示历史价格':r.policyOnly&&Number.isFinite(q.standard)?'以上仅是已知原价小计，未含需确认的附加费':'请查看下方说明';
+   $('miniPrice').textContent=ready?P.money(q.offer):r.policyOnly&&Number.isFinite(q.standard)?P.money(q.standard):'金额待确认';
    $('groupBanner').classList.add('hidden');
    $('explanation').innerHTML=(q.steps.length?q.steps:[q.statusReason||'请选择报价条件。']).map((s,i)=>`<div class="${ready&&i===q.steps.length-1?'sum':''}">${esc(s)}</div>`).join('');
    $('standardTitle').textContent=q.anniversaryUpgradeOnly?'已报名房型原价参考':'原价计算';
@@ -3014,7 +3014,7 @@
    siteInfo.classList.toggle('hide',!webRef?.url);
    if(webRef?.url){
      const priceDisplay=webRef.startingPrice?(webRef.currency==='EUR'?'€':webRef.currency==='USD'?'US$':'¥')+Number(webRef.startingPrice).toLocaleString('zh-CN'):'暂无起价';
-     siteInfo.innerHTML='<a target="_blank" rel="noopener noreferrer" href="'+esc(webRef.url)+'">查看官网行程详情 ↗</a>'+(webRef.begin&&webRef.end?'<small>官网行程 '+esc(webRef.begin)+' — '+esc(webRef.end)+(webRef.startingPrice?' · 公开参考起价 '+esc(priceDisplay):'')+'</small>':'')+'<small>'+(r.webCabinsVerified?'已录入官网公示舱型价格，报价政策须进一步核验':esc(webRef.status||'官网公开价仅供参考，不代表最终成交价'))+'</small>';
+     siteInfo.innerHTML='<a target="_blank" rel="noopener noreferrer" href="'+esc(webRef.url)+'">查看官网行程详情 ↗</a>'+(webRef.begin&&webRef.end?'<small>官网行程 '+esc(webRef.begin)+' — '+esc(webRef.end)+(webRef.startingPrice?' · 公开参考起价 '+esc(priceDisplay):'')+'</small>':'')+'<small>'+(r.webCabinsVerified?'官网公示舱型价已录入，金额可查；实时余位及成交价以产品部为准':esc(webRef.status||'官网公开价仅供参考，不代表最终成交价'))+'</small>';
    }else siteInfo.textContent='';
    $('voyagePolicyDetails').querySelector('.voyagePolicyArrow').textContent=$('voyagePolicyDetails').open?'收起 ↑':'展开全部 '+r.notes.length+' 条 ↓';
    renderForeignFare(q,r,c,today);
