@@ -2914,10 +2914,10 @@
    $('palaceStatus').className='palaceStatus '+(ready?'success':'fail');
    $('palaceIcon').textContent=ready?'✦':'✧';$('palaceStatusTitle').textContent=ready?'报价成功':r.soldOut?'本航次已售罄':r.policyOnly?'政策已录入 · 待补价':'报价失败';
    $('palaceStatusText').textContent=ready?'你离回宫又近了一步~':q.statusReason;
-   $('normalLabel').textContent=q.anniversaryUpgradeOnly?'4层房型原价参考':'原价';
-   $('normalTotal').textContent=q.standard!==null?P.money(q.standard):r.webCabinsVerified?'舱型原价已录入':Number.isFinite(q.price)?'人数待确认':'原价待补充';
+   $('normalLabel').textContent=q.anniversaryUpgradeOnly?'4层房型原价参考':r.policyOnly?'官网/团费参考原价':'原价';
+   $('normalTotal').textContent=q.standard!==null?P.money(q.standard):r.webCabinsVerified&&Number.isFinite(c.price)?P.money(c.price)+'/人':Number.isFinite(q.price)?'人数待确认':'原价待补充';
    $('normalAvg').textContent=Number.isFinite(q.price)?`${P.money(q.price)}/人`:'未提供明确原价';
-   $('normalContext').textContent=q.anniversaryUpgradeOnly?'仅供参考；不代表客户已报名合同金额，原合同价不重算':'行程册舱型基础原价 · 未打折'+(q.stay==='single'?'，未含单房差':'');
+   $('normalContext').textContent=q.anniversaryUpgradeOnly?'仅供参考；不代表客户已报名合同金额，原合同价不重算':r.policyOnly?'仅展示每人参考价；未确认优惠、单间差及库存':'行程册舱型基础原价 · 未打折'+(q.stay==='single'?'，未含单房差':'');
    $('offerLabel').textContent=q.anniversaryUpgradeOnly?'升舱补差价':'优惠价格';
    $('discountTotal').textContent=ready?P.money(q.offer):r.webCabinsVerified?'优惠总价待核验':'金额待确认';
    $('discountAvg').textContent=ready?`平均约 ${P.money(q.offer/q.people)}/人`:'补齐价格依据后自动出价';
