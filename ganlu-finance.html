@@ -2130,17 +2130,18 @@
     "end": "2027-03-29",
     "name": "南美七国精品之旅 · 3月1日",
     "sub": "29天南美七国 · 团费¥168,800/人",
-    "policy": "政策待核实",
+    "policy": "直客优惠：新客户98折；老客户95折（截止日未注明）",
     "deadline": null,
-    "rate": 1,
+    "rate": 0.98,
     "loyal": 0,
     "groupRoom8": false,
-    "hasPolicy": false,
+    "hasPolicy": true,
     "policyOnly": true,
     "notes": [
-      "2027年3月1日至3月29日南美七国29天，团费原价¥168,800/人，与2月20日团期原价相同（用户确认）。",
-      "目前仅确认此团期与团费相同，不能据此推定2月20日的早鸟折扣、有效期或退改规则自动适用于3月1日。",
-      "单房差、酒店入住计价和是否有最新优惠政策待产品部确认；暂无实时余位数据。"
+      "2027年3月1日至3月29日南美七国29天，原价168800元/人。",
+      "本航次直客优惠：新客户98折，老客户95折；优惠截止日期尚未提供，按原政策折扣报价。",
+      "只确认本航次的新老客户折扣，不默认沿用其它航次多人优惠、额外减免及退改条件。",
+      "单房差与酒店入住计价尚待补充；余位需产品部确认。"
     ],
     "cabins": [
       {
@@ -2155,8 +2156,8 @@
     "category": "南美",
     "policySource": "",
     "pendingRequirements": [
-      "3月1日团期单房差",
-      "3月团期适用的营销优惠政策与有效期",
+      "3月1日团期单房差及酒店入住规则",
+      "本团优惠截止日期",
       "可售余位"
     ],
     "destinationGroup": "其它轻探险",
@@ -2359,6 +2360,7 @@
        bear07:{new:.95,old:.92,group:true},
        n0710:{new:.90,old:.85,group:false},
        am0827:{new:.95,old:.92,group:true,singleRate:.50},
+       s0301:{new:.98,old:.95,group:false},
        it0927:{new:.97,old:.95,group:true},
        gal1027:{new:.95,old:.95,group:true,singleRate:.70},
        van2815:{new:.95,old:.95,group:false,singleRate:.75,excludeCabins:['balc3']},
@@ -2392,7 +2394,7 @@
      steps.push('已知条件参考总额：'+money(q.offer));
      assumptions.push('价格基于所列官网公示舱型价或用户明确确认的团费，并非实时锁舱价。');
      if(policyExpired&&rule)warnings.push('政策已过期（截止'+dateCN(r.deadline)+'），仍按该舱型适用的原政策报价。');
-     if(r.id==='s0301')warnings.push('3月1日团期仅确认团费与2月20日同价，未沿用另一团期的优惠。');
+     if(r.id==='s0301'&&!r.deadline)warnings.push('3月1日南美七国优惠截止日期未注明，仍按新客98折、老客95折报价。');
      if(['van2815','van2827'].includes(r.id))warnings.push('升舱须另行选择并核实，当前只计算选定舱型公开价格。');
      if(r.id==='gal1027')warnings.push('同舱第三人及儿童年龄优惠未自动应用，须单独确认实际房间入住人数。');
      return q;
