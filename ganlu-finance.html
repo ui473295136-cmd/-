@@ -2724,6 +2724,7 @@
        '不含项目：'+q.shipDeductionItems.map(x=>x.label).join('、')
      ]:[]),
      `优惠方案：${q.policyName||'暂无优惠方案'}`,
+     ...(q.policy?.code==='expired'?[`提示：政策已过期（截止${q.deadline||'未注明'}），仍按原优惠计算。`]:[]),
      ...(q.publishedFare?['报价性质：官网公示价或用户确认团费的参考计算；非实时锁舱成交价。',...q.steps.map(line=>'计算明细：'+line),'最终价格请以产品部实时余位及正式合同确认为准。']:q.children>0?q.steps.filter(line=>!line.startsWith('基础原价：')&&!line.startsWith('本次报价合计：')).map(line=>'优惠明细：'+line):[]),
      '',
      `最终价格：${amount(q.offer)}元`
