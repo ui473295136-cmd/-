@@ -2350,7 +2350,8 @@
        q.statusReason='官网原价小计已显示；同舱第三人及儿童年龄差价需确认，暂不将原价小计当作最终成交价。';
        q.warnings.push(q.statusReason);return q;
      }
-     const active=!!r.deadline&&today<=r.deadline&&r.hasPolicy!==false;
+     const policyAvailable=r.hasPolicy!==false;
+     const policyExpired=!!r.deadline&&today>r.deadline&&policyAvailable;
      const rules={
        e0227:{new:.98,old:.95,group:true,singleRate:.50},
        u0524:{new:.95,old:.92,group:true,singleRate:.75},
@@ -2364,11 +2365,11 @@
        van2827:{new:.95,old:.95,group:false,singleRate:.75,excludeCabins:['balc3']}
      };
      const rule=rules[r.id]||null;
-     if(stay==='single'&&(!rule||(rule.singleRate==null&&rule.singleFixed==null)||(active&&r.id==='u0524'))){
+     if(stay==='single'&&(!rule||(rule.singleRate==null&&rule.singleFixed==null)||r.id==='u0524')){
        q.statusReason='官网原价小计已显示；本航次单房差或与优惠叠加规则尚不完整，请确认后计算最终价格。';
        q.warnings.push(q.statusReason);return q;
      }
-     const applies=active&&rule&&!rule.excludeCabins?.includes(c.id);
+     const applies=!!(policyAvailable&&rule&&!rule.excludeCabins?.includes(c.id));
      const rate=applies?rule[customer]:1;
      const groupRate=applies&&rule.group&&n>=4?.98:1;
      const baseDiscounted=c.price*n*rate*groupRate;
@@ -2378,19 +2379,19 @@
      q.baseRate=rate;q.groupRate=groupRate===1?0:1-groupRate;q.groupSaving=Math.round(c.price*n*rate*(1-groupRate));
      q.postAdd=addSingle;q.singleSupplement=stay==='single'?addSingle:null;
      q.discounted=Math.round(baseDiscounted);q.offer=total;q.rawOffer=total;
-     q.status='ready';q.copyOffer=true;q.offerValid=active;
+     q.status='ready';q.copyOffer=true;q.offerValid=true;
      q.publishedFareActive=!!applies;q.publishedSource=r.websiteReference?.url||'用户确认的团费';
      q.policyName=applies
        ?'公开原价 × '+(rate*100)+'%'+(groupRate<1?' × 98%（符合4人及以上优惠）':'')
-       :(r.deadline&&today>r.deadline?'官网原价参考（历史早鸟优惠已过期）':'官网/已确认团费原价参考（未设置可确认的专属优惠）');
-     q.policy={code:'published',valid:true,label:applies?'官网价格 · 政策优惠试算':'官网价格 · 原价参考'};
+       :'官网/已确认团费原价参考（无另行适用的优惠）';
+     q.policy={code:policyExpired?'expired':'published',valid:!policyExpired,label:policyExpired?'政策已过期 · 仍按原优惠计算':applies?'按政策折扣报价':'按已确认原价报价'};
      q.statusReason='按官网公示或用户确认的原价计算，仅供报价参考；预订以实时舱位和合同为准。';
      steps.push('报价基础：'+money(c.price)+'/人 × '+n+'人 = '+money(q.standard));
      if(applies)steps.push('明确适用优惠：'+money(q.standard)+' × '+(rate*100)+'%'+(groupRate<1?' × 98%':'')+' = '+money(Math.round(baseDiscounted)));
      if(addSingle)steps.push('单人入住房差：'+(rule.singleFixed!=null?money(rule.singleFixed)+'/人':money(c.price)+'/人 × '+(rule.singleRate*100)+'%')+' × '+n+'人 = +'+money(addSingle));
      steps.push('已知条件参考总额：'+money(q.offer));
      assumptions.push('价格基于所列官网公示舱型价或用户明确确认的团费，并非实时锁舱价。');
-     if(r.deadline&&today>r.deadline)warnings.push('原有优惠截止'+r.deadline+'，已过期；本次按官网原价计算，未叠加过期折扣。');
+     if(policyExpired&&applies)warnings.push('政策已过期（截止'+dateCN(r.deadline)+'），仍按原折扣报价。');
      if(r.id==='s0301')warnings.push('3月1日团期仅确认团费与2月20日同价，未沿用另一团期的优惠。');
      if(['van2815','van2827'].includes(r.id))warnings.push('升舱须另行选择并核实，当前只计算选定舱型公开价格。');
      if(r.id==='gal1027')warnings.push('同舱第三人及儿童年龄优惠未自动应用，须单独确认实际房间入住人数。');
@@ -2504,7 +2505,7 @@
    if(r.date<=today)warnings.push('该航次已到出发日期，本次为历史试算。');
    if(isLatest5o)warnings.push('周年庆A仅限新客户：5层非船头海景92折，名额有限、额满即止；与B方案二选一，不自动叠加老客、多人或邀约减免。');
    if(isPolarBowUpgrade)warnings.push('3层舷窗原价报名，免费升5层船头海景；实际房号、舱位供应须经项目组确认，本报价仍采用3层原价。');
-   if(policy.code==='expired')warnings.push(`政策已于${dateCN(r.deadline)}截止。左侧仍按原优惠条款测算，能否按此价格报名须经产品部确认，不视为自动延期。`);
+   if(policy.code==='expired')warnings.push(`政策已过期（截止${dateCN(r.deadline)}），仍按原政策报价。`);
    if(policy.code==='upcoming')warnings.push(`优惠自${dateCN(r.validFrom)}起生效；左侧为提前试算价，报名时须确认是否适用。`);
    if(policy.code==='unknown')warnings.push('文件优惠有效期不完整，左侧仅为按已知优惠条款的试算价；报名须确认。');
    if(q.children>0&&['b0118','b0130'].includes(r.id)&&['5o','6b','7s'].includes(c.id)){
@@ -2624,8 +2625,8 @@
    let discounted=(ponant?ponantDiscountBase:regularBase)*ratePercent/100;
    let groupSaving=discounted*groupRate;
    let loyal=allowBenefits&&customer==='old'?(r.loyal||0)*(atlas&&stay==='triple'?n:q.regularPeople):0;
-   const bonus=allowBenefits&&silversea&&today<='2026-03-03'?888*q.regularPeople:0;
-   if(silversea&&today>'2026-03-03')warnings.push('2026年3月3日888元/人报名红包活动已结束，本次报价未计算该红包。');
+   const bonus=allowBenefits&&silversea?888*q.regularPeople:0;
+   if(silversea&&today>'2026-03-03'&&bonus)warnings.push('报名红包政策已过期（2026年3月3日截止），仍按原政策计算888元/人减免。');
    if(atlas&&usePolicy&&atlasPromo==='adult_child'){
      discounted=price*.93+price*.80;
      groupRate=0;groupSaving=0;
@@ -2787,14 +2788,16 @@
      lines.push('<p class="fxWarning">'+(c.soldOut?'该舱型官网标注已售罄，不可出价':c.waitlist?'当前仅接受候补，不可出价':'双人入住以外的附加费用尚未核实，仍可查看官网每人价格')+'</p>');
    }else{
      lines.push('<p>本次'+n+'人船票参考小计：<span class="fxNumber">'+routeMoney(r,referenceTotal)+'</span></p>');
-     if(currency==='USD'&&!expired){
+     if(currency==='USD'){
        const rate=q.customer==='old'?.93:.95,groupRate=n>=4?.98:1;
        const discounted=Math.round(c.price*n*rate*groupRate*100)/100;
        lines.push('<p>船客价 × '+(rate*100)+'%'+(n>=4?' × 98%（4人及以上）':'')+' = <span class="fxNumber">'+routeMoney(r,discounted)+'</span></p>');
-       lines.push('<p class="fxWarning">以上为截至'+esc(r.deadline)+'的美元政策试算，最终价格及库存需船司书面确认。</p>');
-     }else{
-       lines.push('<p class="fxWarning">历史'+(currency==='EUR'?'新客9折／老客85折':'新客95折／老客93折')+'优惠截至'+esc(r.deadline)+'，已过期；本次展示官网船客/舱型价 '+routeMoney(r,referenceTotal)+'，不再额外打折。</p>');
+       lines.push('<p class="fxNote">以上美元金额按文件中的船客优惠价，再计算新客95折／老客93折与符合条件的多人2%优惠。</p>');
+      }else{
+       const rate=q.customer==='old'?.85:.90;
+       lines.push('<p>官网欧元原价 × '+(rate*100)+'% = <span class="fxNumber">'+routeMoney(r,Math.round(referenceTotal*rate*100)/100)+'</span></p>');
      }
+     if(expired)lines.push('<p class="fxWarning">政策已过期（截止'+esc(r.deadline)+'），仍按原优惠报价。</p>');
    }
    if(currency==='EUR')lines.push('<p class="fxNote">如选择跟团服务包：另加人民币 ¥10,000/人，与欧元船票分别结算，不做跨币种合计。</p>');
    if(currency==='USD')lines.push('<p class="fxNote">银海套房SL目前候补。优惠基础为船客优惠价，不是船司官方原价；2026年11月11日起需重新确认优惠价格。</p>');
@@ -2806,17 +2809,17 @@
    $('normalTotal').textContent=currency==='USD'?(c.officialPrice&&validPeople&&q.stay==='double'?routeMoney(r,c.officialPrice*n):'待确认'):(referenceTotal!==null?routeMoney(r,referenceTotal):c.soldOut?'已售罄':'待确认');
    $('normalAvg').textContent=currency==='USD'?(c.officialPrice?routeMoney(r,c.officialPrice)+'/人':'候补'):(c.price?routeMoney(r,c.price)+'/人':'候补');
    $('normalContext').textContent='官网参考原币价格，不兑换人民币';
-   $('offerLabel').textContent=expired?'官网原币参考价（'+currency+'）':'原币优惠参考（'+currency+'）';
+   $('offerLabel').textContent='按原优惠政策报价（'+currency+'）';
    if(!baseValid)$('discountTotal').textContent=c.soldOut?'已售罄':c.waitlist?'候补':'请确认入住';
-   else if(expired)$('discountTotal').textContent=routeMoney(r,referenceTotal);
    else{
-     const rate=q.customer==='old'?.93:.95,groupRate=n>=4?.98:1;
+     const rate=currency==='EUR'?(q.customer==='old'?.85:.90):(q.customer==='old'?.93:.95);
+     const groupRate=currency==='USD'&&n>=4?.98:1;
      $('discountTotal').textContent=routeMoney(r,Math.round(c.price*n*rate*groupRate*100)/100);
    }
    $('discountAvg').textContent='价格按'+currency+'计价，船司确认后成交';
-   $('offerBadge').textContent=expired?'过期折扣未计入':'原币参考试算';
-   $('offerCaveat').textContent=expired?'此金额为官网参考价格；已过期优惠不叠加':'仅供参考 · 需确认实时库存';
-   $('miniPrice').textContent=referenceTotal!==null?routeMoney(r,referenceTotal):'待确认';
+   $('offerBadge').textContent=expired?'政策已过期':'原币政策报价';
+   $('offerCaveat').textContent=expired?'按原优惠计算 · 政策已过期':'按政策优惠试算 · 需确认实时库存';
+   $('miniPrice').textContent=referenceTotal!==null?routeMoney(r,Math.round(referenceTotal*(currency==='EUR'?(q.customer==='old'?.85:.90):(q.customer==='old'?.93:.95))*(currency==='USD'&&n>=4?.98:1)*100)/100):'待确认';
  }
 
  const priceOverride=()=>null;
@@ -3005,9 +3008,9 @@
    $('offerLabel').textContent=q.anniversaryUpgradeOnly?'升舱补差价':r.soldOut?'已售罄·历史价格':q.publishedFare?(ready?'官网金额参考':'已知原价小计'):'优惠价格';
    $('discountTotal').textContent=ready?P.money(q.offer):r.soldOut&&Number.isFinite(q.standard)?P.money(q.standard):r.webCabinsVerified&&Number.isFinite(q.standard)?P.money(q.standard):r.webCabinsVerified?'原价待确认':'金额待确认';
    $('discountAvg').textContent=ready?`平均约 ${P.money(q.offer/q.people)}/人`:Number.isFinite(q.standard)&&q.people?`原价约 ${P.money(q.standard/q.people)}/人（未完成最终核算）`:'补齐价格依据后自动出价';
-   $('offerBadge').textContent=!ready?(r.soldOut?'已售罄':r.policyOnly?(r.webCabinsVerified?'已知金额 · 待核附加费':'房型/价格待补充'):'待核价'):q.publishedFare?(q.publishedFareActive?'官网政策试算':'官网原价参考'):q.policy.code==='jan18porthole'?'0118舷窗专享 · 原价立减':q.policy.code==='anniversary'?'周年庆活动 · 名额有限':q.policy.code==='expired'?'政策过期 · 待确认':q.policy.code==='upcoming'?'未生效 · 试算':q.policy.code==='unknown'?'日期待确认':q.policy.code==='latest_unconfirmed'?'专项优惠 · 日期待确认':q.route.hasPolicy?'优惠试算':'常规价格';
+   $('offerBadge').textContent=!ready?(r.soldOut?'已售罄':r.policyOnly?(r.webCabinsVerified?'已知金额 · 待核附加费':'房型/价格待补充'):'待核价'):q.publishedFare?(q.policy.code==='expired'?'政策已过期':q.publishedFareActive?'按政策报价':'原价参考'):q.policy.code==='jan18porthole'?'0118舷窗专享 · 原价立减':q.policy.code==='anniversary'?'周年庆活动 · 名额有限':q.policy.code==='expired'?'政策过期 · 待确认':q.policy.code==='upcoming'?'未生效 · 试算':q.policy.code==='unknown'?'日期待确认':q.policy.code==='latest_unconfirmed'?'专项优惠 · 日期待确认':q.route.hasPolicy?'优惠试算':'常规价格';
    $('offerBadge').classList.toggle('wait',!ready||!q.policy.valid);
-   $('offerCaveat').textContent=ready?(q.publishedFare?'官网/已确认团费参考；实际舱位及签约价以产品部为准':q.anniversaryUpgradeOnly?'仅升舱补差价，不含原合同团款':q.policy.code==='jan18porthole'?'原价减2000/人 · 不叠加折扣':q.policy.code==='anniversary'?'周年庆活动名额有限，额满即止':q.policy.code==='expired'?'按原优惠试算，报名价须确认':q.policyName):r.soldOut?'已售罄 · 仅展示历史价格':r.policyOnly&&Number.isFinite(q.standard)?'以上仅是已知原价小计，未含需确认的附加费':'请查看下方说明';
+   $('offerCaveat').textContent=ready?(q.publishedFare?(q.policy.code==='expired'?'按原政策计算 · 政策已过期':'按文件政策计算，余位以实际为准'):q.anniversaryUpgradeOnly?'仅升舱补差价，不含原合同团款':q.policy.code==='jan18porthole'?'原价减2000/人 · 不叠加折扣':q.policy.code==='anniversary'?'周年庆活动名额有限，额满即止':q.policy.code==='expired'?'按原优惠试算，报名价须确认':q.policyName):r.soldOut?'已售罄 · 仅展示历史价格':r.policyOnly&&Number.isFinite(q.standard)?'以上仅是已知原价小计，未含需确认的附加费':'请查看下方说明';
    $('miniPrice').textContent=ready?P.money(q.offer):r.policyOnly&&Number.isFinite(q.standard)?P.money(q.standard):'金额待确认';
    $('groupBanner').classList.add('hidden');
    $('explanation').innerHTML=(q.steps.length?q.steps:[q.statusReason||'请选择报价条件。']).map((s,i)=>`<div class="${ready&&i===q.steps.length-1?'sum':''}">${esc(s)}</div>`).join('');
