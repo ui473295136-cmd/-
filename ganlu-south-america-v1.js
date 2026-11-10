@@ -80,6 +80,8 @@ function init(){
  }
  function updatePriceCards(q,ext,calc){
   if(!q)return;
+  // Only Antarctica combination routes are managed by this add-on; preserve the official-source cards elsewhere.
+  if(q.route?.policyOnly&&!ext)return;
   const ready=q.status==='ready',people=Number.isInteger(q.people)&&q.people>0?q.people:null;
   if(ext){
    $('offerLabel').textContent='南极＋南美优惠价格';
