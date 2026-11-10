@@ -1690,7 +1690,7 @@
  function plan(r,c,n,customer='new',stay='double',priceOverride=null,today=bjToday(),atlasPromo='earlybird',gaokaoCount=1,atlasOptions={},ponantLandSingle=true,polarBowUpgrade=false,ponantExtras={},anniversaryOption='none',shipOnlyOptions={},partyOptions={}){
    const errors=[],warnings=[],steps=[],standardSteps=[],assumptions=[];
    const anniversaryRoute=['b0118','b0130'].includes(r?.id);
-   const isLatest5o=anniversaryRoute&&c?.id==='5o'&&anniversaryOption==='new92';
+   const isLatest5o=anniversaryRoute&&c?.id==='5o'&&customer==='new'&&['none','new92'].includes(anniversaryOption);
    const isAnniversaryUpgrade=anniversaryRoute&&c?.id==='4o'&&anniversaryOption==='upgrade2500';
    const isPolarBowUpgrade=anniversaryRoute&&c?.id==='3p'&&polarBowUpgrade===true;
    const isJan18Porthole=r?.id==='b0118'&&c?.id==='3p'&&!isPolarBowUpgrade;
@@ -1700,6 +1700,7 @@
    const q={route:r,cabin:c,people:n,adults:partyOptions?.adults??n,children:partyOptions?.children??0,customer,stay,deadline:r?.deadline||null,today,policy,price,standard:null,offer:null,status:'manual',statusReason:'',errors,warnings,steps,standardSteps,assumptions,baseRate:1,groupRate:0,groupSaving:0,loyalDeduction:0,postAdd:0,bonusDeduction:0,copyOffer:false,offerValid:false,conditional:false,manualGroup:false,policyName:'',singleSupplement:null,singleTotal:null,thirdPeople:0,regularPeople:n,atlasPromo,gaokaoCount:atlasPromo==='gaokao'?gaokaoCount:null,upgradeTarget:null,atlasChild:false,atlasOptions,anniversaryOption,anniversaryUpgradeOnly:false,atlasDeduction:0,atlasDeductionItems:[],shipOnly:false,shipDeductionPerPerson:0,shipDeductionItems:[]};
    const fail=s=>{errors.push(s);q.statusReason=errors.join('；');return q};
    if(!r||!c||!r.cabins?.some(x=>x.id===c.id))return fail('请选择有效的航次和舱型。');
+   if(r.policyOnly===true)return fail('航次优惠政策已录入；原价、舱型或入住计价口径尚未补全，当前仅可查看政策，不生成正式报价。');
    if(!Number.isInteger(n)||n<1||n>100)return fail('请输入1—100之间的整数总人数。');
    if(!Number.isInteger(q.adults)||q.adults<1||!Number.isInteger(q.children)||q.children<0||q.adults+q.children!==n)return fail('请分别填写有效的成人和儿童人数，且总人数须为1—100人。');
    if(!Number.isFinite(price)||!Number.isInteger(price)||price<=0||price>=10000000)return fail('该舱型缺少明确原价，请联系产品部核实并更新统一价格表。');
@@ -1748,7 +1749,7 @@
    if(q.children>0){
      if(['b0118','b0130'].includes(r.id)&&['5o','6b','7s'].includes(c.id)){
        if(stay==='triple')return fail('0118／0130的儿童8折专项仅适用于可确认的双人拼住或单人入住；当前入住方式请联系产品部确认。');
-       if(anniversaryOption!=='none'||polarBowUpgrade||shipOnly)return fail('儿童8折与周年庆、免费升舱或单船票减免的叠加规则未明确，请先取消专项方案或联系产品部确认。');
+       if(!['none','new92'].includes(anniversaryOption)||polarBowUpgrade||shipOnly)return fail('儿童8折与升舱补差价、免费升舱或单船票减免的叠加规则未明确，请先取消这些专项方案。');
      }else if(r.id==='c0708'&&q.adults===1&&q.children===1){
        if(atlasPromo!=='adult_child')return fail('Atlas的1大1小需选择“1大1小（孩子未满18岁）”专属方案。');
      }
@@ -1812,27 +1813,28 @@
    if(policy.code==='upcoming')warnings.push(`优惠自${dateCN(r.validFrom)}起生效；左侧为提前试算价，报名时须确认是否适用。`);
    if(policy.code==='unknown')warnings.push('文件优惠有效期不完整，左侧仅为按已知优惠条款的试算价；报名须确认。');
    if(q.children>0&&['b0118','b0130'].includes(r.id)&&['5o','6b','7s'].includes(c.id)){
-     const adultSubtotal=price*q.adults*.94;
+     const adultRate=c.id==='5o'&&customer==='new'?.92:.94;
+     const adultSubtotal=price*q.adults*adultRate;
      const childSubtotal=price*q.children*.80;
      const singleSupplement=stay==='single'?price*.25*n:0;
      const loyal=customer==='old'?(r.loyal||0)*n:0;
      const raw=adultSubtotal+childSubtotal+singleSupplement-loyal;
      if(!Number.isFinite(raw)||raw<0)return fail('成人/儿童组合金额异常，请核对人数和舱型。');
      q.rooms=stay==='single'?n:Math.ceil(n/2);
-     q.policyName='成人市场优惠94折＋儿童专属8折'+(stay==='single'?'＋全程单房差原价25%':'')+'（不自动叠加多人优惠）';
-     q.baseRate=.94;q.groupRate=0;q.groupSaving=0;q.loyalDeduction=loyal;q.postAdd=singleSupplement;
+     q.policyName='成人市场优惠'+Math.round(adultRate*100)+'折＋儿童专属8折'+(stay==='single'?'＋全程单房差原价25%':'')+'（不自动叠加多人优惠）';
+     q.baseRate=adultRate;q.groupRate=0;q.groupSaving=0;q.loyalDeduction=loyal;q.postAdd=singleSupplement;
      q.singleSupplement=stay==='single'?singleSupplement:null;q.singleTotal=stay==='single'?price*n+singleSupplement:null;
      q.discounted=adultSubtotal+childSubtotal;q.rawOffer=raw;q.offer=Math.round(raw);
      q.status='ready';q.statusReason='按0118／0130成人及未成年人专项政策计算';q.copyOffer=true;q.offerValid=true;
      q.steps.push('基础原价：'+money(price)+'/人 × '+n+'人 = '+money(q.standard));
-     q.steps.push('成人市场优惠94折：'+money(price)+'/人 × '+q.adults+'位成人 × 94% = '+money(adultSubtotal));
+     q.steps.push('成人市场优惠'+Math.round(adultRate*100)+'折：'+money(price)+'/人 × '+q.adults+'位成人 × '+Math.round(adultRate*100)+'% = '+money(adultSubtotal));
      q.steps.push('未成年人专属8折：'+money(price)+'/人 × '+q.children+'位儿童 × 80% = '+money(childSubtotal));
      if(singleSupplement)q.steps.push('全程单房差：'+money(price)+'/人 × 25% × '+n+'人 = +'+money(singleSupplement)+'（邮轮＋陆地全程单间）');
      if(n>=4&&n<=7)q.steps.push('多人优惠：儿童8折不与4—7人2%多人优惠同享，本次不叠加。');
      if(n>=8&&(!r.groupRoom8||q.rooms>=4))q.warnings.push('8人及以上3%多人优惠与儿童8折的叠加口径未明确，本次未自动叠加，请产品部确认。');
      if(loyal)q.steps.push('老客户减免：'+money(r.loyal)+'/人 × '+n+'人 = −'+money(loyal));
      q.steps.push('本次报价合计：'+money(q.offer));
-     q.assumptions.push('仅适用于0118／0130的5层及以上舱位；成人按94折、儿童按原价80%计价。');
+     q.assumptions.push('仅适用于0118／0130的5层及以上舱位；五层海景新直客92折、六层以上成人94折、儿童原价80%。');
      q.assumptions.push('儿童专项不自动叠加周年庆、免费升舱、单船票减免；与多人优惠按政策明确范围处理。');
      if(customer==='old')q.assumptions.push('老客户减免按每位旅客5000元计算；请确认同行人均符合老客户本人或直系亲属资格。');
      if(stay==='single')q.assumptions.push('5层及以上专项单房差按原价25%加收，覆盖邮轮与陆地全程。');
@@ -1927,8 +1929,8 @@
    let discounted=(ponant?ponantDiscountBase:regularBase)*ratePercent/100;
    let groupSaving=discounted*groupRate;
    let loyal=allowBenefits&&customer==='old'?(r.loyal||0)*(atlas&&stay==='triple'?n:q.regularPeople):0;
-   const bonus=allowBenefits&&silversea?888*q.regularPeople:0;
-   if(bonus&&today>'2026-03-03')warnings.push('原报名红包活动已于3月3日结束；左侧仍包含该红包金额，报名适用性须确认。');
+   const bonus=allowBenefits&&silversea&&today<='2026-03-03'?888*q.regularPeople:0;
+   if(silversea&&today>'2026-03-03')warnings.push('2026年3月3日888元/人报名红包活动已结束，本次报价未计算该红包。');
    if(atlas&&usePolicy&&atlasPromo==='adult_child'){
      discounted=price*.93+price*.80;
      groupRate=0;groupSaving=0;
@@ -2097,7 +2099,7 @@
    const p=getPartyOptions(),r=route(),hint=$('partyPolicyHint');
    if(!hint)return;
    if(!(p.children>0)){hint.textContent='默认儿童与成人同价；仅航次政策明确列出的儿童专项，才按专项优惠计价。';return;}
-   if(['b0118','b0130'].includes(r.id))hint.textContent=['5o','6b','7s'].includes(cabin().id)?'儿童专项：仅5层及以上舱位适用；成人94折、儿童8折。4—7人不叠加2%多人优惠；其他叠加条件按专项政策核实。'+(stay==='single'?'单人入住另加原价25%全程单房差。':''):'当前舱型不适用5层及以上儿童8折，儿童按成人同价，并按当前舱位优惠计算。';
+   if(['b0118','b0130'].includes(r.id))hint.textContent=['5o','6b','7s'].includes(cabin().id)?'儿童专项：5层新直客成人92折，6层及以上成人94折，儿童8折。不叠加多人优惠。'+(stay==='single'?'单人入住另加原价25%全程单房差。':''):'当前舱型不适用5层及以上儿童8折，儿童按成人同价，并按当前舱位优惠计算。';
    else if(r.id==='c0708')hint.textContent=p.adults===1&&p.children===1?'Atlas明确1大1小专属方案：成人早鸟93折、儿童8折；按专属政策计算。':atlasPromo==='gaokao'?'Atlas当前按高考生专项计价；未单独列明儿童优惠，其他同行人按所选早鸟规则计价。':'当前组合不属于Atlas的1大1小专属优惠，儿童按成人同价，并按所选Atlas方案计算。';
    else hint.textContent='当前航次未列单独儿童优惠，儿童按成人同价计价，并正常参与本航次适用的优惠政策。';
  }
@@ -2139,7 +2141,7 @@
    const r=route(),id=cabin().id,eligible=['b0118','b0130'].includes(r.id)&&['4o','5o'].includes(id);
    const wrap=$('polarAnniversaryWrap'),sel=$('polarAnniversaryOption'),hint=$('polarAnniversaryHint'),current=sel.value||'none';
    wrap.classList.toggle('hide',!eligible);
-   const options=[['none','不使用周年庆专项']];
+   const options=[['none',id==='5o'&&customer==='new'?'默认执行新直客5层海景92折':'不使用周年庆专项']];
    if(id==='5o'&&customer==='new')options.push(['new92','A｜新客户专享92折（5层非船头海景）']);
    if(id==='4o')options.push(['upgrade2500','B｜已报名4层海景房：加2500元/人升5层（优先选舱）']);
    sel.innerHTML=options.map(o=>'<option value="'+o[0]+'">'+o[1]+'</option>').join('');
@@ -2201,7 +2203,7 @@
    $('routeOverview').innerHTML=`<b>${esc(r.date.replaceAll('-','.'))}</b> ${esc(r.name)}<div class="underRoute">${esc(cabinSummary)} · ${Number.isFinite(q.people)?q.people:'—'}人（成人${Number.isFinite(q.adults)?q.adults:'—'}，儿童${Number.isFinite(q.children)?q.children:'—'}） · ${customer==='old'?'老客户':'新客户'} · ${esc(staySummary)}${q.shipOnly?' · 单船票':''}</div>`;
    const ready=q.status==='ready';
    $('palaceStatus').className='palaceStatus '+(ready?'success':'fail');
-   $('palaceIcon').textContent=ready?'✦':'✧';$('palaceStatusTitle').textContent=ready?'报价成功':'报价失败';
+   $('palaceIcon').textContent=ready?'✦':'✧';$('palaceStatusTitle').textContent=ready?'报价成功':r.policyOnly?'政策已录入 · 待补价':'报价失败';
    $('palaceStatusText').textContent=ready?'你离回宫又近了一步~':q.statusReason;
    $('normalLabel').textContent=q.anniversaryUpgradeOnly?'4层房型原价参考':'原价';
    $('normalTotal').textContent=q.standard!==null?P.money(q.standard):Number.isFinite(q.price)?'人数待确认':'原价待补充';
@@ -2210,7 +2212,7 @@
    $('offerLabel').textContent=q.anniversaryUpgradeOnly?'升舱补差价':'优惠价格';
    $('discountTotal').textContent=ready?P.money(q.offer):'金额待确认';
    $('discountAvg').textContent=ready?`平均约 ${P.money(q.offer/q.people)}/人`:'补齐价格依据后自动出价';
-   $('offerBadge').textContent=!ready?'待核价':q.policy.code==='jan18porthole'?'0118舷窗专享 · 原价立减':q.policy.code==='anniversary'?'周年庆活动 · 名额有限':q.policy.code==='expired'?'政策过期 · 待确认':q.policy.code==='upcoming'?'未生效 · 试算':q.policy.code==='unknown'?'日期待确认':q.policy.code==='latest_unconfirmed'?'专项优惠 · 日期待确认':q.route.hasPolicy?'优惠试算':'常规价格';
+   $('offerBadge').textContent=!ready?(r.policyOnly?'房型/价格待补充':'待核价'):q.policy.code==='jan18porthole'?'0118舷窗专享 · 原价立减':q.policy.code==='anniversary'?'周年庆活动 · 名额有限':q.policy.code==='expired'?'政策过期 · 待确认':q.policy.code==='upcoming'?'未生效 · 试算':q.policy.code==='unknown'?'日期待确认':q.policy.code==='latest_unconfirmed'?'专项优惠 · 日期待确认':q.route.hasPolicy?'优惠试算':'常规价格';
    $('offerBadge').classList.toggle('wait',!ready||!q.policy.valid);
    $('offerCaveat').textContent=ready?(q.anniversaryUpgradeOnly?'仅升舱补差价，不含原合同团款':q.policy.code==='jan18porthole'?'原价减2000/人 · 不叠加折扣':q.policy.code==='anniversary'?'周年庆活动名额有限，额满即止':q.policy.code==='expired'?'按原优惠试算，报名价须确认':q.policyName):'请查看下方说明';
    $('miniPrice').textContent=ready?P.money(q.offer):'金额待确认';
@@ -2261,7 +2263,7 @@
    $('customCalcReset').addEventListener('click',()=>{$('customCalcBase').value='';$('customCalcMultiplier').value='1';$('customCalcAdd').value='0';$('customCalcSubtract').value='0';updateCustomCalc();$('customCalcBase').focus();});
    $('customCalcCopy').addEventListener('click',async()=>{if(customCalcValue===null)return;const ok=await copy(String(customCalcValue));toast(ok?'计算结果已复制':'复制失败，请手动记录');});
    updateCustomCalc();
-   $('route').innerHTML=data.map(r=>`<option value="${esc(r.id)}">${esc(r.date.replaceAll('-','.'))} · ${esc(r.name)}</option>`).join('');$('route').value='a1204';
+   $('route').innerHTML=data.slice().sort((a,b)=>a.date.localeCompare(b.date,'zh-CN')).map(r=>`<option value="${esc(r.id)}">${esc(r.date.replaceAll('-','.'))} · ${esc(r.name)}${r.policyOnly?'（政策已录入·待补价）':''}</option>`).join('');$('route').value='a1204';
    $('route').addEventListener('change',onRoute);$('cabin').addEventListener('change',onCabin);$('adultCount').addEventListener('input',render);$('childCount').addEventListener('input',render);
    $('voyagePolicyDetails').addEventListener('toggle',()=>{$('voyagePolicyDetails').querySelector('.voyagePolicyArrow').textContent=$('voyagePolicyDetails').open?'收起 ↑':'展开全部 '+route().notes.length+' 条 ↓';});
    ['ponantSelfFlight','ponantSelfInsurance'].forEach(id=>$(id).addEventListener('change',render));
