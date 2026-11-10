@@ -2838,7 +2838,7 @@
    const filtered=data.filter(r=>(activeDestination==='全部'||r.destinationGroup===activeDestination)&&(activeYear==='全部'||r.date.slice(0,4)===activeYear)).sort((a,b)=>a.date.localeCompare(b.date,'zh-CN'));
    if(!filtered.length)throw Error('当前目的地/年份分类没有匹配航次。');
    const old=$('route').value;
-   $('route').innerHTML=filtered.map(r=>'<option value="'+esc(r.id)+'">'+esc(r.date.replaceAll('-','.'))+' · '+esc(r.name)+(r.soldOut?'（已售罄）':r.policyOnly?(r.webCabinsVerified?'（官网价格已录·报价待核验）':'（政策已录·价格待补）'):'')+'</option>').join('');
+   $('route').innerHTML=filtered.map(r=>'<option value="'+esc(r.id)+'">'+esc(r.date.replaceAll('-','.'))+' · '+esc(r.name)+(r.soldOut?'（已售罄）':r.policyOnly?(r.webCabinsVerified?'（官网金额可查看）':'（政策已录·价格待补）'):'')+'</option>').join('');
    $('route').value=preserve&&filtered.some(r=>r.id===old)?old:(filtered.some(r=>r.id==='a1204')&&activeDestination==='全部'&&activeYear==='全部'?'a1204':filtered[0].id);
    $('destinationPickerCount').textContent='当前显示 '+filtered.length+' 条航次 · '+(activeDestination==='全部'?'全部目的地':activeDestination)+(activeYear==='全部'?'':' · '+activeYear+'年')+'；无单船票独立分类';
  }
@@ -3214,6 +3214,6 @@
 <script defer src="./ganlu-polar-quest-v1.js?v=20261022-completions1"></script>
 <script defer src="./ganlu-mini-banner-v1.js?v=20261026-policy-updated1"></script>
 
-<script defer src="./ganlu-south-america-v1.js?v=20261029-adult-child-policy1"></script><script defer src="./ganlu-inventory-v1.js?v=20261105-stock3"></script>
+<script defer src="./ganlu-south-america-v1.js?v=20261110-published-price1"></script><script defer src="./ganlu-inventory-v1.js?v=20261105-stock3"></script>
 
 </body></html>
