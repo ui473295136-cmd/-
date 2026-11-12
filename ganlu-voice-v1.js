@@ -196,10 +196,119 @@
    reply(q.overview,q);
    status('报价已按现有航次价格及政策核算');
  }
+ const FLOAT_STORE='ganlu-voice-dot-position-v1';
+ const clamp=(x,min,max)=>Math.min(Math.max(x,min),Math.max(min,max));
+ let touchState=null,ignoreFloatClickUntil=0;
+ const viewport=()=>({width:Math.max(320,window.innerWidth||document.documentElement.clientWidth||320),height:Math.max(300,window.innerHeight||document.documentElement.clientHeight||300)});
+ function floatBounds(button){
+   const v=viewport(),width=button.offsetWidth||56,height=button.offsetHeight||56;
+   return {v,width,height,minX:10,maxX:Math.max(10,v.width-width-10),minY:Math.min(72,Math.max(12,v.height-height-24)),maxY:Math.max(12,v.height-height-22)};
+ }
+ function placeFloat(button,x,y){
+   const b=floatBounds(button);
+   button.style.right='auto';button.style.bottom='auto';
+   button.style.left=clamp(x,b.minX,b.maxX)+'px';
+   button.style.top=clamp(y,b.minY,b.maxY)+'px';
+ }
+ function rememberFloat(button){
+   const b=floatBounds(button),r=button.getBoundingClientRect();
+   const side=r.left+r.width/2<b.v.width/2?'left':'right';
+   const fraction=(clamp(r.top,b.minY,b.maxY)-b.minY)/Math.max(1,b.maxY-b.minY);
+   try{localStorage.setItem(FLOAT_STORE,JSON.stringify({side,y:Number(fraction.toFixed(4))}));}catch(e){}
+ }
+ function restoreFloat(button){
+   let saved=null;
+   try{saved=JSON.parse(localStorage.getItem(FLOAT_STORE)||'null');}catch(e){}
+   if(!saved||!['left','right'].includes(saved.side)||!Number.isFinite(saved.y))return false;
+   const b=floatBounds(button),y=b.minY+clamp(saved.y,0,1)*(b.maxY-b.minY);
+   placeFloat(button,saved.side==='left'?b.minX:b.maxX,y);
+   return true;
+ }
+ function snapFloat(button){
+   const b=floatBounds(button),r=button.getBoundingClientRect(),toLeft=(r.left+r.width/2)<b.v.width/2;
+   placeFloat(button,toLeft?b.minX:b.maxX,r.top);
+   rememberFloat(button);
+ }
+ function positionVoicePanel(){
+   const panel=$('voicePanel'),button=$('voiceOpen');
+   if(panel.hidden)return;
+   const v=viewport(),r=button.getBoundingClientRect();
+   const pw=panel.offsetWidth||Math.min(410,v.width-28),ph=panel.offsetHeight||Math.min(560,v.height-95);
+   panel.style.right='auto';panel.style.bottom='auto';
+   if(v.width<=580){
+     panel.style.left=Math.max(8,(v.width-pw)/2)+'px';
+   }else{
+     const side=r.left+r.width/2<v.width/2?'left':'right';
+     const candidate=side==='left'?r.right+13:r.left-pw-13;
+     panel.style.left=clamp(candidate,12,Math.max(12,v.width-pw-12))+'px';
+   }
+   const above=r.top-12,below=v.height-r.bottom-12;
+   let top;
+   if(above>=ph+10)top=r.top-ph-10;
+   else if(below>=ph+10)top=r.bottom+10;
+   else top=r.top+r.height/2-ph/2;
+   panel.style.top=clamp(top,12,Math.max(12,v.height-ph-12))+'px';
+ }
+ function initFloatingDot(button){
+   restoreFloat(button);
+   button.addEventListener('pointerdown',e=>{
+     if(e.pointerType==='mouse'&&e.button!==0)return;
+     const r=button.getBoundingClientRect();
+     touchState={pointerId:e.pointerId,x:e.clientX,y:e.clientY,left:r.left,top:r.top,dragged:false};
+     try{button.setPointerCapture(e.pointerId);}catch(err){}
+   });
+   button.addEventListener('pointermove',e=>{
+     const p=touchState;
+     if(!p||p.pointerId!==e.pointerId)return;
+     const dx=e.clientX-p.x,dy=e.clientY-p.y;
+     if(!p.dragged&&Math.hypot(dx,dy)<=6)return;
+     p.dragged=true;
+     button.classList.add('dragging');
+     placeFloat(button,p.left+dx,p.top+dy);
+     if(!$('voicePanel').hidden)positionVoicePanel();
+     if(e.cancelable)e.preventDefault();
+   });
+   const finish=e=>{
+     if(!touchState||touchState.pointerId!==e.pointerId)return;
+     const dragged=touchState.dragged;touchState=null;
+     button.classList.remove('dragging');
+     try{if(button.hasPointerCapture?.(e.pointerId))button.releasePointerCapture(e.pointerId);}catch(err){}
+     if(dragged){
+       snapFloat(button);
+       ignoreFloatClickUntil=Date.now()+550;
+       if(!$('voicePanel').hidden)positionVoicePanel();
+     }
+   };
+   button.addEventListener('pointerup',finish);
+   button.addEventListener('pointercancel',finish);
+   button.addEventListener('keydown',e=>{
+     if(!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key))return;
+     e.preventDefault();
+     const r=button.getBoundingClientRect();
+     const dx=e.key==='ArrowLeft'?-20:e.key==='ArrowRight'?20:0;
+     const dy=e.key==='ArrowUp'?-20:e.key==='ArrowDown'?20:0;
+     placeFloat(button,r.left+dx,r.top+dy);
+     snapFloat(button);
+     if(!$('voicePanel').hidden)positionVoicePanel();
+   });
+   window.addEventListener('resize',()=>{
+     if(!restoreFloat(button)){
+       const b=floatBounds(button),r=button.getBoundingClientRect();
+       placeFloat(button,r.left<b.v.width/2?b.minX:b.maxX,r.top);
+     }
+     if(!$('voicePanel').hidden)positionVoicePanel();
+   });
+ }
  function setOpen(visible){
-   $('voicePanel').hidden=!visible;$('voiceOpen').setAttribute('aria-expanded',String(visible));
-   if(visible){$('voiceText').focus();status('输入文字或点击麦克风，说出航次和人数');}
-   else if(listening&&recognition){recognition.stop();}
+   const panel=$('voicePanel'),button=$('voiceOpen');
+   panel.hidden=!visible;
+   button.setAttribute('aria-expanded',String(visible));
+   button.classList.toggle('voiceActive',visible);
+   if(visible){
+     positionVoicePanel();
+     if(window.innerWidth>640)$('voiceText').focus();
+     status('输入文字或点击麦克风，说出航次和人数');
+   }else if(listening&&recognition){recognition.stop();}
  }
  function startVoice(){
    const Engine=window.SpeechRecognition||window.webkitSpeechRecognition;
@@ -228,7 +337,8 @@
  function init(){
    const btn=$('voiceOpen'),panel=$('voicePanel');
    if(!btn||!panel)return;
-   btn.addEventListener('click',()=>setOpen(panel.hidden));
+   initFloatingDot(btn);
+   btn.addEventListener('click',e=>{if(Date.now()<ignoreFloatClickUntil){e.preventDefault();return;}setOpen(panel.hidden);});
    $('voiceClose').addEventListener('click',()=>setOpen(false));
    $('voiceMic').addEventListener('click',startVoice);
    $('voiceSend').addEventListener('click',()=>submit($('voiceText').value));
