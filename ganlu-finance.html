@@ -3264,6 +3264,7 @@
    const displayCabin=displayQ.cabin||c;
    const displayReady=ready||smartReady;
    const noAutoResult=!$('cabin').value&&!smartReady;
+   const unpricedOccupancy=!routeHasCabinOptions(r)&&!['EUR','USD'].includes(r.currency)&&num()%2!==0;
    $('copyCustomer').disabled=!displayReady;
    $('copyCustomer').textContent='复制简洁客户报价';
    $('palaceStatus').className='palaceStatus '+(displayReady?'success':'fail');
@@ -3282,12 +3283,12 @@
    $('normalAvg').textContent=noAutoResult?'请指定房型或调整人数':Number.isFinite(displayQ.price)?`${P.money(displayQ.price)}/人`:'未提供明确原价';
    $('normalContext').textContent=smartReady?'按系统推荐舱型计算的未折扣基础团费；单房差另列':q.anniversaryUpgradeOnly?'仅供参考；不代表客户已报名合同金额，原合同价不重算':r.policyOnly?'仅展示每人参考价；未确认优惠、单间差及库存':'行程册舱型基础原价 · 未打折'+(q.stay==='single'?'，未含单房差':'');
    $('offerLabel').textContent=smartReady?'智能最优成交价':q.anniversaryUpgradeOnly?'升舱补差价':r.soldOut?'已售罄·历史价格':q.publishedFare?(ready?'官网金额参考':'已知原价小计'):'优惠价格';
-   $('discountTotal').textContent=noAutoResult?'暂无可核算报价':smartReady?P.money(smartBest.total):ready?P.money(q.offer):r.soldOut&&Number.isFinite(q.standard)?P.money(q.standard):r.webCabinsVerified&&Number.isFinite(q.standard)?P.money(q.standard):r.webCabinsVerified?'原价待确认':'金额待确认';
-   $('discountAvg').textContent=noAutoResult?'调整分房人数后重试':smartReady?`平均约 ${P.money(smartBest.total/displayQ.people)}/人`:ready?`平均约 ${P.money(q.offer/q.people)}/人`:Number.isFinite(q.standard)&&q.people?`原价约 ${P.money(q.standard/q.people)}/人（未完成最终核算）`:'补齐价格依据后自动出价';
+   $('discountTotal').textContent=unpricedOccupancy?'单人房差待确认':noAutoResult?'暂无可核算报价':smartReady?P.money(smartBest.total):ready?P.money(q.offer):r.soldOut&&Number.isFinite(q.standard)?P.money(q.standard):r.webCabinsVerified&&Number.isFinite(q.standard)?P.money(q.standard):r.webCabinsVerified?'原价待确认':'金额待确认';
+   $('discountAvg').textContent=unpricedOccupancy?'请产品部确认实际分房费用':noAutoResult?'调整分房人数后重试':smartReady?`平均约 ${P.money(smartBest.total/displayQ.people)}/人`:ready?`平均约 ${P.money(q.offer/q.people)}/人`:Number.isFinite(q.standard)&&q.people?`原价约 ${P.money(q.standard/q.people)}/人（未完成最终核算）`:'补齐价格依据后自动出价';
    $('offerBadge').textContent=smartReady?(displayQ.policy?.code==='expired'?'政策已过期 · 历史试算':'已比较'+smartBest.comparedCount+'种组合'):!ready?(r.soldOut?'已售罄':r.policyOnly?(r.webCabinsVerified?'已知金额 · 待核附加费':'房型/价格待补充'):'待核价'):q.publishedFare?(q.policy.code==='expired'?'政策已过期':q.publishedFareActive?'按政策报价':'原价参考'):q.policy.code==='jan18porthole'?'0118舷窗专享 · 原价立减':q.policy.code==='anniversary'?'周年庆活动 · 名额有限':q.policy.code==='expired'?'政策过期 · 待确认':q.policy.code==='upcoming'?'未生效 · 试算':q.policy.code==='unknown'?'日期待确认':q.policy.code==='latest_unconfirmed'?'专项优惠 · 日期待确认':q.route.hasPolicy?'优惠试算':'常规价格';
    $('offerBadge').classList.toggle('wait',!displayReady||!displayQ.policy?.valid);
    $('offerCaveat').textContent=smartReady?(displayQ.policy?.code==='expired'?'按已录入优惠政策测算；政策已过期，实际报名须重新确认。':(displayQ.policyName||'按已录入政策计算')+'；库存、分房及优惠资格以产品部确认为准。'):ready?(q.publishedFare?(q.policy.code==='expired'?'按原政策计算 · 政策已过期':'按文件政策计算，余位以实际为准'):q.anniversaryUpgradeOnly?'仅升舱补差价，不含原合同团款':q.policy.code==='jan18porthole'?'原价减2000/人 · 不叠加折扣':q.policy.code==='anniversary'?'周年庆活动名额有限，额满即止':q.policy.code==='expired'?'按原优惠试算，报名价须确认':q.policyName):r.soldOut?'已售罄 · 仅展示历史价格':r.policyOnly&&Number.isFinite(q.standard)?'以上仅是已知原价小计，未含需确认的附加费':'请查看下方说明';
-   $('miniPrice').textContent=noAutoResult?'待核算':smartReady?routeMoney(r,smartBest.total):ready?P.money(q.offer):r.policyOnly&&Number.isFinite(q.standard)?P.money(q.standard):'金额待确认';
+   $('miniPrice').textContent=unpricedOccupancy?'待核实单房差':noAutoResult?'待核算':smartReady?routeMoney(r,smartBest.total):ready?P.money(q.offer):r.policyOnly&&Number.isFinite(q.standard)?P.money(q.standard):'金额待确认';
    $('groupBanner').classList.add('hidden');
    const explanationSteps=smartReady?displayQ.steps:q.steps;
    $('explanation').innerHTML=(explanationSteps.length?explanationSteps:[displayQ.statusReason||'请选择报价条件。']).map((line,i)=>`<div class="${displayReady&&i===explanationSteps.length-1?'sum':''}">${esc(line)}</div>`).join('');
