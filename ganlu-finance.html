@@ -127,6 +127,32 @@
 .shipOnlySummary strong{color:#557355}
 .shipOnlyNote{display:block;color:#91806e;font-size:10px;line-height:1.6}
 @media(max-width:400px){.shipOnlyChoices{grid-template-columns:1fr}}
+
+/* Smart sales recommendation */
+.smartDealPanel{margin:14px 0 16px;border:1px solid #d9c5a3;border-radius:15px;background:linear-gradient(145deg,#fffaf1,#fff);padding:15px;box-shadow:0 8px 22px rgba(92,66,38,.06)}
+.smartDealHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;color:#61462e;font-weight:800;font-size:15px}
+.smartDealHead small{font-size:10px;color:#8d775f;font-weight:500}
+.smartDealInput{margin-top:10px;padding:10px 12px;border:1px solid #dfcfb6;border-radius:11px;background:#fffaf2}
+.smartDealInputRow{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.smartDealInput label{font-size:12px;font-weight:700;color:#594733}
+.smartDealInput input{width:76px;border:1px solid #d9c5a3;border-radius:8px;padding:8px 9px;font-size:15px;text-align:center;color:#5a4330;background:#fff}
+.smartDealHelp{margin:6px 0 0;color:#8b7a67;font-size:10px;line-height:1.6}
+.smartDealWinner{border:1px solid #d8bd91;background:#fffdf8;border-radius:12px;padding:13px;margin-top:10px}
+.smartDealKicker{font-size:10px;color:#92734e;font-weight:700;letter-spacing:.04em}
+.smartDealAmount{font-size:27px;line-height:1.25;color:#805b35;font-weight:850;margin:5px 0}
+.smartDealCabin{font-size:13px;color:#4f4031;font-weight:750;line-height:1.5}
+.smartDealMeta{font-size:11px;line-height:1.7;color:#756451;margin-top:6px}
+.smartDealWhy{font-size:11px;line-height:1.7;color:#685744;margin-top:8px;padding-top:8px;border-top:1px solid #eee2d0}
+.smartDealList{display:grid;gap:7px;margin-top:10px}
+.smartDealOption{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:9px 10px;border:1px solid #e8e0d4;border-radius:10px;background:#fff}
+.smartDealOption strong{font-size:12px;color:#5d4936;line-height:1.4}
+.smartDealOption small{display:block;font-size:10px;color:#8c7b69;margin-top:3px;line-height:1.45}
+.smartDealOption b{font-size:14px;color:#805b35;white-space:nowrap}
+.smartDealWarning{font-size:10px;color:#92724e;line-height:1.65;margin-top:9px}
+.smartDealEmpty{padding:12px;border-radius:10px;background:#f8f4ed;color:#786a59;font-size:11px;line-height:1.7}
+.smartDealPill{display:inline-block;border-radius:20px;padding:3px 7px;background:#e8f2e9;color:#39734b;font-size:10px;font-weight:700;margin-left:5px}
+@media(max-width:520px){.smartDealPanel{padding:12px}.smartDealAmount{font-size:24px}.smartDealOption{grid-template-columns:minmax(0,1fr) auto}}
+
 </style><link rel="stylesheet" href="./ganlu-policy-desk-v9.css?v=20261021-v11-layout"><link rel="stylesheet" href="./ganlu-social-v1.css?v=20261022-compact3"><link rel="stylesheet" href="./ganlu-edicts-v8.css?v=20261021-v8c"><link rel="stylesheet" href="./ganlu-polar-quest-v1.css?v=20261022-completions1"><link rel="stylesheet" href="./ganlu-mini-banner-v1.css?v=20261022-desktop-position2"></head><body>
 <header class="mast"><div class="petals" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <svg class="roofArt" viewBox="0 0 400 220" aria-hidden="true"><g fill="none" stroke="#e7d2ad" stroke-linecap="round" stroke-linejoin="round"><path d="M26 128 Q122 120 193 70 Q253 115 369 115" stroke-width="5"/><path d="M42 142 Q125 132 193 88 Q251 127 354 127" stroke-width="2"/><path d="M76 143 L76 220 M326 133 L326 220 M111 137 L111 220 M291 134 L291 220" stroke-width="6"/><path d="M74 164 H329 M99 183 H302 M154 165 V220 M247 166 V220" stroke-width="2"/><path d="M20 132 Q47 140 66 130 M351 125 Q373 135 392 125" stroke-width="2"/><path d="M164 86 Q193 40 218 82 M165 85 Q195 69 218 83" stroke-width="3"/></g><g fill="#e1c69d" opacity=".18"><path d="M55 141 L195 81 L350 135 L350 220 L55 220Z"/></g></svg>
@@ -186,7 +212,12 @@
   <p class="smallinfo">申根签证与格陵兰签注需同时满足对应要求；保险减免仅适用于文件注明的情况。勾选后会按每位旅客自动扣减。</p>
 </div>
 <div class="field hide" id="gaokaoCountWrap"><label for="gaokaoCount">应届高考生人数</label><input id="gaokaoCount" type="number" inputmode="numeric" min="1" max="100" value="1" step="1"><p class="smallinfo">其余同行人按正常早鸟政策测算；高考生需提供证明。</p></div>
-<div class="field" id="partyCountsField"><div class="fLabel">③ 出行人数</div><div class="partyCounterGrid"><div class="partyCounterCard"><label for="adultCount">成人</label><div class="inlineCount"><button class="step" type="button" id="minus" aria-label="减少1位成人">−</button><input id="adultCount" type="number" inputmode="numeric" value="2" min="1" max="100" step="1"><button class="step" type="button" id="plus" aria-label="增加1位成人">＋</button></div></div><div class="partyCounterCard"><label for="childCount">儿童</label><div class="inlineCount"><button class="step" type="button" id="childMinus" aria-label="减少1位儿童">−</button><input id="childCount" type="number" inputmode="numeric" value="0" min="0" max="100" step="1"><button class="step" type="button" id="childPlus" aria-label="增加1位儿童">＋</button></div></div></div><input id="people" type="hidden" value="2"><p class="smallinfo" id="partyTotal">合计2人（成人2人，儿童0人）</p><div class="quick"><span>快捷成人数</span><button type="button" data-people="1">1成人</button><button type="button" data-people="2">2成人</button><button type="button" data-people="3">3成人</button><button type="button" data-people="4">4成人</button><button type="button" data-people="6">6成人</button><button type="button" data-people="8">8成人</button></div><p class="smallinfo" id="partyPolicyHint">儿童计价按所选航次的明确政策处理；政策未明确时不会猜算。</p></div>
+<div class="field" id="partyCountsField"><div class="fLabel">③ 出行人数</div><div class="partyCounterGrid"><div class="partyCounterCard"><label for="adultCount">成人</label><div class="inlineCount"><button class="step" type="button" id="minus" aria-label="减少1位成人">−</button><input id="adultCount" type="number" inputmode="numeric" value="2" min="1" max="100" step="1"><button class="step" type="button" id="plus" aria-label="增加1位成人">＋</button></div></div><div class="partyCounterCard"><label for="childCount">儿童</label><div class="inlineCount"><button class="step" type="button" id="childMinus" aria-label="减少1位儿童">−</button><input id="childCount" type="number" inputmode="numeric" value="0" min="0" max="100" step="1"><button class="step" type="button" id="childPlus" aria-label="增加1位儿童">＋</button></div></div></div><input id="people" type="hidden" value="2"><p class="smallinfo" id="partyTotal">合计2人（成人2人，儿童0人）</p><div class="quick"><span>快捷成人数</span><button type="button" data-people="1">1成人</button><button type="button" data-people="2">2成人</button><button type="button" data-people="3">3成人</button><button type="button" data-people="4">4成人</button><button type="button" data-people="6">6成人</button><button type="button" data-people="8">8成人</button></div><p class="smallinfo" id="partyPolicyHint">儿童计价按所选航次的明确政策处理；政策未明确时不会猜算。</p>
+<div class="smartDealInput">
+ <div class="smartDealInputRow"><label for="smartSingleAdults">其中：单人独住成人数</label><input id="smartSingleAdults" type="number" min="0" max="100" step="1" value="0" inputmode="numeric"></div>
+ <p class="smartDealHelp">其余客人按两人一间自动分配。例：3位成人（一对夫妻＋一位朋友），填1，即按1间双人房＋1间单人房比较。儿童默认与成人同住；人数无法配平时，系统会提示，不会猜分房。</p>
+</div>
+</div>
 <div class="field"><div class="fLabel">④ 客户类型</div><div class="choices" id="customerType"><button type="button" data-type="new" class="selected" aria-pressed="true">新客户</button><button type="button" data-type="old" aria-pressed="false">老客户</button></div></div>
 <div class="field" id="stayWrap"><div class="fLabel">⑤ 入住方式</div><div class="choices" id="stayType"><button type="button" data-stay="double" class="selected" aria-pressed="true">双人拼住</button><button type="button" data-stay="single" aria-pressed="false">单人住</button><button type="button" data-stay="triple" id="tripleStay" class="hide" aria-pressed="false">三人同舱</button></div><div class="stayHint">独住才加单房差；拼住按每位价格计算。</div>
 <details id="ponantExtrasWrap" class="ponantExtras" hidden>
@@ -283,8 +314,12 @@
 <div class="routeSummary" id="routeOverview">—</div>
 <div class="quoteGrid"><div class="quote primary"><div class="head"><span id="offerLabel">优惠价格</span> <span class="pill" id="offerBadge">计算中</span></div><div class="amount" id="discountTotal">—</div><div class="person" id="discountAvg">—</div><div class="context" id="offerCaveat">按文件政策测算</div></div>
 <div class="quote secondary"><div class="head" id="normalLabel">原价</div><div class="amount" id="normalTotal">—</div><div class="person" id="normalAvg">—</div><div class="context" id="normalContext">基于行程册原价及能确认的入住附加费</div></div></div>
+<section class="smartDealPanel" id="smartDealPanel" aria-live="polite">
+ <div class="smartDealHead"><span>✦ 智能成交方案</span><small>自动比较舱型 · 分房 · 优惠</small></div>
+ <div id="smartDealContent"><div class="smartDealEmpty">填写出行人数后，系统将自动寻找可核算的优惠组合。</div></div>
+</section>
 <div id="fxPricePanel" class="fxPricePanel hide"></div><div id="groupBanner" class="statusLine hidden"></div>
-<div class="copygrid"><button type="button" class="copy primary" id="copyCustomer">复制客户版报价</button><button type="button" class="quoteEdictBtn" id="openQuoteEdict">📜 生成报价圣旨</button></div>
+<div class="copygrid"><button type="button" class="copy primary" id="copyCustomer">复制最优成交方案</button><button type="button" class="quoteEdictBtn" id="openQuoteEdict">📜 生成报价圣旨</button></div>
 <div class="how"><h3>报价计算明细</h3><div class="formula" id="explanation">—</div><div class="detailedTitle" id="standardTitle">原价计算</div><div class="stdExplain" id="standardFormula">—</div></div>
 <div id="issues" class="issues"></div>
 </section></div>
@@ -2759,7 +2794,7 @@
  const esc=s=>String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
  const SIGN_STORE='chuanke-ganlu-daily-sign-v1';
  const load=(key,fallback)=>{try{return JSON.parse(localStorage.getItem(key))??fallback}catch{return fallback}};
- let customer='new',stay='double',today=P.bjToday(),last=null,toastTimer=0,atlasPromo='earlybird';
+ let customer='new',stay='double',today=P.bjToday(),last=null,toastTimer=0,atlasPromo='earlybird',lastSmartQuote=null;
  let activeDestination='全部',activeYear='全部';
  const DESTINATIONS=['全部','南极','北极','加拉帕戈斯','人文奢游','其它轻探险'];
  let drawnDay='',savedSign=load(SIGN_STORE,null);
@@ -2925,6 +2960,135 @@
      selfInsurance:$('atlasSelfInsurance').checked
    };
  }
+
+ function smartPlanFor(r,c,n,party,mode,bowUpgrade){
+   let promo=atlasPromo;
+   if(r.id==='c0708'&&atlasUpgradeSources[promo]&&c.id!==atlasUpgradeSources[promo])promo='earlybird';
+   const extras={selfFlight:$('ponantSelfFlight').checked,visa:$('ponantVisaType').value,selfInsurance:$('ponantSelfInsurance').checked};
+   return P.plan(r,c,n,customer,mode,null,today,promo,Number($('gaokaoCount').value||1),getAtlasOptions(),true,!!bowUpgrade,extras,'none',getShipOnlyOptions(),party);
+ }
+ function smartCustomerText(best){
+   if(!best||!best.quote)return '';
+   const q=best.quote,r=q.route,c=q.cabin;
+   const lines=[
+     '【船客旅行 · 智能最优成交方案】',
+     '航次：'+formatRouteTitle(r),
+     '推荐舱型：'+P.nameCabin(c),
+     '出行人数：'+q.people+'人（成人'+q.adults+'人，儿童'+q.children+'人）',
+     '分房建议：'+best.roomLabel,
+     '原价参考：'+routeMoney(r,q.standard),
+     '优惠方案：'+(q.policyName||'按已录入政策计算')
+   ];
+   (q.steps||[]).forEach(x=>lines.push('计算明细：'+x));
+   (q.warnings||[]).forEach(x=>{if(/政策已过期|截止日期未注明|需确认|余舱/.test(x))lines.push('提示：'+x)});
+   lines.push('最优成交参考：'+routeMoney(r,q.offer));
+   lines.push('说明：按当前已录入政策和分房条件试算；实际舱位、房间安排及成交资格须由产品部确认。');
+   return lines.join('\n');
+ }
+ function renderSmartRecommendation(r,party){
+   const box=$('smartDealContent'),n=party.adults+party.children,solo=Number($('smartSingleAdults').value);
+   lastSmartQuote=null;
+   $('smartSingleAdults').max=String(Number.isInteger(party.adults)&&party.adults>=0?party.adults:0);
+   if(!Number.isInteger(n)||n<1||n>100||!Number.isInteger(solo)||solo<0||solo>party.adults){
+     box.innerHTML='<div class="smartDealEmpty">请检查人数及单人独住成人数。单人独住人数不能超过成人总数。</div>';return false;
+   }
+   if(r.soldOut){box.innerHTML='<div class="smartDealEmpty">本航次已售罄，不生成成交推荐。</div>';return false;}
+   if(r.currency==='EUR'||r.currency==='USD'){
+     box.innerHTML='<div class="smartDealEmpty">本航次使用'+r.currency+'报价，暂不与人民币智能优化混算。外币报价区保留原币政策；单房差没有明确依据时不自动免除。</div>';return false;
+   }
+   if($('polarAnniversaryOption').value==='upgrade2500'){
+     box.innerHTML='<div class="smartDealEmpty">当前选择的是已报名客户升舱补差价，不是全程新订单价格，不能与其他舱型总价直接比较。请切换常规报价后使用智能成交方案。</div>';return false;
+   }
+   const paired=n-solo;
+   if(solo>0&&paired%2!==0){
+     box.innerHTML='<div class="smartDealEmpty">当前分房人数无法配平：'+paired+'位剩余旅客不能按双人间分配。请调整单人独住人数，或在原入住方式中选择适用的三人同舱方案。</div>';return false;
+   }
+   if(solo===0&&n%2!==0&&n<3){
+     box.innerHTML='<div class="smartDealEmpty">1位旅客需要设置为单人独住，系统才能计算单房差。</div>';return false;
+   }
+   const candidates=[],manual=[];
+   for(const c of r.cabins||[]){
+     if(c.soldOut||c.waitlist||!Number.isFinite(c.price)||c.price<=0)continue;
+     if(solo>0){
+       if(['b0118','b0130'].includes(r.id)&&c.id==='3p'){
+         manual.push('3层舷窗可免费升至5层船头海景，但该升舱与5层以上25%单房差的叠加适用范围未明确，暂不自动报价。');
+         continue;
+       }
+       const q=smartPlanFor(r,c,n,party,'single',false);
+       if(q.status!=='ready'||!Number.isFinite(q.singleSupplement)){
+         if(q.statusReason)manual.push(P.nameCabin(c)+'：'+q.statusReason);
+         continue;
+       }
+       const raw=Number.isFinite(q.rawOffer)?q.rawOffer:q.offer;
+       const per=q.singleSupplement/n;
+       const actualSingle=per*solo;
+       const total=Math.round(raw-q.singleSupplement+actualSingle);
+       if(!Number.isFinite(total)||total<0)continue;
+       const smartQ={...q,offer:total,rawOffer:raw-q.singleSupplement+actualSingle,singleSupplement:actualSingle,stay:'mixed',rooms:solo+paired/2,copyOffer:true};
+       smartQ.policyName=(q.policyName||'按已录入政策计算')+'（仅'+solo+'位成人单独入住）';
+       smartQ.steps=(q.steps||[]).filter(x=>!/(单房差|单人入住|单人入住房差)/.test(x)&&!x.includes('本次报价合计'));
+       smartQ.steps.push('分房建议：'+(paired?Math.floor(paired/2)+'间双人房（'+paired+'人）＋':'')+solo+'间单人房（'+solo+'位成人）');
+       if(actualSingle>0)smartQ.steps.push('单房差：'+routeMoney(r,per)+'/位 × '+solo+'位独住成人 = +'+routeMoney(r,actualSingle));
+       else smartQ.steps.push('单房差：按已录入的明确政策免收。');
+       smartQ.steps.push('智能最优方案总价：'+routeMoney(r,total));
+       smartQ.warnings=(q.warnings||[]).filter(x=>!/(单房差|单人入住)/.test(x));
+       smartQ.assumptions=(q.assumptions||[]).filter(x=>!/(单房差|单人入住)/.test(x));
+       smartQ.assumptions.push('按'+solo+'位成人单人入住，其余'+paired+'位旅客两人一间计算；请确认实际房间安排。');
+       const roomLabel=(paired?Math.floor(paired/2)+'间双人房（'+paired+'人）':'')+(paired&&solo?'＋':'')+(solo?solo+'间单人房（'+solo+'位成人）':'');
+       candidates.push({quote:smartQ,total,roomLabel,singlePer:per,kind:'mixed'});
+     }else{
+       if(n%2===0){
+         const bow=['b0118','b0130'].includes(r.id)&&c.id==='3p';
+         const q=smartPlanFor(r,c,n,party,'double',bow);
+         if(q.status==='ready'&&Number.isFinite(q.offer)){
+           const rooms=q.rooms||Math.ceil(n/2);
+           const roomLabel=q.upgradeTarget?'双人入住（'+rooms+'间）＋免费升舱至'+q.upgradeTarget:q.stay==='triple'?'按该舱型固定三人间规则入住':'双人入住（'+rooms+'间）';
+           candidates.push({quote:q,total:q.offer,roomLabel,singlePer:0,kind:q.stay==='triple'?'triple':'double'});
+         }else if(q.statusReason)manual.push(P.nameCabin(c)+'：'+q.statusReason);
+       }
+     }
+     if(solo===0&&n>=3&&P.hasThirdBed(r,c)){
+       const q=smartPlanFor(r,c,n,party,'triple',false);
+       if(q.status==='ready'&&Number.isFinite(q.offer)){
+         if(!candidates.some(x=>x.quote.cabin.id===c.id&&x.kind==='triple')){
+           const rooms=q.rooms||Math.ceil(n/(c.capacity||3));
+           candidates.push({quote:q,total:q.offer,roomLabel:'三人/多人同舱（'+rooms+'间，按该舱型政策计价）',singlePer:0,kind:'triple'});
+         }
+       }
+     }
+   }
+   if(!candidates.length){
+     const main=solo>0?'当前航次没有找到单房差金额及叠加规则均明确的可报价舱型。':'当前人数没有可核算的双人/三人房组合。';
+     const detail=manual.find(x=>/单房差|单人入住|第三人|候补|售罄/.test(x));
+     box.innerHTML='<div class="smartDealEmpty">'+esc(main)+'系统不会擅自免除单房差或推定优惠可叠加。'+(detail?'<br>'+esc(detail):'')+' 请产品部确认缺失政策或分房条件。</div>';
+     return false;
+   }
+   candidates.sort((a,b)=>a.total-b.total||a.singlePer-b.singlePer||a.quote.price-b.quote.price);
+   const best=candidates[0];lastSmartQuote=best;
+   const q=best.quote,expired=q.policy?.code==='expired';
+   const roomCount=q.rooms||1;
+   const singleInfo=best.kind==='mixed'?(best.singlePer===0?'明确免单房差':'单房差'+routeMoney(r,best.singlePer)+'/位，仅计'+solo+'位独住成人'):'无单人独住房差';
+   const expiredText=expired?' · 政策已过期，仍按原政策计算':'';
+   const freeText=best.kind==='mixed'&&best.singlePer===0?'已按明确政策免单房差':'';
+   const why=best.kind==='mixed'
+     ?'系统只对实际单独入住的成人计入单房差；夫妻/同行双人入住部分不按全员独住收费。'
+     :q.upgradeTarget?'利用当前航次明确的免费升舱政策，按原舱型基础价测算。'
+     :best.kind==='triple'?'已比较该舱型三人/多人同舱政策与双人房组合。'
+     :'按该航次适用的成人、儿童、多人及专项优惠计算。';
+   const top=candidates.slice(1,4);
+   box.innerHTML=
+     '<div class="smartDealWinner">'+
+       '<div class="smartDealKicker">系统推荐 · 当前可核算方案最低总价</div>'+
+       '<div class="smartDealAmount">'+routeMoney(r,best.total)+'</div>'+
+       '<div class="smartDealCabin">'+esc(P.nameCabin(q.cabin))+(q.upgradeTarget?' → '+esc(q.upgradeTarget):'')+'</div>'+
+       '<div class="smartDealMeta">分房：'+esc(best.roomLabel)+'<br>优惠：'+esc(q.policyName||'按已录入政策计算')+'<br>单房差：'+esc(singleInfo)+'<br>人数：'+n+'人（成人'+party.adults+'，儿童'+party.children+'）</div>'+
+       '<div class="smartDealWhy">'+esc(why)+(expired?'<br><strong>政策已过期</strong>，按原优惠试算。':'')+(freeText?'<br>'+esc(freeText):'')+'<br>余舱及实际房间分配仍须产品部确认。</div>'+
+     '</div>'+
+     (top.length?'<div class="smartDealList">'+top.map((x,i)=>'<div class="smartDealOption"><span><strong>备选'+(i+1)+' · '+esc(P.nameCabin(x.quote.cabin))+'</strong><small>'+esc(x.roomLabel)+' · '+esc(x.quote.policyName||'按已录入政策计算')+'</small></span><b>'+routeMoney(r,x.total)+'</b></div>').join('')+'</div>':'')+
+     '<div class="smartDealWarning">只比较有明确价格、优惠和单房差计算依据的方案；未确认库存、缺少单房差政策或叠加口径不明的舱型不作为确定成交价。'+(manual.length?' 另有'+manual.length+'项房型因条件未明确未纳入自动排序。':'')+'</div>';
+   return true;
+ }
+
  function onAtlasPromoChange(){
    atlasPromo=$('atlasPromo').value;
    if(atlasPromo==='adult_child'){$('adultCount').value='1';$('childCount').value='1';}
@@ -3001,6 +3165,9 @@
    const staySummary=r.id==='c0708'&&q.stay==='triple'?'三/四人同舱':P.stayName(q.stay);
    $('routeOverview').innerHTML=`<b>${esc(formatRouteTitle(r))}</b><div class="underRoute">${esc(cabinSummary)} · ${Number.isFinite(q.people)?q.people:'—'}人（成人${Number.isFinite(q.adults)?q.adults:'—'}，儿童${Number.isFinite(q.children)?q.children:'—'}） · ${customer==='old'?'老客户':'新客户'} · ${esc(staySummary)}${q.shipOnly?' · 单船票':''}</div>`;
    const ready=q.status==='ready';
+   const smartReady=renderSmartRecommendation(r,party);
+   $('copyCustomer').disabled=!(ready||smartReady);
+   $('copyCustomer').textContent=smartReady?'复制最优成交方案':'复制客户版报价';
    $('palaceStatus').className='palaceStatus '+(ready?'success':'fail');
    $('palaceIcon').textContent=ready?'✦':'✧';$('palaceStatusTitle').textContent=ready?(q.publishedFare?'官网金额已计算':'报价成功'):r.soldOut?'本航次已售罄':r.policyOnly&&r.webCabinsVerified?'官网金额已录入':'报价失败';
    $('palaceStatusText').textContent=ready?'你离回宫又近了一步~':q.statusReason;
@@ -3020,7 +3187,7 @@
    $('standardTitle').textContent=q.anniversaryUpgradeOnly?'已报名房型原价参考':'原价计算';
    $('standardFormula').innerHTML=(q.standardSteps.length?q.standardSteps:['尚无可计算的原价。']).map(s=>`<div>${esc(s)}</div>`).join('');
    $('issues').innerHTML=q.errors.map(s=>`<div class="issue error">${esc(s)}</div>`).concat(q.warnings.map(s=>`<div class="issue">${esc(s)}</div>`),q.assumptions.map(s=>`<div class="issue hint">${esc(s)}</div>`)).join('');
-   $('copyCustomer').disabled=!ready;
+   $('copyCustomer').disabled=!(ready||smartReady);
    for(const b of document.querySelectorAll('button[data-people]')){const active=Number(b.dataset.people)===q.adults&&q.children===0;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));}
    const partyNow=getPartyOptions(),partyTotal=partyNow.adults+partyNow.children;
    $('minus').disabled=partyNow.adults<=1;$('plus').disabled=!Number.isInteger(partyTotal)||partyTotal>=100;
@@ -3066,7 +3233,7 @@
    renderDestinationFilter();fillFilteredRoutes(false);
    $('destinationTabs').addEventListener('click',e=>{const b=e.target.closest('button[data-destination]');if(!b||!DESTINATIONS.includes(b.dataset.destination))return;setDestinationFilters(b.dataset.destination,'全部');});
    $('destinationYears').addEventListener('click',e=>{const b=e.target.closest('button[data-year]');if(!b)return;setDestinationFilters(null,b.dataset.year);});
-   $('route').addEventListener('change',onRoute);$('cabin').addEventListener('change',onCabin);$('adultCount').addEventListener('input',render);$('childCount').addEventListener('input',render);
+   $('route').addEventListener('change',onRoute);$('cabin').addEventListener('change',onCabin);$('adultCount').addEventListener('input',render);$('childCount').addEventListener('input',render);$('smartSingleAdults').addEventListener('input',render);
    $('voyagePolicyDetails').addEventListener('toggle',()=>{$('voyagePolicyDetails').querySelector('.voyagePolicyArrow').textContent=$('voyagePolicyDetails').open?'收起 ↑':'展开全部 '+route().notes.length+' 条 ↓';});
    ['ponantSelfFlight','ponantSelfInsurance'].forEach(id=>$(id).addEventListener('change',render));
    $('ponantVisaType').addEventListener('change',render);
@@ -3080,7 +3247,7 @@
    document.querySelectorAll('button[data-people]').forEach(b=>b.addEventListener('click',()=>{$('adultCount').value=b.dataset.people;$('childCount').value='0';render()}));
    $('customerType').addEventListener('click',e=>{const b=e.target.closest('button[data-type]');if(!b)return;customer=b.dataset.type;setChoice('customerType','type',customer);render()});
    $('stayType').addEventListener('click',e=>{const b=e.target.closest('button[data-stay]');if(!b)return;stay=b.dataset.stay;setChoice('stayType','stay',stay);render()});
-   $('copyCustomer').addEventListener('click',async()=>{const quotation=copyText();if(!quotation){toast(last.statusReason||'金额待确认');return}if(await copy(quotation))toast('客户版报价已复制');else manualCopy(copyText()||quotation)});
+   $('copyCustomer').addEventListener('click',async()=>{const quotation=lastSmartQuote?smartCustomerText(lastSmartQuote):copyText();if(!quotation){toast(last.statusReason||'金额待确认');return}if(await copy(quotation))toast(lastSmartQuote?'智能最优成交方案已复制':'客户版报价已复制');else manualCopy(quotation)});
    $('closeCopy').addEventListener('click',closeCopy);
    $('jumpPrice').addEventListener('click',()=>$('resultPanel').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'}));
    $('drawSign').addEventListener('click',()=>{refreshDate();if(drawnDay===today)return;drawnDay=today;persist(SIGN_STORE,{day:today,drawn:true});renderSign();$('signResult').classList.remove('signReveal');void $('signResult').offsetWidth;$('signResult').classList.add('signReveal')});
