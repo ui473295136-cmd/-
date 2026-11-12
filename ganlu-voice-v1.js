@@ -253,6 +253,8 @@
    restoreFloat(button);
    button.addEventListener('pointerdown',e=>{
      if(e.pointerType==='mouse'&&e.button!==0)return;
+     // A fresh tap after a drag must work immediately; only the drag-generated click is ignored.
+     ignoreFloatClickUntil=0;
      const r=button.getBoundingClientRect();
      touchState={pointerId:e.pointerId,x:e.clientX,y:e.clientY,left:r.left,top:r.top,dragged:false};
      try{button.setPointerCapture(e.pointerId);}catch(err){}
