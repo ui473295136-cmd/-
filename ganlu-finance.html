@@ -150,6 +150,9 @@
 .smartDealOption b{font-size:14px;color:#805b35;white-space:nowrap}
 .smartDealWarning{font-size:10px;color:#92724e;line-height:1.65;margin-top:9px}
 .smartDealBreakdown{margin-top:10px;border-top:1px solid #eee2d0;padding-top:8px;color:#7a6957;font-size:10px}
+.smartDealOpportunity{margin-top:9px;padding:10px 11px;border:1px dashed #caa875;border-radius:10px;background:#fff8ec;color:#785b36;font-size:10px;line-height:1.65}
+.smartDealOpportunity strong{display:block;font-size:11px;margin-bottom:4px}
+.smartDealOpportunity p{margin:4px 0}
 .smartDealBreakdown summary{cursor:pointer;font-weight:700;color:#795b39}
 .smartDealBreakdown p{margin:5px 0;line-height:1.55}
 .smartDealEmpty{padding:12px;border-radius:10px;background:#f8f4ed;color:#786a59;font-size:11px;line-height:1.7}
@@ -3009,12 +3012,16 @@
    if(solo===0&&n%2!==0&&n<3){
      box.innerHTML='<div class="smartDealEmpty">1位旅客需要设置为单人独住，系统才能计算单房差。</div>';return false;
    }
-   const candidates=[],manual=[];
+   const candidates=[],manual=[],opportunities=[];
    for(const c of r.cabins||[]){
      if(c.soldOut||c.waitlist||!Number.isFinite(c.price)||c.price<=0)continue;
      if(solo>0){
+       if(['a1122','a1204'].includes(r.id)&&c.id==='5o'){
+         opportunities.push('5层海景有邮轮段原价25%单房差专项（限5席），但陆地段单房差金额未提供；这可能比常规全程70%单房差更优惠，须向产品部确认陆地金额后才能计算最终价。');
+         continue;
+       }
        if(['b0118','b0130'].includes(r.id)&&c.id==='3p'){
-         manual.push('3层舷窗可免费升至5层船头海景，但该升舱与5层以上25%单房差的叠加适用范围未明确，暂不自动报价。');
+         opportunities.push('3层舷窗可免费升级至5层船头海景；但免费升舱后能否适用5层及以上25%全程单房差，文件未明确，暂不自动合并报价。');
          continue;
        }
        if(P.isFixedTriple(c)){
@@ -3067,7 +3074,8 @@
    if(!candidates.length){
      const main=solo>0?'当前航次没有找到单房差金额及叠加规则均明确的可报价舱型。':'当前人数没有可核算的双人/三人房组合。';
      const detail=manual.find(x=>/单房差|单人入住|第三人|候补|售罄/.test(x));
-     box.innerHTML='<div class="smartDealEmpty">'+esc(main)+'系统不会擅自免除单房差或推定优惠可叠加。'+(detail?'<br>'+esc(detail):'')+' 请产品部确认缺失政策或分房条件。</div>';
+     const opportunityHtml=opportunities.length?'<div class="smartDealOpportunity"><strong>可争取的优惠政策（待核价）</strong>'+opportunities.map(x=>'<p>'+esc(x)+'</p>').join('')+'</div>':'';
+     box.innerHTML='<div class="smartDealEmpty">'+esc(main)+'系统不会擅自免除单房差或推定优惠可叠加。'+(detail?'<br>'+esc(detail):'')+' 请产品部确认缺失政策或分房条件。</div>'+opportunityHtml;
      return false;
    }
    candidates.sort((a,b)=>a.total-b.total||a.singlePer-b.singlePer||a.quote.price-b.quote.price);
@@ -3095,7 +3103,7 @@
        '<details class="smartDealBreakdown"><summary>展开最优方案计算明细</summary><div>'+q.steps.map(x=>'<p>'+esc(x)+'</p>').join('')+'</div></details>'+
      '</div>'+
      (top.length?'<div class="smartDealList">'+top.map((x,i)=>'<div class="smartDealOption"><span><strong>备选'+(i+1)+' · '+esc(P.nameCabin(x.quote.cabin))+'</strong><small>'+esc(x.roomLabel)+' · '+esc(x.quote.policyName||'按已录入政策计算')+'</small></span><b>'+routeMoney(r,x.total)+'</b></div>').join('')+'</div>':'')+
-     '<div class="smartDealWarning">只比较有明确价格、优惠和单房差计算依据的方案；未确认库存、缺少单房差政策或叠加口径不明的舱型不作为确定成交价。'+(manual.length?' 另有'+manual.length+'项房型因条件未明确未纳入自动排序。':'')+'</div>';
+     '<div class="smartDealWarning">只比较有明确价格、优惠和单房差计算依据的方案；未确认库存、缺少单房差政策或叠加口径不明的舱型不作为确定成交价。'+(manual.length?' 另有'+manual.length+'项房型因条件未明确未纳入自动排序。':'')+'</div>'+opportunityHtml;
    return true;
  }
 
