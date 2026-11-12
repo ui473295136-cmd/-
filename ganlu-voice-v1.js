@@ -36,6 +36,10 @@
      if(m)date=String(m[1]).padStart(2,'0')+String(m[2]).padStart(2,'0');
    }
    if(!date){
+     m=t.match(/([一二三四五六七八九十]+)月([一二三四五六七八九十]+)[日号]?/);
+     if(m){const mo=cnNum(m[1]),day=cnNum(m[2]);if(mo>=1&&mo<=12&&day>=1&&day<=31)date=String(mo).padStart(2,'0')+String(day).padStart(2,'0');}
+   }
+   if(!date){
      m=t.match(/(?:^|[^\d])(0[1-9]|1[0-2])([0-3]\d)(?!\d)/);
      if(m)date=m[1]+m[2];
    }
@@ -69,7 +73,12 @@
      const m=t.match(new RegExp(numPat+'\\s*(?:位|个|名)?\\s*人(?:去|报名|参加|一起)?'));
      if(m)total=cnNum(m[1]);
    }
-   if(adults===null&&/一对夫妻/.test(t))adults=2;
+   if(adults===null&&/一对夫妻/.test(t)){
+     adults=2;
+     const afterCouple=t.split('一对夫妻')[1]||'';
+     const extra=afterCouple.match(new RegExp(numPat+'\\s*(?:位|个|名 )?\\s*(?:男生|女生|男人|女人|朋友|同事|客人|成人)(?:同行|单住|独住)?'));
+     if(extra&&children===null)adults+=cnNum(extra[1])||0;
+   }
    if(total===null&&adults===null){
      const man=findCount(t,'(?:男(?:性|生|的|人|士)?)');
      const woman=findCount(t,'(?:女(?:性|生|的|人|士)?)');
