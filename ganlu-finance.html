@@ -3014,7 +3014,9 @@
    }
    const candidates=[],manual=[],opportunities=[];
    for(const c of r.cabins||[]){
-     if(c.soldOut||c.waitlist||!Number.isFinite(c.price)||c.price<=0)continue;
+     const cabinSoldOut=c.soldOut===true||c.note==='soldout'||/售罄/.test(c.name||'');
+     const cabinWaitlist=c.waitlist===true||c.note==='waitlist'||/候补/.test(c.name||'');
+     if(cabinSoldOut||cabinWaitlist||!Number.isFinite(c.price)||c.price<=0)continue;
      if(solo>0){
        if(['a1122','a1204'].includes(r.id)&&c.id==='5o'){
          opportunities.push('5层海景有邮轮段原价25%单房差专项（限5席），但陆地段单房差金额未提供；这可能比常规全程70%单房差更优惠，须向产品部确认陆地金额后才能计算最终价。');
