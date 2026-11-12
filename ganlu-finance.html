@@ -3030,7 +3030,7 @@
        if(!Number.isFinite(total)||total<0)continue;
        const smartQ={...q,offer:total,rawOffer:raw-q.singleSupplement+actualSingle,singleSupplement:actualSingle,stay:'mixed',rooms:solo+paired/2,copyOffer:true};
        smartQ.policyName=(q.policyName||'按已录入政策计算')+'（仅'+solo+'位成人单独入住）';
-       smartQ.steps=(q.steps||[]).filter(x=>!/(单房差|单人入住|单人入住房差|已知条件参考总额)/.test(x)&&!x.includes('本次报价合计'));
+       smartQ.steps=(q.steps||[]).map(x=>x.replace(/＋全程单房差[^：:]*[：:]?/g,'').replace(/常规单人住 · 原价加70%房差/g,'常规价格（单人入住不叠加普通折扣）').replace(/常规单人入住 · 原价×150%/g,'常规价格（单人入住不叠加早鸟折扣）')).filter(x=>!/(^全程单房差|^单房差|^单人入住房差|已知条件参考总额)/.test(x)&&!x.includes('本次报价合计'));
        smartQ.steps.push('分房建议：'+(paired?Math.floor(paired/2)+'间双人房（'+paired+'人）＋':'')+solo+'间单人房（'+solo+'位成人）');
        if(actualSingle>0)smartQ.steps.push('单房差：'+routeMoney(r,per)+'/位 × '+solo+'位独住成人 = +'+routeMoney(r,actualSingle));
        else smartQ.steps.push('单房差：按已录入的明确政策免收。');
@@ -3072,6 +3072,8 @@
    const q=best.quote,expired=q.policy?.code==='expired';
    const roomCount=q.rooms||1;
    const singleInfo=best.kind==='mixed'?(best.singlePer===0?'按明确政策免单房差':'单房差'+routeMoney(r,best.singlePer)+'/位，仅计'+solo+'位独住成人'):'本方案无单人独住房间，不产生单房差';
+   const singleRatio=best.kind==='mixed'&&q.price>0?best.singlePer/q.price:null;
+   const singleBadge=best.kind==='mixed'?(singleRatio===0?'<span class="smartDealPill">免单房差</span>':singleRatio<=.30?'<span class="smartDealPill">低单房差政策</span>':'') : '';
    const expiredText=expired?' · 政策已过期，仍按原政策计算':'';
    const freeText=best.kind==='mixed'&&best.singlePer===0?'已按明确政策免单房差':'';
    const why=best.kind==='mixed'
@@ -3083,7 +3085,7 @@
    box.innerHTML=
      '<div class="smartDealWinner">'+
        '<div class="smartDealKicker">系统推荐 · 当前可核算方案最低总价</div>'+
-       '<div class="smartDealAmount">'+routeMoney(r,best.total)+'</div>'+
+       '<div class="smartDealAmount">'+routeMoney(r,best.total)+'</div>'+singleBadge+
        '<div class="smartDealCabin">'+esc(P.nameCabin(q.cabin))+(q.upgradeTarget?' → '+esc(q.upgradeTarget):'')+'</div>'+
        '<div class="smartDealMeta">分房：'+esc(best.roomLabel)+'<br>优惠：'+esc(q.policyName||'按已录入政策计算')+'<br>单房差：'+esc(singleInfo)+'<br>人数：'+n+'人（成人'+party.adults+'，儿童'+party.children+'）</div>'+
        '<div class="smartDealWhy">'+esc(why)+(expired?'<br><strong>政策已过期</strong>，按原优惠试算。':'')+(freeText?'<br>'+esc(freeText):'')+'<br>余舱及实际房间分配仍须产品部确认。</div>'+
