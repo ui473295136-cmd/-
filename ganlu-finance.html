@@ -149,6 +149,9 @@
 .smartDealOption small{display:block;font-size:10px;color:#8c7b69;margin-top:3px;line-height:1.45}
 .smartDealOption b{font-size:14px;color:#805b35;white-space:nowrap}
 .smartDealWarning{font-size:10px;color:#92724e;line-height:1.65;margin-top:9px}
+.smartDealBreakdown{margin-top:10px;border-top:1px solid #eee2d0;padding-top:8px;color:#7a6957;font-size:10px}
+.smartDealBreakdown summary{cursor:pointer;font-weight:700;color:#795b39}
+.smartDealBreakdown p{margin:5px 0;line-height:1.55}
 .smartDealEmpty{padding:12px;border-radius:10px;background:#f8f4ed;color:#786a59;font-size:11px;line-height:1.7}
 .smartDealPill{display:inline-block;border-radius:20px;padding:3px 7px;background:#e8f2e9;color:#39734b;font-size:10px;font-weight:700;margin-left:5px}
 @media(max-width:520px){.smartDealPanel{padding:12px}.smartDealAmount{font-size:24px}.smartDealOption{grid-template-columns:minmax(0,1fr) auto}}
@@ -312,12 +315,12 @@
 <section class="panel" id="resultPanel"><div class="resultsHead"><div><h2>报价结果</h2></div><span class="palaceTag" id="policyFlag">政策测算</span></div>
 <div class="palaceStatus" id="palaceStatus" role="status"><div class="icon" id="palaceIcon">✦</div><div><strong id="palaceStatusTitle">报价失败</strong><small id="palaceStatusText">你离回宫又远了一步~</small></div></div>
 <div class="routeSummary" id="routeOverview">—</div>
-<div class="quoteGrid"><div class="quote primary"><div class="head"><span id="offerLabel">优惠价格</span> <span class="pill" id="offerBadge">计算中</span></div><div class="amount" id="discountTotal">—</div><div class="person" id="discountAvg">—</div><div class="context" id="offerCaveat">按文件政策测算</div></div>
-<div class="quote secondary"><div class="head" id="normalLabel">原价</div><div class="amount" id="normalTotal">—</div><div class="person" id="normalAvg">—</div><div class="context" id="normalContext">基于行程册原价及能确认的入住附加费</div></div></div>
 <section class="smartDealPanel" id="smartDealPanel" aria-live="polite">
  <div class="smartDealHead"><span>✦ 智能成交方案</span><small>自动比较舱型 · 分房 · 优惠</small></div>
  <div id="smartDealContent"><div class="smartDealEmpty">填写出行人数后，系统将自动寻找可核算的优惠组合。</div></div>
 </section>
+<div class="quoteGrid"><div class="quote primary"><div class="head"><span id="offerLabel">优惠价格</span> <span class="pill" id="offerBadge">计算中</span></div><div class="amount" id="discountTotal">—</div><div class="person" id="discountAvg">—</div><div class="context" id="offerCaveat">按文件政策测算</div></div>
+<div class="quote secondary"><div class="head" id="normalLabel">原价</div><div class="amount" id="normalTotal">—</div><div class="person" id="normalAvg">—</div><div class="context" id="normalContext">基于行程册原价及能确认的入住附加费</div></div></div>
 <div id="fxPricePanel" class="fxPricePanel hide"></div><div id="groupBanner" class="statusLine hidden"></div>
 <div class="copygrid"><button type="button" class="copy primary" id="copyCustomer">复制最优成交方案</button><button type="button" class="quoteEdictBtn" id="openQuoteEdict">📜 生成报价圣旨</button></div>
 <div class="how"><h3>报价计算明细</h3><div class="formula" id="explanation">—</div><div class="detailedTitle" id="standardTitle">原价计算</div><div class="stdExplain" id="standardFormula">—</div></div>
@@ -3088,7 +3091,8 @@
        '<div class="smartDealAmount">'+routeMoney(r,best.total)+'</div>'+singleBadge+
        '<div class="smartDealCabin">'+esc(P.nameCabin(q.cabin))+(q.upgradeTarget?' → '+esc(q.upgradeTarget):'')+'</div>'+
        '<div class="smartDealMeta">分房：'+esc(best.roomLabel)+'<br>优惠：'+esc(q.policyName||'按已录入政策计算')+'<br>单房差：'+esc(singleInfo)+'<br>人数：'+n+'人（成人'+party.adults+'，儿童'+party.children+'）</div>'+
-       '<div class="smartDealWhy">'+esc(why)+(expired?'<br><strong>政策已过期</strong>，按原优惠试算。':'')+(freeText?'<br>'+esc(freeText):'')+'<br>余舱及实际房间分配仍须产品部确认。</div>'+
+       '<div class="smartDealWhy">'+esc(why)+(best.kind==='mixed'&&best.singlePer>0?'<br>当前已录入且可核算的舱型中未发现免单房差；系统已优先选择单房差成本较低的方案。':'')+(expired?'<br><strong>政策已过期</strong>，按原优惠试算。':'')+(freeText?'<br>'+esc(freeText):'')+'<br>余舱及实际房间分配仍须产品部确认。</div>'+
+       '<details class="smartDealBreakdown"><summary>展开最优方案计算明细</summary><div>'+q.steps.map(x=>'<p>'+esc(x)+'</p>').join('')+'</div></details>'+
      '</div>'+
      (top.length?'<div class="smartDealList">'+top.map((x,i)=>'<div class="smartDealOption"><span><strong>备选'+(i+1)+' · '+esc(P.nameCabin(x.quote.cabin))+'</strong><small>'+esc(x.roomLabel)+' · '+esc(x.quote.policyName||'按已录入政策计算')+'</small></span><b>'+routeMoney(r,x.total)+'</b></div>').join('')+'</div>':'')+
      '<div class="smartDealWarning">只比较有明确价格、优惠和单房差计算依据的方案；未确认库存、缺少单房差政策或叠加口径不明的舱型不作为确定成交价。'+(manual.length?' 另有'+manual.length+'项房型因条件未明确未纳入自动排序。':'')+'</div>';
@@ -3187,7 +3191,8 @@
    $('offerBadge').textContent=!ready?(r.soldOut?'已售罄':r.policyOnly?(r.webCabinsVerified?'已知金额 · 待核附加费':'房型/价格待补充'):'待核价'):q.publishedFare?(q.policy.code==='expired'?'政策已过期':q.publishedFareActive?'按政策报价':'原价参考'):q.policy.code==='jan18porthole'?'0118舷窗专享 · 原价立减':q.policy.code==='anniversary'?'周年庆活动 · 名额有限':q.policy.code==='expired'?'政策过期 · 待确认':q.policy.code==='upcoming'?'未生效 · 试算':q.policy.code==='unknown'?'日期待确认':q.policy.code==='latest_unconfirmed'?'专项优惠 · 日期待确认':q.route.hasPolicy?'优惠试算':'常规价格';
    $('offerBadge').classList.toggle('wait',!ready||!q.policy.valid);
    $('offerCaveat').textContent=ready?(q.publishedFare?(q.policy.code==='expired'?'按原政策计算 · 政策已过期':'按文件政策计算，余位以实际为准'):q.anniversaryUpgradeOnly?'仅升舱补差价，不含原合同团款':q.policy.code==='jan18porthole'?'原价减2000/人 · 不叠加折扣':q.policy.code==='anniversary'?'周年庆活动名额有限，额满即止':q.policy.code==='expired'?'按原优惠试算，报名价须确认':q.policyName):r.soldOut?'已售罄 · 仅展示历史价格':r.policyOnly&&Number.isFinite(q.standard)?'以上仅是已知原价小计，未含需确认的附加费':'请查看下方说明';
-   $('miniPrice').textContent=ready?P.money(q.offer):r.policyOnly&&Number.isFinite(q.standard)?P.money(q.standard):'金额待确认';
+   if(smartReady){$('offerLabel').textContent='当前所选舱型报价';$('offerCaveat').textContent='此处为当前选中舱型的试算价；成交优先参考上方智能推荐方案。';}
+   $('miniPrice').textContent=smartReady?routeMoney(r,lastSmartQuote.total):ready?P.money(q.offer):r.policyOnly&&Number.isFinite(q.standard)?P.money(q.standard):'金额待确认';
    $('groupBanner').classList.add('hidden');
    $('explanation').innerHTML=(q.steps.length?q.steps:[q.statusReason||'请选择报价条件。']).map((s,i)=>`<div class="${ready&&i===q.steps.length-1?'sum':''}">${esc(s)}</div>`).join('');
    $('standardTitle').textContent=q.anniversaryUpgradeOnly?'已报名房型原价参考':'原价计算';
