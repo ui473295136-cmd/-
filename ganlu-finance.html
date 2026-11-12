@@ -2985,32 +2985,31 @@
    };
  }
 
- function smartPlanFor(r,c,n,party,mode,bowUpgrade){
-   let promo=atlasPromo;
+ function smartPlanFor(r,c,n,party,mode,bowUpgrade,promoOverride){
+   let promo=promoOverride||atlasPromo;
    if(r.id==='c0708'&&atlasUpgradeSources[promo]&&c.id!==atlasUpgradeSources[promo])promo='earlybird';
    const extras={selfFlight:$('ponantSelfFlight').checked,visa:$('ponantVisaType').value,selfInsurance:$('ponantSelfInsurance').checked};
    return P.plan(r,c,n,customer,mode,null,today,promo,Number($('gaokaoCount').value||1),getAtlasOptions(),true,!!bowUpgrade,extras,'none',getShipOnlyOptions(),party);
  }
  function smartCustomerText(best){
-   if(!best||!best.quote)return '';
-   const q=best.quote,r=q.route,c=q.cabin;
-   const lines=[
-     '【船客旅行 · 智能最优成交方案】',
-     '航次：'+formatRouteTitle(r),
-     '推荐舱型：'+P.nameCabin(c),
-     '出行人数：'+q.people+'人（成人'+q.adults+'人，儿童'+q.children+'人）',
-     '分房建议：'+best.roomLabel,
-     '原价参考：'+routeMoney(r,q.standard),
-     '优惠方案：'+(q.policyName||'按已录入政策计算')
-   ];
-   (q.steps||[]).forEach(x=>lines.push('计算明细：'+x));
-   (q.warnings||[]).forEach(x=>lines.push('提示：'+x));
-   lines.push('最优成交参考：'+routeMoney(r,q.offer));
-   lines.push('说明：按当前已录入政策和分房条件试算；实际舱位、房间安排及成交资格须由产品部确认。');
+   if(!best||!best.quote||best.quote.status!=='ready'||!Number.isFinite(best.quote.offer))return '';
+   const q=best.quote,r=q.route;
+   const voyage=formatRouteTitle(r).replace(/^\d{4}\.\d{2}\.\d{2}·/,r.date+' ').replace(/·/g,' · ').replace(/-(\d+)天$/,' $1天');
+   const total=Number(q.offer);
+   const lines=['【船客旅行 · 航次报价】','航次：'+voyage,'人数：'+q.people+'人'];
+   if(q.shipOnly)lines.push('报价范围：仅单船票，不含已勾选的接待服务');
+   if(q.anniversaryUpgradeOnly)lines.push('报价范围：仅已报名客户升舱补差价，不含原团款');
+   lines.push('最终价格：'+total.toLocaleString('zh-CN',{useGrouping:false,maximumFractionDigits:2})+'元');
+   lines.push('每人价格：'+(total/q.people).toFixed(2)+'元');
    return lines.join('\n');
  }
  function renderSmartRecommendation(r,party){
-   const box=$('smartDealContent'),n=party.adults+party.children,solo=Number($('smartSingleAdults').value);
+   const box=$('smartDealContent'),n=party.adults+party.children,solo=Number($('smartSingleAdults').value),fixedId=$('cabin').value;
+   const modeFixed=Boolean(fixedId);
+   $('smartAutoMode').classList.toggle('active',!modeFixed);
+   $('smartAutoMode').setAttribute('aria-pressed',String(!modeFixed));
+   $('smartFixedMode').classList.toggle('active',modeFixed);
+   $('smartFixedMode').setAttribute('aria-pressed',String(modeFixed));
    lastSmartQuote=null;
    $('smartSingleAdults').max=String(Number.isInteger(party.adults)&&party.adults>=0?party.adults:0);
    if(!Number.isInteger(n)||n<1||n>100||!Number.isInteger(solo)||solo<0||solo>party.adults){
@@ -3023,19 +3022,19 @@
    if($('polarAnniversaryOption').value==='upgrade2500'){
      box.innerHTML='<div class="smartDealEmpty">当前选择的是已报名客户升舱补差价，不是全程新订单价格，不能与其他舱型总价直接比较。请切换常规报价后使用智能成交方案。</div>';return false;
    }
-   const paired=n-solo;
+   const effectiveSolo=solo===0&&n%2===1&&party.adults>=1?1:solo;
+   const paired=n-effectiveSolo;
    if(solo>0&&paired%2!==0){
      box.innerHTML='<div class="smartDealEmpty">当前分房人数无法配平：'+paired+'位剩余旅客不能按双人间分配。请调整单人独住人数，或在原入住方式中选择适用的三人同舱方案。</div>';return false;
    }
-   if(solo===0&&n%2!==0&&n<3){
-     box.innerHTML='<div class="smartDealEmpty">1位旅客需要设置为单人独住，系统才能计算单房差。</div>';return false;
-   }
    const candidates=[],manual=[],opportunities=[];
    for(const c of r.cabins||[]){
+     if(modeFixed&&c.id!==fixedId)continue;
+     if(P.isFixedTriple(c)&&n%3!==0)continue;
      const cabinSoldOut=c.soldOut===true||c.note==='soldout'||/售罄/.test(c.name||'');
      const cabinWaitlist=c.waitlist===true||c.note==='waitlist'||/候补/.test(c.name||'');
      if(cabinSoldOut||cabinWaitlist||!Number.isFinite(c.price)||c.price<=0)continue;
-     if(solo>0){
+     if(effectiveSolo>0){
        if(['a1122','a1204'].includes(r.id)&&c.id==='5o'){
          opportunities.push('5层海景有邮轮段原价25%单房差专项（限5席），但陆地段单房差金额未提供；这可能比常规全程70%单房差更优惠，须向产品部确认陆地金额后才能计算最终价。');
          continue;
@@ -3055,30 +3054,33 @@
        }
        const raw=Number.isFinite(q.rawOffer)?q.rawOffer:q.offer;
        const per=q.singleSupplement/n;
-       const actualSingle=per*solo;
+       const actualSingle=per*effectiveSolo;
        const total=Math.round(raw-q.singleSupplement+actualSingle);
        if(!Number.isFinite(total)||total<0)continue;
        const smartQ={...q,offer:total,rawOffer:raw-q.singleSupplement+actualSingle,singleSupplement:actualSingle,stay:'mixed',rooms:solo+paired/2,copyOffer:true};
-       smartQ.policyName=(q.policyName||'按已录入政策计算')+'（仅'+solo+'位成人单独入住）';
+       smartQ.policyName=(q.policyName||'按已录入政策计算')+'（仅'+effectiveSolo+'位成人单独入住）';
        smartQ.steps=(q.steps||[]).map(x=>x.replace(/＋全程单房差[^：:]*[：:]?/g,'').replace(/常规单人住 · 原价加70%房差/g,'常规价格（单人入住不叠加普通折扣）').replace(/常规单人入住 · 原价×150%/g,'常规价格（单人入住不叠加早鸟折扣）')).filter(x=>!/(^全程单房差|^单房差|^单人入住房差|已知条件参考总额)/.test(x)&&!x.includes('本次报价合计'));
-       smartQ.steps.push('分房建议：'+(paired?Math.floor(paired/2)+'间双人房（'+paired+'人）＋':'')+solo+'间单人房（'+solo+'位成人）');
-       if(actualSingle>0)smartQ.steps.push('单房差：'+routeMoney(r,per)+'/位 × '+solo+'位独住成人 = +'+routeMoney(r,actualSingle));
+       smartQ.steps.push('分房建议：'+(paired?Math.floor(paired/2)+'间双人房（'+paired+'人）＋':'')+solo+'间单人房（'+effectiveSolo+'位成人）');
+       if(actualSingle>0)smartQ.steps.push('单房差：'+routeMoney(r,per)+'/位 × '+effectiveSolo+'位独住成人 = +'+routeMoney(r,actualSingle));
        else smartQ.steps.push('单房差：按已录入的明确政策免收。');
        smartQ.steps.push('智能最优方案总价：'+routeMoney(r,total));
        smartQ.warnings=(q.warnings||[]).filter(x=>!/(单房差|单人入住)/.test(x));
        smartQ.assumptions=(q.assumptions||[]).filter(x=>!/(单房差|单人入住)/.test(x));
-       smartQ.assumptions.push('按'+solo+'位成人单人入住，其余'+paired+'位旅客两人一间计算；请确认实际房间安排。');
-       const roomLabel=(paired?Math.floor(paired/2)+'间双人房（'+paired+'人）':'')+(paired&&solo?'＋':'')+(solo?solo+'间单人房（'+solo+'位成人）':'');
-       candidates.push({quote:smartQ,total,roomLabel,singlePer:per,kind:'mixed'});
+       smartQ.assumptions.push('按'+effectiveSolo+'位成人单人入住，其余'+paired+'位旅客两人一间计算；请确认实际房间安排。');
+       const roomLabel=(paired?Math.floor(paired/2)+'间双人房（'+paired+'人）':'')+(paired&&effectiveSolo?'＋':'')+(effectiveSolo?effectiveSolo+'间单人房（'+effectiveSolo+'位成人）':'');
+       candidates.push({quote:smartQ,total,roomLabel,singlePer:per,kind:'mixed',soloAdults:effectiveSolo});
      }else{
        if(n%2===0){
-         const bow=['b0118','b0130'].includes(r.id)&&c.id==='3p';
-         const q=smartPlanFor(r,c,n,party,'double',bow);
-         if(q.status==='ready'&&Number.isFinite(q.offer)){
-           const rooms=q.rooms||Math.ceil(n/2);
-           const roomLabel=q.upgradeTarget?'双人入住（'+rooms+'间）＋免费升舱至'+q.upgradeTarget:q.stay==='triple'?'按该舱型固定三人间规则入住':'双人入住（'+rooms+'间）';
-           candidates.push({quote:q,total:q.offer,roomLabel,singlePer:0,kind:q.stay==='triple'?'triple':'double'});
-         }else if(q.statusReason)manual.push(P.nameCabin(c)+'：'+q.statusReason);
+         const bowEligible=['b0118','b0130'].includes(r.id)&&c.id==='3p';
+         const promos=r.id==='c0708'?Array.from(new Set(['earlybird',...(atlasPromo==='gaokao'?['gaokao']:[]),...Object.entries(atlasUpgradeSources).filter(([name,id])=>id===c.id).map(([name])=>name)])):[null];
+         for(const promo of promos)for(const bow of (bowEligible?[false,true]:[false])){
+           const q=smartPlanFor(r,c,n,party,'double',bow,promo);
+           if(q.status==='ready'&&Number.isFinite(q.offer)){
+             const rooms=q.rooms||Math.ceil(n/2);
+             const roomLabel=q.upgradeTarget?'双人入住（'+rooms+'间）＋免费升舱至'+q.upgradeTarget:q.stay==='triple'?'按该舱型固定三人间规则入住':'双人入住（'+rooms+'间）';
+             candidates.push({quote:q,total:q.offer,roomLabel,singlePer:0,kind:q.stay==='triple'?'triple':'double'});
+           }else if(q.statusReason)manual.push(P.nameCabin(c)+'：'+q.statusReason);
+         }
        }else if(n>=3){
          // Odd-sized groups cannot be represented as two-person rooms without an explicitly entered solo room.
          // Only a source-supported triple/quad cabin may be evaluated below.
@@ -3100,51 +3102,32 @@
    }
    const opportunityHtml=opportunities.length?'<div class="smartDealOpportunity"><strong>可争取的优惠政策（待核价）</strong>'+opportunities.map(x=>'<p>'+esc(x)+'</p>').join('')+'</div>':'';
    if(!candidates.length){
-     const main=solo>0?'当前航次没有找到单房差金额及叠加规则均明确的可报价舱型。':'当前人数没有可核算的双人/三人房组合。';
+     const main=modeFixed?'指定房型暂无符合当前人数和政策的可核算报价。':'当前人数暂无可核算的分房方案。';
      const detail=manual.find(x=>/单房差|单人入住|第三人|候补|售罄/.test(x));
      box.innerHTML='<div class="smartDealEmpty">'+esc(main)+'系统不会擅自免除单房差或推定优惠可叠加。'+(detail?'<br>'+esc(detail):'')+' 请产品部确认缺失政策或分房条件。</div>'+opportunityHtml;
      return false;
    }
-   candidates.sort((a,b)=>a.total-b.total||a.singlePer-b.singlePer||a.quote.price-b.quote.price);
+   candidates.sort((a,b)=>a.total-b.total||Number(Boolean(b.quote.upgradeTarget))-Number(Boolean(a.quote.upgradeTarget))||a.singlePer-b.singlePer||a.quote.price-b.quote.price);
    const best=candidates[0];best.comparedCount=candidates.length;lastSmartQuote=best;
    const q=best.quote,expired=q.policy?.code==='expired';
-   const roomCount=q.rooms||1;
-   const singleInfo=best.kind==='mixed'?(best.singlePer===0?'按明确政策免单房差':'单房差'+routeMoney(r,best.singlePer)+'/位，仅计'+solo+'位独住成人'):'本方案无单人独住房间，不产生单房差';
-   const singleRatio=best.kind==='mixed'&&q.price>0?best.singlePer/q.price:null;
-   const singleBadge=best.kind==='mixed'?(singleRatio===0?'<span class="smartDealPill">免单房差</span>':singleRatio<=.30?'<span class="smartDealPill">低单房差政策</span>':'') : '';
-   const expiredText=expired?' · 政策已过期，仍按原政策计算':'';
-   const freeText=best.kind==='mixed'&&best.singlePer===0?'已按明确政策免单房差':'';
-   const why=best.kind==='mixed'
-     ?'系统只对实际单独入住的成人计入单房差；夫妻/同行双人入住部分不按全员独住收费。'
-     :q.upgradeTarget?'利用当前航次明确的免费升舱政策，按原舱型基础价测算。'
-     :best.kind==='triple'?'已比较该舱型三人/多人同舱政策与双人房组合。'
-     :'按该航次适用的成人、儿童、多人及专项优惠计算。';
-   const limitedPolicy=(q.warnings||[]).some(x=>/名额有限|额满即止/.test(x));
-   const salesTip=expired
-     ?'这组金额引用的优惠政策已过期。先向产品部确认是否延续，再向客户报最终成交价。'
-     :opportunities.length
-       ?'先用上方已核算方案给客户做预算，同时优先向产品部核实待确认的专项优惠；核实前不要把待核金额承诺给客户。'
-       :limitedPolicy
-         ?'当前方案涉及限量优惠。建议先核实名额，再向客户说明优惠条件及适用范围，避免把未锁定名额当作确定权益。'
-         :best.kind==='mixed'
-           ?'建议先说明分房逻辑：双人房按两人入住，只有实际独住的成人计单房差。'+(singleRatio!==null&&singleRatio<=.30?'本方案单房差比例较低，可作为沟通重点。':'')
-           :best.kind==='triple'
-             ?'如果客人接受三人同舱，优先展示这组总价；如果客人希望夫妻一间、朋友单住，把单人独住成人数改为实际人数再比较。'
-             :'先展示这组已核算总价，并说明所选舱型、入住方式和适用优惠。';
-   const top=candidates.slice(1,4);
-   const policyWarnings=(q.warnings||[]).slice(0,3);
-   box.innerHTML=
-     '<div class="smartDealWinner">'+
-       '<div class="smartDealKicker">系统推荐 · 已录入政策内最低测算价（比较'+candidates.length+'种组合）</div>'+
-       '<div class="smartDealAmount">'+routeMoney(r,best.total)+'</div>'+singleBadge+
-       '<div class="smartDealCabin">'+esc(P.nameCabin(q.cabin))+(q.upgradeTarget?' → '+esc(q.upgradeTarget):'')+'</div>'+
-       '<div class="smartDealMeta">分房：'+esc(best.roomLabel)+'<br>优惠：'+esc(q.policyName||'按已录入政策计算')+'<br>单房差：'+esc(singleInfo)+'<br>人数：'+n+'人（成人'+party.adults+'，儿童'+party.children+'）<br>'+(q.standard>best.total?'较该舱型基础原价节省 '+routeMoney(r,q.standard-best.total):q.standard<best.total?'含入住附加费用后较基础原价增加 '+routeMoney(r,best.total-q.standard):'与基础原价持平')+'</div>'+
-       '<div class="smartDealWhy">'+esc(why)+(best.kind==='mixed'&&best.singlePer>0?'<br>当前已录入且可核算的舱型中未发现免单房差；系统已优先选择单房差成本较低的方案。':'')+(expired?'<br><strong>政策已过期</strong>，按原优惠试算。':'')+(freeText?'<br>'+esc(freeText):'')+(policyWarnings.length?'<br><strong>政策提示：</strong>'+policyWarnings.map(x=>esc(x)).join('；'):'')+'<br>余舱及实际房间分配仍须产品部确认。</div>'+
-       '<div class="smartDealSalesTip"><strong>销售沟通建议</strong>'+esc(salesTip)+'</div>'+
-       '<details class="smartDealBreakdown"><summary>展开最优方案计算明细</summary><div>'+q.steps.map(x=>'<p>'+esc(x)+'</p>').join('')+'</div></details>'+
-     '</div>'+
-     (top.length?'<div class="smartDealList">'+top.map((x,i)=>'<div class="smartDealOption"><span><strong>备选'+(i+1)+' · '+esc(P.nameCabin(x.quote.cabin))+'</strong><small>'+esc(x.roomLabel)+' · '+esc(x.quote.policyName||'按已录入政策计算')+'</small></span><b>'+routeMoney(r,x.total)+'</b></div>').join('')+'</div>':'')+
-     '<div class="smartDealWarning">只比较有明确价格、优惠和单房差计算依据的方案；未确认库存、缺少单房差政策或叠加口径不明的舱型不作为确定成交价。'+(manual.length?' 另有'+manual.length+'项房型因条件未明确未纳入自动排序。':'')+'</div>'+opportunityHtml;
+   const upgrades=candidates.filter(x=>x!==best&&x.quote.upgradeTarget).slice(0,2);
+   const itemLabel=(modeFixed?'指定房型：':'推荐房型：')+P.nameCabin(q.cabin)+(q.upgradeTarget?' → '+q.upgradeTarget:'');
+   const remark=expired?'政策已过期，仍按原优惠试算':q.upgradeTarget?'已计入免费升舱权益':best.kind==='mixed'&&best.singlePer===0?'已按明确政策免单房差':best.kind==='mixed'&&best.singlePer/q.price<=.30?'已计入较低单房差':'按可核实政策自动比价';
+   const alternatives=upgrades.length?'<p>其他升舱选项：'+upgrades.map(x=>esc(P.nameCabin(x.quote.cabin))+' → '+esc(x.quote.upgradeTarget)+'（'+routeMoney(r,x.total)+'）').join('；')+'</p>':'';
+   box.innerHTML='<div class="smartCompact">'+
+     '<div class="smartCompactMain"><div><div class="smartDealKicker">'+(modeFixed?'已选房型 · 定向优化':'未选房型 · 自动推荐')+' · 已比较'+candidates.length+'种方案</div><div class="smartCompactPrice">'+routeMoney(r,best.total)+'</div></div><div class="smartCompactAvg">'+routeMoney(r,best.total/n)+'/人</div></div>'+
+     '<div class="smartCompactCabin">'+esc(itemLabel)+'</div>'+
+     '<div class="smartCompactInfo">'+esc(best.roomLabel)+'</div>'+
+     '<div class="smartCompactNote">'+esc(remark)+'</div>'+
+     '<details class="smartCompactDetails"><summary>查看内部计算及待确认事项</summary>'+
+       '<p><strong>优惠：</strong>'+esc(q.policyName||'按已录入政策计算')+'</p>'+
+       (q.steps||[]).map(x=>'<p>'+esc(x)+'</p>').join('')+
+       (q.warnings||[]).map(x=>'<p>注意：'+esc(x)+'</p>').join('')+
+       alternatives+
+       (manual.length?'<p>'+manual.length+'条条件暂不可核算，未参与比价。</p>':'')+
+       (opportunities.length?'<p>'+opportunities.map(x=>esc(x)).join('；')+'</p>':'')+
+       '<p>实际余位及优惠资格须由产品部确认。</p>'+
+     '</details></div>';
    return true;
  }
 
