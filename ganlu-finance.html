@@ -3071,10 +3071,10 @@
        }
      }
    }
+   const opportunityHtml=opportunities.length?'<div class="smartDealOpportunity"><strong>可争取的优惠政策（待核价）</strong>'+opportunities.map(x=>'<p>'+esc(x)+'</p>').join('')+'</div>':'';
    if(!candidates.length){
      const main=solo>0?'当前航次没有找到单房差金额及叠加规则均明确的可报价舱型。':'当前人数没有可核算的双人/三人房组合。';
      const detail=manual.find(x=>/单房差|单人入住|第三人|候补|售罄/.test(x));
-     const opportunityHtml=opportunities.length?'<div class="smartDealOpportunity"><strong>可争取的优惠政策（待核价）</strong>'+opportunities.map(x=>'<p>'+esc(x)+'</p>').join('')+'</div>':'';
      box.innerHTML='<div class="smartDealEmpty">'+esc(main)+'系统不会擅自免除单房差或推定优惠可叠加。'+(detail?'<br>'+esc(detail):'')+' 请产品部确认缺失政策或分房条件。</div>'+opportunityHtml;
      return false;
    }
