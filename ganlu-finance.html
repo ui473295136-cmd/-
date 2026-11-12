@@ -210,7 +210,7 @@
   <details class="voyageCabinPrices"><summary>查看本航次全部房型原价</summary><div id="priceList"></div></details>
  </details>
 </section>
-<div class="field"><label for="cabin">② 楼层 · 房型（可不选）</label><select id="cabin"></select><p class="smallinfo">不选：自动推荐；已选：只优化指定房型的价格与权益。</p></div>
+<div class="field" id="cabinField"><label for="cabin">② 楼层 · 房型（可不选）</label><select id="cabin"></select><p class="smallinfo">不选：自动推荐；已选：只优化指定房型的价格与权益。</p></div>
 <div class="field hide polarBowUpgradeWrap" id="polarBowUpgradeWrap">
   <label><input id="polarBowUpgrade" type="checkbox">按原价免费升5层船头海景（0118与立减2000二选一）</label>
   <small>0118默认3层舷窗每人立减2000，不打折；选中本项则改按原价免费升5层船头，不叠加减2000。0130保持原价免费升舱。实际房号由产品部确认。</small>
@@ -240,7 +240,7 @@
 </div>
 <div class="field hide" id="gaokaoCountWrap"><label for="gaokaoCount">应届高考生人数</label><input id="gaokaoCount" type="number" inputmode="numeric" min="1" max="100" value="1" step="1"><p class="smallinfo">其余同行人按正常早鸟政策测算；高考生需提供证明。</p></div>
 <div class="field" id="partyCountsField"><div class="fLabel">③ 出行人数</div><div class="partyCounterGrid"><div class="partyCounterCard"><label for="adultCount">成人</label><div class="inlineCount"><button class="step" type="button" id="minus" aria-label="减少1位成人">−</button><input id="adultCount" type="number" inputmode="numeric" value="2" min="1" max="100" step="1"><button class="step" type="button" id="plus" aria-label="增加1位成人">＋</button></div></div><div class="partyCounterCard"><label for="childCount">儿童</label><div class="inlineCount"><button class="step" type="button" id="childMinus" aria-label="减少1位儿童">−</button><input id="childCount" type="number" inputmode="numeric" value="0" min="0" max="100" step="1"><button class="step" type="button" id="childPlus" aria-label="增加1位儿童">＋</button></div></div></div><input id="people" type="hidden" value="2"><p class="smallinfo" id="partyTotal">合计2人（成人2人，儿童0人）</p><div class="quick"><span>快捷成人数</span><button type="button" data-people="1">1成人</button><button type="button" data-people="2">2成人</button><button type="button" data-people="3">3成人</button><button type="button" data-people="4">4成人</button><button type="button" data-people="6">6成人</button><button type="button" data-people="8">8成人</button></div><p class="smallinfo" id="partyPolicyHint">儿童计价按所选航次的明确政策处理；政策未明确时不会猜算。</p>
-<div class="smartDealInput">
+<div class="smartDealInput" id="smartSoloWrap">
  <div class="smartDealInputRow"><label for="smartSingleAdults">单人独住成人数（智能分房）</label><input id="smartSingleAdults" type="number" min="0" max="100" step="1" value="0" inputmode="numeric"></div>
  <p class="smartDealHelp">选填。3位成人如需夫妻一间、朋友独住，填1；不填则自动比较可核算的入住方案。</p>
 </div>
@@ -2829,6 +2829,15 @@
  if(savedSign&&typeof savedSign==='object'&&savedSign.drawn===true&&typeof savedSign.day==='string')drawnDay=savedSign.day;
  const route=()=>data.find(r=>r.id===$('route').value)||data[0];
  const cabin=()=>route().cabins.find(c=>c.id===$('cabin').value)||route().cabins[0];
+ const smartAvailableCabins=r=>(r?.cabins||[]).filter(c=>Number.isFinite(c.price)&&c.price>0&&!c.soldOut&&!c.waitlist&&c.note!=='soldout'&&c.note!=='waitlist');
+ const routeNeedsCabinChoice=r=>!['USD','EUR'].includes(r.currency)&&smartAvailableCabins(r).length>1;
+ function updateSmartVisibility(r,ready){
+   const choice=routeNeedsCabinChoice(r);
+   $('cabinField').classList.toggle('hide',!choice);
+   $('smartSoloWrap').classList.toggle('hide',!choice);
+   $('smartDealPanel').classList.toggle('hide',!choice||!ready);
+ }
+
  const routeMoney=(r,amount)=>amount===null||!Number.isFinite(Number(amount))?'待确认':(r.currency==='EUR'?'€':r.currency==='USD'?'US$':'¥')+Number(amount).toLocaleString('zh-CN',{maximumFractionDigits:2});
  const cabinPriceLabel=(r,c)=>{
    if(c.waitlist)return '候补 · 暂无报价';
@@ -3015,6 +3024,7 @@
    $('smartFixedMode').classList.toggle('active',modeFixed);
    $('smartFixedMode').setAttribute('aria-pressed',String(modeFixed));
    lastSmartQuote=null;
+   if(!routeNeedsCabinChoice(r))return false;
    $('smartSingleAdults').max=String(Number.isInteger(party.adults)&&party.adults>=0?party.adults:0);
    if(!Number.isInteger(n)||n<1||n>100||!Number.isInteger(solo)||solo<0||solo>party.adults){
      box.innerHTML='<div class="smartDealEmpty">请检查人数及单人独住成人数。单人独住人数不能超过成人总数。</div>';return false;
@@ -3166,7 +3176,8 @@
    $('ponantSelfFlight').checked=false;$('ponantVisaType').value='included';$('ponantSelfInsurance').checked=false;
    ['atlasSelfSchengen','atlasSelfGreenland','atlasSelfFlight','atlasSelfInsurance'].forEach(id=>$(id).checked=false);
    $('cabin').innerHTML='<option value="">未选择房型 · 自动推荐最优报价</option>'+r.cabins.slice().sort((a,b)=>(a.deck||99)-(b.deck||99)).map(c=>`<option value="${esc(c.id)}">${esc(P.nameCabin(c))} · ${esc(cabinPriceLabel(r,c))}</option>`).join('');
-   $('cabin').value='';$('polarBowUpgrade').checked=false;updateStay();updateAtlasPromoUI();render();
+   $('cabin').value=routeNeedsCabinChoice(r)?'':(smartAvailableCabins(r)[0]?.id||r.cabins[0]?.id||'');
+   $('polarBowUpgrade').checked=false;updateStay();updateAtlasPromoUI();render();
  }
  function onCabin(){
    $('polarBowUpgrade').checked=false;
@@ -3211,6 +3222,7 @@
    $('routeOverview').innerHTML=`<b>${esc(formatRouteTitle(r))}</b><div class="underRoute">${esc(cabinSummary)} · ${Number.isFinite(q.people)?q.people:'—'}人（成人${Number.isFinite(q.adults)?q.adults:'—'}，儿童${Number.isFinite(q.children)?q.children:'—'}） · ${customer==='old'?'老客户':'新客户'} · ${esc(staySummary)}${q.shipOnly?' · 单船票':''}</div>`;
    const ready=q.status==='ready'&&Boolean($('cabin').value)&&Number($('smartSingleAdults').value)===0&&!c.soldOut&&!c.waitlist&&!['EUR','USD'].includes(r.currency)&&(!P.isFixedTriple(c)||num()%3===0);
    const smartReady=renderSmartRecommendation(r,party);
+   updateSmartVisibility(r,smartReady);
    const smartBest=smartReady?lastSmartQuote:null;
    const displayQ=smartBest?smartBest.quote:q;
    const displayCabin=displayQ.cabin||c;
