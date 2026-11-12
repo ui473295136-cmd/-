@@ -3014,8 +3014,12 @@
          manual.push('3层舷窗可免费升至5层船头海景，但该升舱与5层以上25%单房差的叠加适用范围未明确，暂不自动报价。');
          continue;
        }
+       if(P.isFixedTriple(c)){
+         manual.push(P.nameCabin(c)+'：固定三人舱不按单人房差规则自动估算。');
+         continue;
+       }
        const q=smartPlanFor(r,c,n,party,'single',false);
-       if(q.status!=='ready'||!Number.isFinite(q.singleSupplement)){
+       if(q.status!=='ready'||q.stay!=='single'||!Number.isFinite(q.singleSupplement)){
          if(q.statusReason)manual.push(P.nameCabin(c)+'：'+q.statusReason);
          continue;
        }
@@ -3026,7 +3030,7 @@
        if(!Number.isFinite(total)||total<0)continue;
        const smartQ={...q,offer:total,rawOffer:raw-q.singleSupplement+actualSingle,singleSupplement:actualSingle,stay:'mixed',rooms:solo+paired/2,copyOffer:true};
        smartQ.policyName=(q.policyName||'按已录入政策计算')+'（仅'+solo+'位成人单独入住）';
-       smartQ.steps=(q.steps||[]).filter(x=>!/(单房差|单人入住|单人入住房差)/.test(x)&&!x.includes('本次报价合计'));
+       smartQ.steps=(q.steps||[]).filter(x=>!/(单房差|单人入住|单人入住房差|已知条件参考总额)/.test(x)&&!x.includes('本次报价合计'));
        smartQ.steps.push('分房建议：'+(paired?Math.floor(paired/2)+'间双人房（'+paired+'人）＋':'')+solo+'间单人房（'+solo+'位成人）');
        if(actualSingle>0)smartQ.steps.push('单房差：'+routeMoney(r,per)+'/位 × '+solo+'位独住成人 = +'+routeMoney(r,actualSingle));
        else smartQ.steps.push('单房差：按已录入的明确政策免收。');
@@ -3047,7 +3051,7 @@
          }else if(q.statusReason)manual.push(P.nameCabin(c)+'：'+q.statusReason);
        }
      }
-     if(solo===0&&n>=3&&P.hasThirdBed(r,c)){
+     if(solo===0&&n>=3&&Number(c.capacity)>=3){
        const q=smartPlanFor(r,c,n,party,'triple',false);
        if(q.status==='ready'&&Number.isFinite(q.offer)){
          if(!candidates.some(x=>x.quote.cabin.id===c.id&&x.kind==='triple')){
@@ -3067,7 +3071,7 @@
    const best=candidates[0];lastSmartQuote=best;
    const q=best.quote,expired=q.policy?.code==='expired';
    const roomCount=q.rooms||1;
-   const singleInfo=best.kind==='mixed'?(best.singlePer===0?'明确免单房差':'单房差'+routeMoney(r,best.singlePer)+'/位，仅计'+solo+'位独住成人'):'无单人独住房差';
+   const singleInfo=best.kind==='mixed'?(best.singlePer===0?'按明确政策免单房差':'单房差'+routeMoney(r,best.singlePer)+'/位，仅计'+solo+'位独住成人'):'本方案无单人独住房间，不产生单房差';
    const expiredText=expired?' · 政策已过期，仍按原政策计算':'';
    const freeText=best.kind==='mixed'&&best.singlePer===0?'已按明确政策免单房差':'';
    const why=best.kind==='mixed'
