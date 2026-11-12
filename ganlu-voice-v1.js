@@ -76,7 +76,7 @@
    if(adults===null&&/一对夫妻/.test(t)){
      adults=2;
      const afterCouple=t.split('一对夫妻')[1]||'';
-     const extra=afterCouple.match(new RegExp(numPat+'\\s*(?:位|个|名 )?\\s*(?:男生|女生|男人|女人|朋友|同事|客人|成人)(?:同行|单住|独住)?'));
+     const extra=afterCouple.match(new RegExp(numPat+'\\s*(?:位|个|名)?\\s*(?:男生|女生|男人|女人|朋友|同事|客人|成人)(?:同行|单住|独住)?'));
      if(extra&&children===null)adults+=cnNum(extra[1])||0;
    }
    if(total===null&&adults===null){
