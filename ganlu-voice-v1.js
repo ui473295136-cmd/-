@@ -27,7 +27,7 @@
  let recognition=null,listening=false,lastReply=null, speak=false;
  const status=s=>{const el=$('voiceStatus');if(el)el.textContent=s;};
  function routeFromText(raw){
-   const t=raw.replace(/\s+/g,'').replace(/０/g,'0');
+   const t=raw.replace(/\s+/g,' ').replace(/０/g,'0');
    let date=null,year=null;
    let m=t.match(/(20\d{2})[年.\-/](\d{1,2})[月.\-/](\d{1,2})/);
    if(m){year=Number(m[1]);date=String(m[2]).padStart(2,'0')+String(m[3]).padStart(2,'0');}
@@ -54,7 +54,7 @@
    return {route:routes().find(r=>r.id===state.routeId)||null,specified:false};
  }
  function partyFromText(text){
-   const t=text.replace(/\s+/g,'');
+   const t=text.replace(/\s+/g,'').replace(/(?:二|两|三|四|2|3|4)人(?:海景|间|舱|房)/g,'房型');
    let adults=null,children=null,total=null,solo=null;
    const pair=t.match(new RegExp(numPat+'\\s*(?:位|个)?\\s*(?:大|成人|大人)\\s*'+numPat+'\\s*(?:位|个)?\\s*(?:小|儿童|小孩|孩子)'));
    if(pair){adults=cnNum(pair[1]);children=cnNum(pair[2]);}
@@ -202,7 +202,9 @@
      recognition.onstart=()=>{listening=true;$('voiceMic').classList.add('recording');status('正在倾听，请说出人数、航次和房型…');};
      recognition.onresult=e=>{
        let words='';
-       for(let i=0;i<e.results.length;i++){words+=e.results[i][0].transcript;if(e.results[i].isFinal)finalTranscript+=e.results[i][0].transcript;}
+       let finalWords='';
+       for(let i=0;i<e.results.length;i++){words+=e.results[i][0].transcript;if(e.results[i].isFinal)finalWords+=e.results[i][0].transcript;}
+       if(finalWords)finalTranscript=finalWords;
        $('voiceText').value=words;
      };
      recognition.onerror=e=>{status(e.error==='not-allowed'?'麦克风权限被拒绝，可在浏览器地址栏允许后重试。':'识别失败（'+e.error+'），也可以直接打字。');};
