@@ -176,6 +176,10 @@
 .smartCompactDetails summary{font-size:11px;font-weight:650;cursor:pointer}
 .smartCompactDetails p{margin:5px 0;line-height:1.55}
 @media(max-width:370px){.smartDealModes button{font-size:11px}.smartCompactPrice{font-size:23px}}
+.quoteMathFold,.quoteIssuesFold{margin:10px 0;border:1px solid #e7d8c1;border-radius:11px;background:#fffdf9;padding:0 12px}
+.quoteMathFold>summary,.quoteIssuesFold>summary{cursor:pointer;font-weight:680;font-size:12px;color:#79634f;padding:10px 0}
+.quoteMathFold[open]>summary,.quoteIssuesFold[open]>summary{border-bottom:1px solid #eee2d0;margin-bottom:10px}
+.quoteIssuesFold>.issues{margin:8px 0 12px}
 </style><link rel="stylesheet" href="./ganlu-policy-desk-v9.css?v=20261021-v11-layout"><link rel="stylesheet" href="./ganlu-social-v1.css?v=20261022-compact3"><link rel="stylesheet" href="./ganlu-edicts-v8.css?v=20261021-v8c"><link rel="stylesheet" href="./ganlu-polar-quest-v1.css?v=20261022-completions1"><link rel="stylesheet" href="./ganlu-mini-banner-v1.css?v=20261022-desktop-position2"></head><body>
 <header class="mast"><div class="petals" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <svg class="roofArt" viewBox="0 0 400 220" aria-hidden="true"><g fill="none" stroke="#e7d2ad" stroke-linecap="round" stroke-linejoin="round"><path d="M26 128 Q122 120 193 70 Q253 115 369 115" stroke-width="5"/><path d="M42 142 Q125 132 193 88 Q251 127 354 127" stroke-width="2"/><path d="M76 143 L76 220 M326 133 L326 220 M111 137 L111 220 M291 134 L291 220" stroke-width="6"/><path d="M74 164 H329 M99 183 H302 M154 165 V220 M247 166 V220" stroke-width="2"/><path d="M20 132 Q47 140 66 130 M351 125 Q373 135 392 125" stroke-width="2"/><path d="M164 86 Q193 40 218 82 M165 85 Q195 69 218 83" stroke-width="3"/></g><g fill="#e1c69d" opacity=".18"><path d="M55 141 L195 81 L350 135 L350 220 L55 220Z"/></g></svg>
@@ -344,8 +348,8 @@
 <div class="quote secondary"><div class="head" id="normalLabel">原价</div><div class="amount" id="normalTotal">—</div><div class="person" id="normalAvg">—</div><div class="context" id="normalContext">基于行程册原价及能确认的入住附加费</div></div></div>
 <div id="fxPricePanel" class="fxPricePanel hide"></div><div id="groupBanner" class="statusLine hidden"></div>
 <div class="copygrid"><button type="button" class="copy primary" id="copyCustomer">复制简洁客户报价</button><button type="button" class="quoteEdictBtn" id="openQuoteEdict">📜 生成报价圣旨</button></div>
-<div class="how"><h3>报价计算明细</h3><div class="formula" id="explanation">—</div><div class="detailedTitle" id="standardTitle">原价计算</div><div class="stdExplain" id="standardFormula">—</div></div>
-<div id="issues" class="issues"></div>
+<details class="how quoteMathFold"><summary>内部报价计算明细 · 点击展开</summary><div class="formula" id="explanation">—</div><div class="detailedTitle" id="standardTitle">原价计算</div><div class="stdExplain" id="standardFormula">—</div></details>
+<details id="quoteIssuesFold" class="quoteIssuesFold"><summary>内部核价提醒 · 点击展开</summary><div id="issues" class="issues"></div></details>
 </section></div>
 <section class="ganluAdCarousel" id="ganluAdCarousel" aria-label="广告位轮播展示">
  <span class="ganluAdLabel">AD · 广告招商</span>
@@ -3242,6 +3246,7 @@
    $('standardTitle').textContent=smartReady?'推荐方案原价计算':q.anniversaryUpgradeOnly?'已报名房型原价参考':'原价计算';
    $('standardFormula').innerHTML=(displayQ.standardSteps?.length?displayQ.standardSteps:['尚无可计算的原价。']).map(line=>`<div>${esc(line)}</div>`).join('');
    const issueQ=smartReady?displayQ:q;
+   $('quoteIssuesFold').open=!displayReady&&issueQ.errors.length>0;
    $('issues').innerHTML=issueQ.errors.map(line=>`<div class="issue error">${esc(line)}</div>`).concat(issueQ.warnings.map(line=>`<div class="issue">${esc(line)}</div>`),issueQ.assumptions.map(line=>`<div class="issue hint">${esc(line)}</div>`)).join('');
    $('copyCustomer').disabled=!displayReady;
    for(const b of document.querySelectorAll('button[data-people]')){const active=Number(b.dataset.people)===q.adults&&q.children===0;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));}
