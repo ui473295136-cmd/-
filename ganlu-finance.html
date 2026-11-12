@@ -3205,7 +3205,7 @@
    const cabinSummary=q.anniversaryUpgradeOnly?`${P.nameCabin(c)} → ${q.upgradeTarget}`:q.upgradeTarget?`${P.nameCabin(c)} · 免费升舱至${q.upgradeTarget}`:P.nameCabin(c);
    const staySummary=r.id==='c0708'&&q.stay==='triple'?'三/四人同舱':P.stayName(q.stay);
    $('routeOverview').innerHTML=`<b>${esc(formatRouteTitle(r))}</b><div class="underRoute">${esc(cabinSummary)} · ${Number.isFinite(q.people)?q.people:'—'}人（成人${Number.isFinite(q.adults)?q.adults:'—'}，儿童${Number.isFinite(q.children)?q.children:'—'}） · ${customer==='old'?'老客户':'新客户'} · ${esc(staySummary)}${q.shipOnly?' · 单船票':''}</div>`;
-   const ready=q.status==='ready'&&Boolean($('cabin').value);
+   const ready=q.status==='ready'&&Boolean($('cabin').value)&&Number($('smartSingleAdults').value)===0&&(!P.isFixedTriple(c)||num()%3===0);
    const smartReady=renderSmartRecommendation(r,party);
    const smartBest=smartReady?lastSmartQuote:null;
    const displayQ=smartBest?smartBest.quote:q;
@@ -3291,7 +3291,7 @@
    $('destinationYears').addEventListener('click',e=>{const b=e.target.closest('button[data-year]');if(!b)return;setDestinationFilters(null,b.dataset.year);});
    $('route').addEventListener('change',onRoute);$('cabin').addEventListener('change',onCabin);
    $('smartAutoMode').addEventListener('click',()=>{$('cabin').value='';onCabin();});
-   $('smartFixedMode').addEventListener('click',()=>{if(!$('cabin').value){const picked=route().cabins.find(x=>Number.isFinite(x.price)&&!x.soldOut&&!x.waitlist)||route().cabins[0];$('cabin').value=picked.id;}onCabin();});$('adultCount').addEventListener('input',render);$('childCount').addEventListener('input',render);$('smartSingleAdults').addEventListener('input',render);
+   $('smartFixedMode').addEventListener('click',()=>{if(!$('cabin').value){const people=getPartyOptions().adults+getPartyOptions().children;const picked=route().cabins.find(x=>Number.isFinite(x.price)&&!x.soldOut&&!x.waitlist&&(!P.isFixedTriple(x)||people%3===0))||route().cabins[0];$('cabin').value=picked.id;}onCabin();});$('adultCount').addEventListener('input',render);$('childCount').addEventListener('input',render);$('smartSingleAdults').addEventListener('input',render);
    $('voyagePolicyDetails').addEventListener('toggle',()=>{$('voyagePolicyDetails').querySelector('.voyagePolicyArrow').textContent=$('voyagePolicyDetails').open?'收起 ↑':'展开全部 '+route().notes.length+' 条 ↓';});
    ['ponantSelfFlight','ponantSelfInsurance'].forEach(id=>$(id).addEventListener('change',render));
    $('ponantVisaType').addEventListener('change',render);
