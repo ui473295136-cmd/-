@@ -120,7 +120,7 @@
    if(!found.length)return {notFound:true,floor,kind,specified:true};
    const available=found.filter(c=>!c.soldOut&&!c.waitlist&&Number.isFinite(c.price));
    if(available.length===1)return {selected:available[0].id,specified:true};
-   if(available.length>1)return {ambiguous:available.slice(0,6),specified:true};
+   if(available.length>1)return {ambiguous:available.slice(0,6),floor,kind,specified:true};
    return {unavailable:found,specified:true};
  }
  function message(type,content,copyValue=null,suggestions=[]){
