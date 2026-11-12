@@ -153,6 +153,8 @@
 .smartDealOpportunity{margin-top:9px;padding:10px 11px;border:1px dashed #caa875;border-radius:10px;background:#fff8ec;color:#785b36;font-size:10px;line-height:1.65}
 .smartDealOpportunity strong{display:block;font-size:11px;margin-bottom:4px}
 .smartDealOpportunity p{margin:4px 0}
+.smartDealSalesTip{margin-top:9px;padding:10px 11px;border-radius:10px;background:#f4f7f5;border:1px solid #dce7df;color:#4e6658;font-size:11px;line-height:1.7}
+.smartDealSalesTip strong{display:block;font-size:11px;margin-bottom:3px;color:#3e5a48}
 .smartDealBreakdown summary{cursor:pointer;font-weight:700;color:#795b39}
 .smartDealBreakdown p{margin:5px 0;line-height:1.55}
 .smartDealEmpty{padding:12px;border-radius:10px;background:#f8f4ed;color:#786a59;font-size:11px;line-height:1.7}
@@ -3101,6 +3103,18 @@
      :q.upgradeTarget?'利用当前航次明确的免费升舱政策，按原舱型基础价测算。'
      :best.kind==='triple'?'已比较该舱型三人/多人同舱政策与双人房组合。'
      :'按该航次适用的成人、儿童、多人及专项优惠计算。';
+   const limitedPolicy=(q.warnings||[]).some(x=>/名额有限|额满即止/.test(x));
+   const salesTip=expired
+     ?'这组金额引用的优惠政策已过期。先向产品部确认是否延续，再向客户报最终成交价。'
+     :opportunities.length
+       ?'先用上方已核算方案给客户做预算，同时优先向产品部核实待确认的专项优惠；核实前不要把待核金额承诺给客户。'
+       :limitedPolicy
+         ?'当前方案涉及限量优惠。建议先核实名额，再向客户说明优惠条件及适用范围，避免把未锁定名额当作确定权益。'
+         :best.kind==='mixed'
+           ?'建议先说明分房逻辑：双人房按两人入住，只有实际独住的成人计单房差。'+(singleRatio!==null&&singleRatio<=.30?'本方案单房差比例较低，可作为沟通重点。':'')
+           :best.kind==='triple'
+             ?'如果客人接受三人同舱，优先展示这组总价；如果客人希望夫妻一间、朋友单住，把单人独住成人数改为实际人数再比较。'
+             :'先展示这组已核算总价，并说明所选舱型、入住方式和适用优惠。';
    const top=candidates.slice(1,4);
    const policyWarnings=(q.warnings||[]).slice(0,3);
    box.innerHTML=
@@ -3110,6 +3124,7 @@
        '<div class="smartDealCabin">'+esc(P.nameCabin(q.cabin))+(q.upgradeTarget?' → '+esc(q.upgradeTarget):'')+'</div>'+
        '<div class="smartDealMeta">分房：'+esc(best.roomLabel)+'<br>优惠：'+esc(q.policyName||'按已录入政策计算')+'<br>单房差：'+esc(singleInfo)+'<br>人数：'+n+'人（成人'+party.adults+'，儿童'+party.children+'）<br>'+(q.standard>best.total?'较该舱型基础原价节省 '+routeMoney(r,q.standard-best.total):q.standard<best.total?'含入住附加费用后较基础原价增加 '+routeMoney(r,best.total-q.standard):'与基础原价持平')+'</div>'+
        '<div class="smartDealWhy">'+esc(why)+(best.kind==='mixed'&&best.singlePer>0?'<br>当前已录入且可核算的舱型中未发现免单房差；系统已优先选择单房差成本较低的方案。':'')+(expired?'<br><strong>政策已过期</strong>，按原优惠试算。':'')+(freeText?'<br>'+esc(freeText):'')+(policyWarnings.length?'<br><strong>政策提示：</strong>'+policyWarnings.map(x=>esc(x)).join('；'):'')+'<br>余舱及实际房间分配仍须产品部确认。</div>'+
+       '<div class="smartDealSalesTip"><strong>销售沟通建议</strong>'+esc(salesTip)+'</div>'+
        '<details class="smartDealBreakdown"><summary>展开最优方案计算明细</summary><div>'+q.steps.map(x=>'<p>'+esc(x)+'</p>').join('')+'</div></details>'+
      '</div>'+
      (top.length?'<div class="smartDealList">'+top.map((x,i)=>'<div class="smartDealOption"><span><strong>备选'+(i+1)+' · '+esc(P.nameCabin(x.quote.cabin))+'</strong><small>'+esc(x.roomLabel)+' · '+esc(x.quote.policyName||'按已录入政策计算')+'</small></span><b>'+routeMoney(r,x.total)+'</b></div>').join('')+'</div>':'')+
