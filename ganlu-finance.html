@@ -180,6 +180,38 @@
 .quoteMathFold>summary,.quoteIssuesFold>summary{cursor:pointer;font-weight:680;font-size:12px;color:#79634f;padding:10px 0}
 .quoteMathFold[open]>summary,.quoteIssuesFold[open]>summary{border-bottom:1px solid #eee2d0;margin-bottom:10px}
 .quoteIssuesFold>.issues{margin:8px 0 12px}
+/* Siri-like quote assistant · compact mobile-first */
+.voiceFloating{position:fixed;z-index:79;right:18px;bottom:max(18px,env(safe-area-inset-bottom));display:flex;align-items:center;gap:7px;padding:10px 16px;border:1px solid #c7a875;border-radius:99px;background:linear-gradient(135deg,#775944,#9d7d58);box-shadow:0 9px 26px rgba(66,44,27,.23);color:#fffaf0;font:700 13px/1.45 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;cursor:pointer}
+.voiceFloating span{font-size:17px}
+.voiceFloating:focus-visible,.voicePanel button:focus-visible,.voicePanel input:focus-visible{outline:3px solid #c19e6d;outline-offset:2px}
+.voicePanel[hidden]{display:none!important}
+.voicePanel{position:fixed;z-index:80;bottom:max(70px,calc(env(safe-area-inset-bottom) + 58px));right:18px;width:min(410px,calc(100vw - 28px));height:min(560px,calc(100dvh - 95px));min-height:310px;display:flex;flex-direction:column;border-radius:18px;overflow:hidden;background:#fffcf7;border:1px solid #d9c4a6;box-shadow:0 25px 75px rgba(46,34,22,.27);font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+.voiceHead{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;background:linear-gradient(120deg,#68503e,#8e7152);color:#fff}
+.voiceHead strong{display:block;font-size:15px;line-height:1.3}
+.voiceHead small{display:block;color:#efe3d0;font-size:10px;margin-top:3px}
+.voiceHead button{font-size:27px;line-height:1;color:#fff;background:none;border:0;cursor:pointer;width:34px;height:34px}
+.voiceMessages{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:11px;padding:13px 13px 20px;background:radial-gradient(circle at top,#fffaf0,#f8f2e9);overscroll-behavior:contain}
+.voiceBubble{max-width:96%;padding:10px 12px;border-radius:12px;background:#fff;border:1px solid #e8ddcc;color:#514437;font-size:12px;line-height:1.65;overflow-wrap:anywhere}
+.voiceBubble.fromUser{align-self:flex-end;max-width:88%;background:#eee1ce;border-color:#dec7a5}
+.voiceBubble.fromBot{align-self:flex-start}
+.voiceBubbleText{white-space:pre-wrap;user-select:text}
+.voiceBubbleActions,.voiceBubbleChoices{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.voiceBubbleActions button,.voiceBubbleChoices button{border:1px solid #d9c4a4;border-radius:8px;background:#fffaf2;color:#71543a;font-size:11px;padding:6px 8px;cursor:pointer}
+.voiceBottom{padding:10px 12px 12px;background:#fff;border-top:1px solid #e5d6bf}
+.voiceInputRow{display:flex;align-items:center;gap:6px}
+.voiceInputRow input{min-width:0;flex:1;height:40px;border:1px solid #decdb4;border-radius:9px;font:13px -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;padding:0 9px;color:#493a2c;background:#fffdf9}
+.voiceInputRow button{height:40px;border-radius:9px;border:1px solid #d9c5a7;background:#f7f0e4;font-size:12px;color:#57422f;padding:0 10px;cursor:pointer;white-space:nowrap}
+.voiceInputRow #voiceMic{width:41px;padding:0;font-size:19px}
+.voiceInputRow #voiceMic.recording{border-color:#c56e60;background:#fce9e6;box-shadow:0 0 0 4px rgba(197,110,96,.12);animation:voicePulse 1.2s ease-in-out infinite}
+.voiceInputRow #voiceSend{background:#826449;color:#fff;border-color:#826449;font-weight:700}
+.voiceActions{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11px;color:#77614e;margin-top:9px}
+.voiceActions label{display:flex;align-items:center;gap:4px}
+.voiceActions input{accent-color:#8c7459}
+.voiceActions button{font:inherit;background:transparent;border:0;color:#805d3d;text-decoration:underline;cursor:pointer;padding:0}
+.voiceStatus{font-size:10px;color:#91806c;line-height:1.45;margin-top:5px;min-height:15px}
+@keyframes voicePulse{50%{box-shadow:0 0 0 7px rgba(197,110,96,.03)}}
+@media(max-width:520px){.voiceFloating{right:12px;bottom:max(12px,env(safe-area-inset-bottom));padding:8px 12px}.voicePanel{right:8px;width:calc(100vw - 16px);bottom:max(62px,calc(env(safe-area-inset-bottom) + 55px));height:min(570px,calc(100dvh - 87px));border-radius:14px}}
+@media(prefers-reduced-motion:reduce){.voiceInputRow #voiceMic.recording{animation:none}}
 </style><link rel="stylesheet" href="./ganlu-policy-desk-v9.css?v=20261021-v11-layout"><link rel="stylesheet" href="./ganlu-social-v1.css?v=20261022-compact3"><link rel="stylesheet" href="./ganlu-edicts-v8.css?v=20261021-v8c"><link rel="stylesheet" href="./ganlu-polar-quest-v1.css?v=20261022-completions1"><link rel="stylesheet" href="./ganlu-mini-banner-v1.css?v=20261022-desktop-position2"></head><body>
 <header class="mast"><div class="petals" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <svg class="roofArt" viewBox="0 0 400 220" aria-hidden="true"><g fill="none" stroke="#e7d2ad" stroke-linecap="round" stroke-linejoin="round"><path d="M26 128 Q122 120 193 70 Q253 115 369 115" stroke-width="5"/><path d="M42 142 Q125 132 193 88 Q251 127 354 127" stroke-width="2"/><path d="M76 143 L76 220 M326 133 L326 220 M111 137 L111 220 M291 134 L291 220" stroke-width="6"/><path d="M74 164 H329 M99 183 H302 M154 165 V220 M247 166 V220" stroke-width="2"/><path d="M20 132 Q47 140 66 130 M351 125 Q373 135 392 125" stroke-width="2"/><path d="M164 86 Q193 40 218 82 M165 85 Q195 69 218 83" stroke-width="3"/></g><g fill="#e1c69d" opacity=".18"><path d="M55 141 L195 81 L350 135 L350 220 L55 220Z"/></g></svg>
@@ -3517,4 +3549,13 @@
 
 <script defer src="./ganlu-south-america-v1.js?v=20261110-expired-policy2"></script><script defer src="./ganlu-inventory-v1.js?v=20261105-stock3"></script>
 
+<button type="button" id="voiceOpen" class="voiceFloating" aria-controls="voicePanel" aria-expanded="false" title="语音或文字智能问价"><span aria-hidden="true">🎙</span> 语音问价</button>
+<section id="voicePanel" class="voicePanel" role="dialog" aria-modal="false" aria-labelledby="voiceTitle" hidden>
+ <div class="voiceHead"><div><strong id="voiceTitle">✦ 航次智能问价助手</strong><small>说话 / 打字 · 自动核算真实报价</small></div><button type="button" id="voiceClose" aria-label="关闭报价助手">×</button></div>
+ <div id="voiceMessages" class="voiceMessages" role="log" aria-live="polite" aria-relevant="additions"><div class="voiceBubble fromBot"><div class="voiceBubbleText">你好！可以问我：\n“三位成人报名1204，四层多少钱？有什么优惠？”\n\n我会根据航次、人数和房型调用网站现有的报价政策。</div></div></div>
+ <div class="voiceBottom"><div class="voiceInputRow"><input id="voiceText" type="text" autocomplete="off" enterkeyhint="send" placeholder="例如：3人报名1204四层多少钱" aria-label="输入航次报价问题"><button type="button" id="voiceMic" aria-label="开始语音输入" title="开始/停止语音识别">🎤</button><button type="button" id="voiceSend" aria-label="发送问题">发送</button></div>
+ <div class="voiceActions"><label><input id="voiceSpeak" type="checkbox"> 语音播报结果</label><button type="button" id="voiceCopy">复制上次客户报价</button></div>
+ <div id="voiceStatus" class="voiceStatus">识别功能由浏览器提供，无法使用时可直接打字</div></div>
+</section>
+<script defer src="./ganlu-voice-v1.js?v=20261112-v1"></script>
 </body></html>
