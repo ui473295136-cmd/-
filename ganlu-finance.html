@@ -3158,6 +3158,7 @@
    const best=candidates[0];best.comparedCount=candidates.length;lastSmartQuote=best;
    const q=best.quote,expired=q.policy?.code==='expired';
    const upgrades=candidates.filter(x=>x!==best&&x.quote.upgradeTarget).slice(0,2);
+   best.upgradeAlternatives=upgrades.map(x=>({target:x.quote.upgradeTarget,source:P.nameCabin(x.quote.cabin),total:x.total}));
    const itemLabel=(modeFixed?'指定房型：':'推荐房型：')+P.nameCabin(q.cabin)+(q.upgradeTarget?' → '+q.upgradeTarget:'');
    const remark=expired?'政策已过期，仍按原优惠试算':q.upgradeTarget?'已计入免费升舱权益':best.kind==='mixed'&&best.singlePer===0?'已按明确政策免单房差':best.kind==='mixed'&&best.singlePer/q.price<=.30?'已计入较低单房差':'按可核实政策自动比价';
    const alternatives=upgrades.length?'<p>其他升舱选项：'+upgrades.map(x=>esc(P.nameCabin(x.quote.cabin))+' → '+esc(x.quote.upgradeTarget)+'（'+routeMoney(r,x.total)+'）').join('；')+'</p>':'';
@@ -3166,6 +3167,7 @@
      '<div class="smartCompactCabin">'+esc(itemLabel)+'</div>'+
      '<div class="smartCompactInfo">'+esc(best.roomLabel)+'</div>'+
      '<div class="smartCompactNote">'+esc(remark)+'</div>'+
+     (upgrades.length?'<div class="smartCompactInfo">另可选免费升舱至'+esc(upgrades[0].quote.upgradeTarget)+'，该方案总价'+routeMoney(r,upgrades[0].total)+'（与当前折扣二选一）</div>':'')+
      '<details class="smartCompactDetails"><summary>查看内部计算及待确认事项</summary>'+
        '<p><strong>优惠：</strong>'+esc(q.policyName||'按已录入政策计算')+'</p>'+
        (q.steps||[]).map(x=>'<p>'+esc(x)+'</p>').join('')+
@@ -3253,6 +3255,7 @@
    const cabinSummary=q.anniversaryUpgradeOnly?`${P.nameCabin(c)} → ${q.upgradeTarget}`:q.upgradeTarget?`${P.nameCabin(c)} · 免费升舱至${q.upgradeTarget}`:P.nameCabin(c);
    const staySummary=r.id==='c0708'&&q.stay==='triple'?'三/四人同舱':P.stayName(q.stay);
    $('routeOverview').innerHTML=`<b>${esc(formatRouteTitle(r))}</b><div class="underRoute">${esc(cabinSummary)} · ${Number.isFinite(q.people)?q.people:'—'}人（成人${Number.isFinite(q.adults)?q.adults:'—'}，儿童${Number.isFinite(q.children)?q.children:'—'}） · ${customer==='old'?'老客户':'新客户'} · ${esc(staySummary)}${q.shipOnly?' · 单船票':''}</div>`;
+   if(!routeHasCabinOptions(r))$('routeOverview').innerHTML=`<b>${esc(formatRouteTitle(r))}</b><div class="underRoute">${Number.isFinite(q.people)?q.people:'—'}人（成人${q.adults}，儿童${q.children}） · ${customer==='old'?'老客户':'新客户'} · 按本航次团费核算</div>`;
    const ready=q.status==='ready'&&Boolean($('cabin').value)&&Number($('smartSingleAdults').value)===0&&!c.soldOut&&!c.waitlist&&!['EUR','USD'].includes(r.currency)&&(!P.isFixedTriple(c)||num()%3===0)&&(num()%2===0||q.stay==='single'||q.stay==='triple'||P.isFixedTriple(c))&&(!r.policyOnly||routeNeedsCabinChoice(r)||num()%2===0);
    const smartReady=renderSmartRecommendation(r,party);
    updateSmartVisibility(r,smartReady);
@@ -3400,6 +3403,13 @@
    if(chosen&&q.cabin.id!==chosen)return {ok:false,reason:'智能报价与指定房型不一致，请重新选择。'};
    const formatTotal=x=>Number(x).toLocaleString('zh-CN',{useGrouping:false,maximumFractionDigits:2});
    const voiceCabinLine=canChoose?'\n房型：'+P.nameCabin(q.cabin)+(q.upgradeTarget?' → '+q.upgradeTarget:'')+'\n入住：'+(best?.roomLabel||n/2+'间双人房'):'';
+   const voiceExtra=[];
+   if(q.groupRate>0)voiceExtra.push('多人额外优惠'+Number((q.groupRate*100).toFixed(2))+'%');
+   if(q.loyalDeduction>0)voiceExtra.push('老客户减免'+formatTotal(q.loyalDeduction)+'元');
+   if(q.bonusDeduction>0)voiceExtra.push('其他优惠减免'+formatTotal(q.bonusDeduction)+'元');
+   const extraSavings=voiceExtra.length?'\n叠加权益：'+voiceExtra.join('、'):'';
+   const otherUpgrade=best?.upgradeAlternatives?.[0];
+   const upgradeChoice=otherUpgrade?'\n可选升舱：'+otherUpgrade.source+'免费升至'+otherUpgrade.target+'；采用此方案总价'+formatTotal(otherUpgrade.total)+'元（与当前折扣二选一，须核实余舱）。':'';
    const offer=Number(q.offer),people=q.people;
    return {ok:true,routeId:r.id,title:formatRouteTitle(r),cabin:P.nameCabin(q.cabin),room:best?.roomLabel||(n/2+'间双人房'),
      upgrade:q.upgradeTarget||null,adults,children,people,offer,perPerson:(offer/people).toFixed(2),
@@ -3412,6 +3422,7 @@
        voiceCabinLine+
        '\n最终价格：'+formatTotal(offer)+'元\n每人价格：'+(offer/people).toFixed(2)+'元'+
        '\n适用优惠：'+(q.policyName||'按已录入政策计算')+
+       extraSavings+upgradeChoice+
        (q.policy?.code==='expired'?'\n提示：优惠政策已过期，仍按原政策试算。':'')+
        '\n说明：实际舱位和优惠资格以产品部确认为准。'};
  }
