@@ -3161,9 +3161,8 @@
    document.querySelectorAll('[data-ship-item]').forEach(input=>input.checked=true);
    $('ponantSelfFlight').checked=false;$('ponantVisaType').value='included';$('ponantSelfInsurance').checked=false;
    ['atlasSelfSchengen','atlasSelfGreenland','atlasSelfFlight','atlasSelfInsurance'].forEach(id=>$(id).checked=false);
-   $('cabin').innerHTML=r.cabins.slice().sort((a,b)=>(a.deck||99)-(b.deck||99)).map(c=>`<option value="${esc(c.id)}">${esc(P.nameCabin(c))}${r.currency?' · '+esc(cabinPriceLabel(r,c)):c.soldOut?'（已售罄）':''}</option>`).join('');
-   const first=r.cabins.find(c=>c.id===previous)||r.cabins.find(c=>c.id==='4o')||r.cabins.find(c=>c.id==='4pb')||r.cabins.find(c=>c.id==='5v')||r.cabins.find(c=>c.price)||r.cabins[0];
-   $('cabin').value=first.id;$('polarBowUpgrade').checked=false;updateStay();updateAtlasPromoUI();render();
+   $('cabin').innerHTML='<option value="">未选择房型 · 自动推荐最优报价</option>'+r.cabins.slice().sort((a,b)=>(a.deck||99)-(b.deck||99)).map(c=>`<option value="${esc(c.id)}">${esc(P.nameCabin(c))} · ${esc(cabinPriceLabel(r,c))}</option>`).join('');
+   $('cabin').value='';$('polarBowUpgrade').checked=false;updateStay();updateAtlasPromoUI();render();
  }
  function onCabin(){
    $('polarBowUpgrade').checked=false;
@@ -3206,18 +3205,19 @@
    const cabinSummary=q.anniversaryUpgradeOnly?`${P.nameCabin(c)} → ${q.upgradeTarget}`:q.upgradeTarget?`${P.nameCabin(c)} · 免费升舱至${q.upgradeTarget}`:P.nameCabin(c);
    const staySummary=r.id==='c0708'&&q.stay==='triple'?'三/四人同舱':P.stayName(q.stay);
    $('routeOverview').innerHTML=`<b>${esc(formatRouteTitle(r))}</b><div class="underRoute">${esc(cabinSummary)} · ${Number.isFinite(q.people)?q.people:'—'}人（成人${Number.isFinite(q.adults)?q.adults:'—'}，儿童${Number.isFinite(q.children)?q.children:'—'}） · ${customer==='old'?'老客户':'新客户'} · ${esc(staySummary)}${q.shipOnly?' · 单船票':''}</div>`;
-   const ready=q.status==='ready';
+   const ready=q.status==='ready'&&Boolean($('cabin').value);
    const smartReady=renderSmartRecommendation(r,party);
    const smartBest=smartReady?lastSmartQuote:null;
    const displayQ=smartBest?smartBest.quote:q;
    const displayCabin=displayQ.cabin||c;
    const displayReady=ready||smartReady;
+   const noAutoResult=!$('cabin').value&&!smartReady;
    $('copyCustomer').disabled=!displayReady;
-   $('copyCustomer').textContent=smartReady?'复制最优成交方案':'复制客户版报价';
+   $('copyCustomer').textContent='复制简洁客户报价';
    $('palaceStatus').className='palaceStatus '+(displayReady?'success':'fail');
    $('palaceIcon').textContent=displayReady?'✦':'✧';
-   $('palaceStatusTitle').textContent=smartReady?'智能最优方案已算出':ready?(q.publishedFare?'官网金额已计算':'报价成功'):r.soldOut?'本航次已售罄':r.policyOnly&&r.webCabinsVerified?'官网金额已录入':'报价待核实';
-   $('palaceStatusText').textContent=smartReady?'已比较'+smartBest.comparedCount+'种可核算组合，优先展示总价更合适的分房与舱型方案。':ready?'你离回宫又近了一步~':q.statusReason;
+   $('palaceStatusTitle').textContent=smartReady?'智能报价已完成':ready?(q.publishedFare?'官网金额已计算':'报价成功'):r.soldOut?'本航次已售罄':r.policyOnly&&r.webCabinsVerified?'官网金额已录入':'报价待核实';
+   $('palaceStatusText').textContent=smartReady?'已比较'+smartBest.comparedCount+'种符合条件的方案。':ready?'你离回宫又近了一步~':q.statusReason;
    if(smartReady){
      $('routeOverview').innerHTML=`<b>${esc(formatRouteTitle(r))}</b><div class="underRoute">智能推荐：${esc(P.nameCabin(displayCabin))} · ${Number.isFinite(displayQ.people)?displayQ.people:'—'}人（成人${displayQ.adults}，儿童${displayQ.children}） · ${esc(smartBest.roomLabel)}</div>`;
      $('deadline').textContent=displayQ.policy?.code==='expired'?'政策已过期 · 按已录入政策测算':P.dateCN(r.deadline)+'（含当日）';
@@ -3226,16 +3226,16 @@
      $('policyFlag').classList.toggle('invalid',!displayQ.policy?.valid);
    }
    $('normalLabel').textContent=smartReady?'推荐方案基础原价':q.anniversaryUpgradeOnly?'4层房型原价参考':r.policyOnly?'官网/团费参考原价':'原价';
-   $('normalTotal').textContent=displayQ.standard!==null&&displayQ.standard!==undefined?P.money(displayQ.standard):r.webCabinsVerified&&Number.isFinite(displayCabin.price)?P.money(displayCabin.price)+'/人':Number.isFinite(displayQ.price)?'人数待确认':'原价待补充';
-   $('normalAvg').textContent=Number.isFinite(displayQ.price)?`${P.money(displayQ.price)}/人`:'未提供明确原价';
+   $('normalTotal').textContent=noAutoResult?'待核算':displayQ.standard!==null&&displayQ.standard!==undefined?P.money(displayQ.standard):r.webCabinsVerified&&Number.isFinite(displayCabin.price)?P.money(displayCabin.price)+'/人':Number.isFinite(displayQ.price)?'人数待确认':'原价待补充';
+   $('normalAvg').textContent=noAutoResult?'请指定房型或调整人数':Number.isFinite(displayQ.price)?`${P.money(displayQ.price)}/人`:'未提供明确原价';
    $('normalContext').textContent=smartReady?'按系统推荐舱型计算的未折扣基础团费；单房差另列':q.anniversaryUpgradeOnly?'仅供参考；不代表客户已报名合同金额，原合同价不重算':r.policyOnly?'仅展示每人参考价；未确认优惠、单间差及库存':'行程册舱型基础原价 · 未打折'+(q.stay==='single'?'，未含单房差':'');
    $('offerLabel').textContent=smartReady?'智能最优成交价':q.anniversaryUpgradeOnly?'升舱补差价':r.soldOut?'已售罄·历史价格':q.publishedFare?(ready?'官网金额参考':'已知原价小计'):'优惠价格';
-   $('discountTotal').textContent=smartReady?P.money(smartBest.total):ready?P.money(q.offer):r.soldOut&&Number.isFinite(q.standard)?P.money(q.standard):r.webCabinsVerified&&Number.isFinite(q.standard)?P.money(q.standard):r.webCabinsVerified?'原价待确认':'金额待确认';
-   $('discountAvg').textContent=smartReady?`平均约 ${P.money(smartBest.total/displayQ.people)}/人`:ready?`平均约 ${P.money(q.offer/q.people)}/人`:Number.isFinite(q.standard)&&q.people?`原价约 ${P.money(q.standard/q.people)}/人（未完成最终核算）`:'补齐价格依据后自动出价';
+   $('discountTotal').textContent=noAutoResult?'暂无可核算报价':smartReady?P.money(smartBest.total):ready?P.money(q.offer):r.soldOut&&Number.isFinite(q.standard)?P.money(q.standard):r.webCabinsVerified&&Number.isFinite(q.standard)?P.money(q.standard):r.webCabinsVerified?'原价待确认':'金额待确认';
+   $('discountAvg').textContent=noAutoResult?'调整分房人数后重试':smartReady?`平均约 ${P.money(smartBest.total/displayQ.people)}/人`:ready?`平均约 ${P.money(q.offer/q.people)}/人`:Number.isFinite(q.standard)&&q.people?`原价约 ${P.money(q.standard/q.people)}/人（未完成最终核算）`:'补齐价格依据后自动出价';
    $('offerBadge').textContent=smartReady?(displayQ.policy?.code==='expired'?'政策已过期 · 历史试算':'已比较'+smartBest.comparedCount+'种组合'):!ready?(r.soldOut?'已售罄':r.policyOnly?(r.webCabinsVerified?'已知金额 · 待核附加费':'房型/价格待补充'):'待核价'):q.publishedFare?(q.policy.code==='expired'?'政策已过期':q.publishedFareActive?'按政策报价':'原价参考'):q.policy.code==='jan18porthole'?'0118舷窗专享 · 原价立减':q.policy.code==='anniversary'?'周年庆活动 · 名额有限':q.policy.code==='expired'?'政策过期 · 待确认':q.policy.code==='upcoming'?'未生效 · 试算':q.policy.code==='unknown'?'日期待确认':q.policy.code==='latest_unconfirmed'?'专项优惠 · 日期待确认':q.route.hasPolicy?'优惠试算':'常规价格';
    $('offerBadge').classList.toggle('wait',!displayReady||!displayQ.policy?.valid);
    $('offerCaveat').textContent=smartReady?(displayQ.policy?.code==='expired'?'按已录入优惠政策测算；政策已过期，实际报名须重新确认。':(displayQ.policyName||'按已录入政策计算')+'；库存、分房及优惠资格以产品部确认为准。'):ready?(q.publishedFare?(q.policy.code==='expired'?'按原政策计算 · 政策已过期':'按文件政策计算，余位以实际为准'):q.anniversaryUpgradeOnly?'仅升舱补差价，不含原合同团款':q.policy.code==='jan18porthole'?'原价减2000/人 · 不叠加折扣':q.policy.code==='anniversary'?'周年庆活动名额有限，额满即止':q.policy.code==='expired'?'按原优惠试算，报名价须确认':q.policyName):r.soldOut?'已售罄 · 仅展示历史价格':r.policyOnly&&Number.isFinite(q.standard)?'以上仅是已知原价小计，未含需确认的附加费':'请查看下方说明';
-   $('miniPrice').textContent=smartReady?routeMoney(r,smartBest.total):ready?P.money(q.offer):r.policyOnly&&Number.isFinite(q.standard)?P.money(q.standard):'金额待确认';
+   $('miniPrice').textContent=noAutoResult?'待核算':smartReady?routeMoney(r,smartBest.total):ready?P.money(q.offer):r.policyOnly&&Number.isFinite(q.standard)?P.money(q.standard):'金额待确认';
    $('groupBanner').classList.add('hidden');
    const explanationSteps=smartReady?displayQ.steps:q.steps;
    $('explanation').innerHTML=(explanationSteps.length?explanationSteps:[displayQ.statusReason||'请选择报价条件。']).map((line,i)=>`<div class="${displayReady&&i===explanationSteps.length-1?'sum':''}">${esc(line)}</div>`).join('');
@@ -3257,7 +3257,7 @@
    renderSign();
  }
  function refreshDate(){if(P.bjToday()!==today)render()}
- function copyText(){refreshDate();return P.customerText(last)}
+ function copyText(){refreshDate();return lastSmartQuote?smartCustomerText(lastSmartQuote):smartCustomerText({quote:last})}
  async function copy(s){
    if(navigator.clipboard&&window.isSecureContext){try{await navigator.clipboard.writeText(s);return true}catch{/* 受限浏览器继续尝试本地复制。 */}}
    const ta=document.createElement('textarea'),focus=document.activeElement;
@@ -3289,7 +3289,9 @@
    renderDestinationFilter();fillFilteredRoutes(false);
    $('destinationTabs').addEventListener('click',e=>{const b=e.target.closest('button[data-destination]');if(!b||!DESTINATIONS.includes(b.dataset.destination))return;setDestinationFilters(b.dataset.destination,'全部');});
    $('destinationYears').addEventListener('click',e=>{const b=e.target.closest('button[data-year]');if(!b)return;setDestinationFilters(null,b.dataset.year);});
-   $('route').addEventListener('change',onRoute);$('cabin').addEventListener('change',onCabin);$('adultCount').addEventListener('input',render);$('childCount').addEventListener('input',render);$('smartSingleAdults').addEventListener('input',render);
+   $('route').addEventListener('change',onRoute);$('cabin').addEventListener('change',onCabin);
+   $('smartAutoMode').addEventListener('click',()=>{$('cabin').value='';onCabin();});
+   $('smartFixedMode').addEventListener('click',()=>{if(!$('cabin').value){const picked=route().cabins.find(x=>Number.isFinite(x.price)&&!x.soldOut&&!x.waitlist)||route().cabins[0];$('cabin').value=picked.id;}onCabin();});$('adultCount').addEventListener('input',render);$('childCount').addEventListener('input',render);$('smartSingleAdults').addEventListener('input',render);
    $('voyagePolicyDetails').addEventListener('toggle',()=>{$('voyagePolicyDetails').querySelector('.voyagePolicyArrow').textContent=$('voyagePolicyDetails').open?'收起 ↑':'展开全部 '+route().notes.length+' 条 ↓';});
    ['ponantSelfFlight','ponantSelfInsurance'].forEach(id=>$(id).addEventListener('change',render));
    $('ponantVisaType').addEventListener('change',render);
@@ -3303,7 +3305,7 @@
    document.querySelectorAll('button[data-people]').forEach(b=>b.addEventListener('click',()=>{$('adultCount').value=b.dataset.people;$('childCount').value='0';render()}));
    $('customerType').addEventListener('click',e=>{const b=e.target.closest('button[data-type]');if(!b)return;customer=b.dataset.type;setChoice('customerType','type',customer);render()});
    $('stayType').addEventListener('click',e=>{const b=e.target.closest('button[data-stay]');if(!b)return;stay=b.dataset.stay;setChoice('stayType','stay',stay);render()});
-   $('copyCustomer').addEventListener('click',async()=>{const quotation=lastSmartQuote?smartCustomerText(lastSmartQuote):copyText();if(!quotation){toast(last.statusReason||'金额待确认');return}if(await copy(quotation))toast(lastSmartQuote?'智能最优成交方案已复制':'客户版报价已复制');else manualCopy(quotation)});
+   $('copyCustomer').addEventListener('click',async()=>{const quotation=lastSmartQuote?smartCustomerText(lastSmartQuote):copyText();if(!quotation){toast(last.statusReason||'金额待确认');return}if(await copy(quotation))toast('简洁客户报价已复制');else manualCopy(quotation)});
    $('closeCopy').addEventListener('click',closeCopy);
    $('jumpPrice').addEventListener('click',()=>$('resultPanel').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'}));
    $('drawSign').addEventListener('click',()=>{refreshDate();if(drawnDay===today)return;drawnDay=today;persist(SIGN_STORE,{day:today,drawn:true});renderSign();$('signResult').classList.remove('signReveal');void $('signResult').offsetWidth;$('signResult').classList.add('signReveal')});
