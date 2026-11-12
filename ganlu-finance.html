@@ -3220,7 +3220,7 @@
    const cabinSummary=q.anniversaryUpgradeOnly?`${P.nameCabin(c)} → ${q.upgradeTarget}`:q.upgradeTarget?`${P.nameCabin(c)} · 免费升舱至${q.upgradeTarget}`:P.nameCabin(c);
    const staySummary=r.id==='c0708'&&q.stay==='triple'?'三/四人同舱':P.stayName(q.stay);
    $('routeOverview').innerHTML=`<b>${esc(formatRouteTitle(r))}</b><div class="underRoute">${esc(cabinSummary)} · ${Number.isFinite(q.people)?q.people:'—'}人（成人${Number.isFinite(q.adults)?q.adults:'—'}，儿童${Number.isFinite(q.children)?q.children:'—'}） · ${customer==='old'?'老客户':'新客户'} · ${esc(staySummary)}${q.shipOnly?' · 单船票':''}</div>`;
-   const ready=q.status==='ready'&&Boolean($('cabin').value)&&Number($('smartSingleAdults').value)===0&&!c.soldOut&&!c.waitlist&&!['EUR','USD'].includes(r.currency)&&(!P.isFixedTriple(c)||num()%3===0);
+   const ready=q.status==='ready'&&Boolean($('cabin').value)&&Number($('smartSingleAdults').value)===0&&!c.soldOut&&!c.waitlist&&!['EUR','USD'].includes(r.currency)&&(!P.isFixedTriple(c)||num()%3===0)&&(!r.policyOnly||routeNeedsCabinChoice(r)||num()%2===0);
    const smartReady=renderSmartRecommendation(r,party);
    updateSmartVisibility(r,smartReady);
    const smartBest=smartReady?lastSmartQuote:null;
@@ -3330,7 +3330,53 @@
    window.addEventListener('storage',e=>{if(e.key===SIGN_STORE||e.key===null){const s=load(SIGN_STORE,null);drawnDay=s&&s.drawn===true&&typeof s.day==='string'?s.day:'';refreshDate();renderSign()}});
    setInterval(refreshDate,15000);onRoute();
  }
- window.ChuankeApp={getResult:()=>last,getData:()=>data,copyText,rerender:render};
+ function voiceQuote(request){
+   const r=data.find(x=>x.id===request?.routeId);
+   if(!r)return {ok:false,reason:'没有匹配到航次，请提供出发日期，例如1204或0118。'};
+   if(r.soldOut)return {ok:false,reason:'该航次已售罄，暂不提供可成交报价。'};
+   const adults=Number(request.adults),children=Number(request.children||0),solo=Number(request.soloAdults||0);
+   const n=adults+children;
+   if(!Number.isInteger(adults)||adults<1||!Number.isInteger(children)||children<0||n>100||!Number.isInteger(solo)||solo<0||solo>adults)return {ok:false,reason:'请确认成人、儿童及独住人数（总人数为1—100人）。'};
+   if(['USD','EUR'].includes(r.currency))return {ok:false,reason:'该航次为外币报价，语音助手暂不生成正式人民币报价，请使用页面的外币参考模块核价。'};
+   const canChoose=routeNeedsCabinChoice(r);
+   const chosen=canChoose?(request.cabinId||''):(smartAvailableCabins(r)[0]?.id||r.cabins[0]?.id||'');
+   if(chosen&&!r.cabins.some(c=>c.id===chosen))return {ok:false,reason:'指定的房型不属于该航次，请重新选择房型。'};
+   if(!canChoose&&(solo>0||n%2!==0))return {ok:false,reason:'该航次只有统一团费，没有可核实的单人入住差价；当前入住人数需要产品部先确认分房及单房差。'};
+   if(activeDestination!=='全部'||activeYear!=='全部'){
+     activeDestination='全部';activeYear='全部';renderDestinationFilter();fillFilteredRoutes(false);
+   }
+   $('route').value=r.id;
+   onRoute();
+   $('adultCount').value=String(adults);$('childCount').value=String(children);
+   $('smartSingleAdults').value=String(solo);
+   if(request.customer==='old'||request.customer==='new'){customer=request.customer;setChoice('customerType','type',customer);}
+   $('cabin').value=chosen;
+   onCabin();
+   if(solo>0&&solo===n){stay='single';setChoice('stayType','stay',stay);}
+   render();
+   const best=lastSmartQuote;
+   const q=best?.quote||last;
+   const applicable=best||(!canChoose&&n%2===0&&solo===0&&q?.status==='ready'&&!q.cabin?.soldOut&&!q.cabin?.waitlist);
+   if(!applicable||!q||q.status!=='ready'||!Number.isFinite(q.offer))return {ok:false,reason:q?.statusReason||'当前房型与人数暂无可以确定的优惠组合，请调整房型或联系产品部核价。'};
+   if(chosen&&q.cabin.id!==chosen)return {ok:false,reason:'智能报价与指定房型不一致，请重新选择。'};
+   const formatTotal=x=>Number(x).toLocaleString('zh-CN',{useGrouping:false,maximumFractionDigits:2});
+   const offer=Number(q.offer),people=q.people;
+   return {ok:true,routeId:r.id,title:formatRouteTitle(r),cabin:P.nameCabin(q.cabin),room:best?.roomLabel||(n/2+'间双人房'),
+     upgrade:q.upgradeTarget||null,adults,children,people,offer,perPerson:(offer/people).toFixed(2),
+     policy:q.policyName||'按当前航次已录入政策计算',
+     expired:q.policy?.code==='expired',warnings:(q.warnings||[]).filter(x=>/确认|名额|售罄|候补|过期|待|限量/.test(x)).slice(0,2),
+     mode:canChoose?(chosen?'fixed':'auto'):'standard',
+     shortText:smartCustomerText(best||{quote:q}),
+     overview:'【船客旅行 · 航次报价】\n航次：'+formatRouteTitle(r).replace(/^\d{4}\.\d{2}\.\d{2}·/,r.date+' ').replace(/·/g,' · ').replace(/-(\d+)天$/,' $1天')+
+       '\n人数：'+people+'人（成人'+adults+'人，儿童'+children+'人）'+
+       '\n房型：'+P.nameCabin(q.cabin)+(q.upgradeTarget?' → '+q.upgradeTarget:'')+
+       '\n入住：'+(best?.roomLabel||n/2+'间双人房')+
+       '\n最终价格：'+formatTotal(offer)+'元\n每人价格：'+(offer/people).toFixed(2)+'元'+
+       '\n适用优惠：'+(q.policyName||'按已录入政策计算')+
+       (q.policy?.code==='expired'?'\n提示：优惠政策已过期，仍按原政策试算。':'')+
+       '\n说明：实际舱位和优惠资格以产品部确认为准。'};
+ }
+ window.ChuankeApp={getResult:()=>last,getData:()=>data,copyText,rerender:render,voiceQuote};
  init();
 })();
 </script>
