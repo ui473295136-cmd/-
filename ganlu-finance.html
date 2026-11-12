@@ -3044,9 +3044,8 @@
          continue;
        }
        if(P.isFixedTriple(c)){
-         manual.push(P.nameCabin(c)+'：固定三人舱不按单人房差规则自动估算。');
-         continue;
-       }
+         if(solo>0){manual.push(P.nameCabin(c)+'：三人舱不可按单人独住计算。');continue;}
+       }else{
        const q=smartPlanFor(r,c,n,party,'single',false);
        if(q.status!=='ready'||q.stay!=='single'||!Number.isFinite(q.singleSupplement)){
          if(q.statusReason)manual.push(P.nameCabin(c)+'：'+q.statusReason);
@@ -3069,6 +3068,7 @@
        smartQ.assumptions.push('按'+effectiveSolo+'位成人单人入住，其余'+paired+'位旅客两人一间计算；请确认实际房间安排。');
        const roomLabel=(paired?Math.floor(paired/2)+'间双人房（'+paired+'人）':'')+(paired&&effectiveSolo?'＋':'')+(effectiveSolo?effectiveSolo+'间单人房（'+effectiveSolo+'位成人）':'');
        candidates.push({quote:smartQ,total,roomLabel,singlePer:per,kind:'mixed',soloAdults:effectiveSolo});
+       }
      }else{
        if(n%2===0){
          const bowEligible=['b0118','b0130'].includes(r.id)&&c.id==='3p';
