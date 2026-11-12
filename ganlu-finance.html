@@ -2862,12 +2862,13 @@
  const route=()=>data.find(r=>r.id===$('route').value)||data[0];
  const cabin=()=>route().cabins.find(c=>c.id===$('cabin').value)||route().cabins[0];
  const smartAvailableCabins=r=>(r?.cabins||[]).filter(c=>Number.isFinite(c.price)&&c.price>0&&!c.soldOut&&!c.waitlist&&c.note!=='soldout'&&c.note!=='waitlist');
- const routeNeedsCabinChoice=r=>!['USD','EUR'].includes(r.currency)&&smartAvailableCabins(r).length>1;
+ const routeHasCabinOptions=r=>smartAvailableCabins(r).length>1;
+ const routeNeedsCabinChoice=r=>!['USD','EUR'].includes(r.currency)&&routeHasCabinOptions(r);
  function updateSmartVisibility(r,ready){
-   const choice=routeNeedsCabinChoice(r);
-   $('cabinField').classList.toggle('hide',!choice);
-   $('smartSoloWrap').classList.toggle('hide',!choice);
-   $('smartDealPanel').classList.toggle('hide',!choice||!ready);
+   const hasOptions=routeHasCabinOptions(r),smartChoice=routeNeedsCabinChoice(r);
+   $('cabinField').classList.toggle('hide',!hasOptions);
+   $('smartSoloWrap').classList.toggle('hide',!smartChoice);
+   $('smartDealPanel').classList.toggle('hide',!smartChoice||!ready);
  }
 
  const routeMoney=(r,amount)=>amount===null||!Number.isFinite(Number(amount))?'待确认':(r.currency==='EUR'?'€':r.currency==='USD'?'US$':'¥')+Number(amount).toLocaleString('zh-CN',{maximumFractionDigits:2});
