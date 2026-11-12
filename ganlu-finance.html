@@ -3253,7 +3253,7 @@
    const cabinSummary=q.anniversaryUpgradeOnly?`${P.nameCabin(c)} → ${q.upgradeTarget}`:q.upgradeTarget?`${P.nameCabin(c)} · 免费升舱至${q.upgradeTarget}`:P.nameCabin(c);
    const staySummary=r.id==='c0708'&&q.stay==='triple'?'三/四人同舱':P.stayName(q.stay);
    $('routeOverview').innerHTML=`<b>${esc(formatRouteTitle(r))}</b><div class="underRoute">${esc(cabinSummary)} · ${Number.isFinite(q.people)?q.people:'—'}人（成人${Number.isFinite(q.adults)?q.adults:'—'}，儿童${Number.isFinite(q.children)?q.children:'—'}） · ${customer==='old'?'老客户':'新客户'} · ${esc(staySummary)}${q.shipOnly?' · 单船票':''}</div>`;
-   const ready=q.status==='ready'&&Boolean($('cabin').value)&&Number($('smartSingleAdults').value)===0&&!c.soldOut&&!c.waitlist&&!['EUR','USD'].includes(r.currency)&&(!P.isFixedTriple(c)||num()%3===0)&&(!r.policyOnly||routeNeedsCabinChoice(r)||num()%2===0);
+   const ready=q.status==='ready'&&Boolean($('cabin').value)&&Number($('smartSingleAdults').value)===0&&!c.soldOut&&!c.waitlist&&!['EUR','USD'].includes(r.currency)&&(!P.isFixedTriple(c)||num()%3===0)&&(num()%2===0||q.stay==='single'||q.stay==='triple'||P.isFixedTriple(c))&&(!r.policyOnly||routeNeedsCabinChoice(r)||num()%2===0);
    const smartReady=renderSmartRecommendation(r,party);
    updateSmartVisibility(r,smartReady);
    const smartBest=smartReady?lastSmartQuote:null;
@@ -3390,9 +3390,16 @@
    const best=lastSmartQuote;
    const q=best?.quote||last;
    const applicable=best||(!canChoose&&n%2===0&&solo===0&&q?.status==='ready'&&!q.cabin?.soldOut&&!q.cabin?.waitlist);
-   if(!applicable||!q||q.status!=='ready'||!Number.isFinite(q.offer))return {ok:false,reason:q?.statusReason||'当前房型与人数暂无可以确定的优惠组合，请调整房型或联系产品部核价。'};
+   if(!applicable||!q||q.status!=='ready'||!Number.isFinite(q.offer)){
+     const specialSingle=adults+children>1&&(adults+children)%2===1&&['a1122','a1204'].includes(r.id)&&chosen==='5o';
+     const reason=specialSingle?'当前5层海景的25%单房差优惠仅明确邮轮段，陆地段差价还未确认，因此暂时不能计算包含单人房的最终总价。请产品部补充后再报价。':
+       q?.status==='ready'?'当前房型无法确定完整分房费用或优惠叠加条件，暂不提供最终金额。建议改选可核算房型，或先让产品部核实。':
+       q?.statusReason||'当前房型与人数暂无可确定的报价，请调整房型或联系产品部核价。';
+     return {ok:false,reason};
+   }
    if(chosen&&q.cabin.id!==chosen)return {ok:false,reason:'智能报价与指定房型不一致，请重新选择。'};
    const formatTotal=x=>Number(x).toLocaleString('zh-CN',{useGrouping:false,maximumFractionDigits:2});
+   const voiceCabinLine=canChoose?'\n房型：'+P.nameCabin(q.cabin)+(q.upgradeTarget?' → '+q.upgradeTarget:'')+'\n入住：'+(best?.roomLabel||n/2+'间双人房'):'';
    const offer=Number(q.offer),people=q.people;
    return {ok:true,routeId:r.id,title:formatRouteTitle(r),cabin:P.nameCabin(q.cabin),room:best?.roomLabel||(n/2+'间双人房'),
      upgrade:q.upgradeTarget||null,adults,children,people,offer,perPerson:(offer/people).toFixed(2),
@@ -3402,8 +3409,7 @@
      shortText:smartCustomerText(best||{quote:q}),
      overview:'【船客旅行 · 航次报价】\n航次：'+formatRouteTitle(r).replace(/^\d{4}\.\d{2}\.\d{2}·/,r.date+' ').replace(/·/g,' · ').replace(/-(\d+)天$/,' $1天')+
        '\n人数：'+people+'人（成人'+adults+'人，儿童'+children+'人）'+
-       '\n房型：'+P.nameCabin(q.cabin)+(q.upgradeTarget?' → '+q.upgradeTarget:'')+
-       '\n入住：'+(best?.roomLabel||n/2+'间双人房')+
+       voiceCabinLine+
        '\n最终价格：'+formatTotal(offer)+'元\n每人价格：'+(offer/people).toFixed(2)+'元'+
        '\n适用优惠：'+(q.policyName||'按已录入政策计算')+
        (q.policy?.code==='expired'?'\n提示：优惠政策已过期，仍按原政策试算。':'')+
