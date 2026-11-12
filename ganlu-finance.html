@@ -220,8 +220,8 @@
 <div class="field hide" id="gaokaoCountWrap"><label for="gaokaoCount">应届高考生人数</label><input id="gaokaoCount" type="number" inputmode="numeric" min="1" max="100" value="1" step="1"><p class="smallinfo">其余同行人按正常早鸟政策测算；高考生需提供证明。</p></div>
 <div class="field" id="partyCountsField"><div class="fLabel">③ 出行人数</div><div class="partyCounterGrid"><div class="partyCounterCard"><label for="adultCount">成人</label><div class="inlineCount"><button class="step" type="button" id="minus" aria-label="减少1位成人">−</button><input id="adultCount" type="number" inputmode="numeric" value="2" min="1" max="100" step="1"><button class="step" type="button" id="plus" aria-label="增加1位成人">＋</button></div></div><div class="partyCounterCard"><label for="childCount">儿童</label><div class="inlineCount"><button class="step" type="button" id="childMinus" aria-label="减少1位儿童">−</button><input id="childCount" type="number" inputmode="numeric" value="0" min="0" max="100" step="1"><button class="step" type="button" id="childPlus" aria-label="增加1位儿童">＋</button></div></div></div><input id="people" type="hidden" value="2"><p class="smallinfo" id="partyTotal">合计2人（成人2人，儿童0人）</p><div class="quick"><span>快捷成人数</span><button type="button" data-people="1">1成人</button><button type="button" data-people="2">2成人</button><button type="button" data-people="3">3成人</button><button type="button" data-people="4">4成人</button><button type="button" data-people="6">6成人</button><button type="button" data-people="8">8成人</button></div><p class="smallinfo" id="partyPolicyHint">儿童计价按所选航次的明确政策处理；政策未明确时不会猜算。</p>
 <div class="smartDealInput">
- <div class="smartDealInputRow"><label for="smartSingleAdults">其中：单人独住成人数</label><input id="smartSingleAdults" type="number" min="0" max="100" step="1" value="0" inputmode="numeric"></div>
- <p class="smartDealHelp">其余客人按两人一间自动分配。例：3位成人（一对夫妻＋一位朋友），填1，即按1间双人房＋1间单人房比较。儿童默认与成人同住；人数无法配平时，系统会提示，不会猜分房。</p>
+ <div class="smartDealInputRow"><label for="smartSingleAdults">单人独住成人数（智能分房）</label><input id="smartSingleAdults" type="number" min="0" max="100" step="1" value="0" inputmode="numeric"></div>
+ <p class="smartDealHelp">此项决定智能方案的分房方式。例：3位成人（一对夫妻＋一位朋友），填1，即按1间双人房＋1间单人房比较；填0则优先比较三人同舱。儿童默认与成人合住，但儿童同床、加床及第三人价格仍按具体航次政策核实；人数无法配平时，系统不会猜分房。</p>
 </div>
 </div>
 <div class="field"><div class="fLabel">④ 客户类型</div><div class="choices" id="customerType"><button type="button" data-type="new" class="selected" aria-pressed="true">新客户</button><button type="button" data-type="old" aria-pressed="false">老客户</button></div></div>
@@ -2986,7 +2986,7 @@
      '优惠方案：'+(q.policyName||'按已录入政策计算')
    ];
    (q.steps||[]).forEach(x=>lines.push('计算明细：'+x));
-   (q.warnings||[]).forEach(x=>{if(/政策已过期|截止日期未注明|需确认|余舱/.test(x))lines.push('提示：'+x)});
+   (q.warnings||[]).forEach(x=>lines.push('提示：'+x));
    lines.push('最优成交参考：'+routeMoney(r,q.offer));
    lines.push('说明：按当前已录入政策和分房条件试算；实际舱位、房间安排及成交资格须由产品部确认。');
    return lines.join('\n');
@@ -3067,6 +3067,10 @@
        }
      }
      if(solo===0&&n>=3&&Number(c.capacity)>=3){
+       if(party.children>0&&!['c0708','d1110'].includes(r.id)){
+         manual.push(P.nameCabin(c)+'：含儿童三人/多人同舱的第三人价格与儿童同价规则尚未明确，暂不套用第三人折扣。');
+         continue;
+       }
        const q=smartPlanFor(r,c,n,party,'triple',false);
        if(q.status==='ready'&&Number.isFinite(q.offer)){
          if(!candidates.some(x=>x.quote.cabin.id===c.id&&x.kind==='triple')){
@@ -3098,13 +3102,14 @@
      :best.kind==='triple'?'已比较该舱型三人/多人同舱政策与双人房组合。'
      :'按该航次适用的成人、儿童、多人及专项优惠计算。';
    const top=candidates.slice(1,4);
+   const policyWarnings=(q.warnings||[]).slice(0,3);
    box.innerHTML=
      '<div class="smartDealWinner">'+
        '<div class="smartDealKicker">系统推荐 · 已录入政策内最低测算价（比较'+candidates.length+'种组合）</div>'+
        '<div class="smartDealAmount">'+routeMoney(r,best.total)+'</div>'+singleBadge+
        '<div class="smartDealCabin">'+esc(P.nameCabin(q.cabin))+(q.upgradeTarget?' → '+esc(q.upgradeTarget):'')+'</div>'+
        '<div class="smartDealMeta">分房：'+esc(best.roomLabel)+'<br>优惠：'+esc(q.policyName||'按已录入政策计算')+'<br>单房差：'+esc(singleInfo)+'<br>人数：'+n+'人（成人'+party.adults+'，儿童'+party.children+'）<br>'+(q.standard>best.total?'较该舱型基础原价节省 '+routeMoney(r,q.standard-best.total):q.standard<best.total?'含入住附加费用后较基础原价增加 '+routeMoney(r,best.total-q.standard):'与基础原价持平')+'</div>'+
-       '<div class="smartDealWhy">'+esc(why)+(best.kind==='mixed'&&best.singlePer>0?'<br>当前已录入且可核算的舱型中未发现免单房差；系统已优先选择单房差成本较低的方案。':'')+(expired?'<br><strong>政策已过期</strong>，按原优惠试算。':'')+(freeText?'<br>'+esc(freeText):'')+'<br>余舱及实际房间分配仍须产品部确认。</div>'+
+       '<div class="smartDealWhy">'+esc(why)+(best.kind==='mixed'&&best.singlePer>0?'<br>当前已录入且可核算的舱型中未发现免单房差；系统已优先选择单房差成本较低的方案。':'')+(expired?'<br><strong>政策已过期</strong>，按原优惠试算。':'')+(freeText?'<br>'+esc(freeText):'')+(policyWarnings.length?'<br><strong>政策提示：</strong>'+policyWarnings.map(x=>esc(x)).join('；'):'')+'<br>余舱及实际房间分配仍须产品部确认。</div>'+
        '<details class="smartDealBreakdown"><summary>展开最优方案计算明细</summary><div>'+q.steps.map(x=>'<p>'+esc(x)+'</p>').join('')+'</div></details>'+
      '</div>'+
      (top.length?'<div class="smartDealList">'+top.map((x,i)=>'<div class="smartDealOption"><span><strong>备选'+(i+1)+' · '+esc(P.nameCabin(x.quote.cabin))+'</strong><small>'+esc(x.roomLabel)+' · '+esc(x.quote.policyName||'按已录入政策计算')+'</small></span><b>'+routeMoney(r,x.total)+'</b></div>').join('')+'</div>':'')+
