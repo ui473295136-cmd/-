@@ -312,26 +312,90 @@
      status('输入文字或点击麦克风，说出航次和人数');
    }else if(listening&&recognition){recognition.stop();}
  }
+ function recognitionScore(text,confidence){
+   const t=String(text||'').replace(/\s+/g,'').toLowerCase();
+   let score=(Number(confidence)||0)*2;
+   const vocabulary=['南极','南美','北极','加拉帕戈斯','加帕','海神号','庞洛','舷窗','海景','阳台','套房','单房差','单人入住','免费升舱','儿童','成人','新客户','老客户','新客','老客','飞船游南极','奇遇王企鹅','天涯双城记','南乔治亚','德雷克'];
+   vocabulary.forEach(word=>{if(t.includes(word.toLowerCase()))score+=0.32;});
+   routes().forEach(r=>{
+     const compactDate=String(r.date||'').slice(5).replace('-','');
+     const chineseDate=String(Number(String(r.date||'').slice(5,7)))+'月'+String(Number(String(r.date||'').slice(8,10)))+'日';
+     if(compactDate&&t.includes(compactDate))score+=1.7;
+     if(t.includes(chineseDate))score+=1.7;
+     const name=String(r.name||'').replace(/\s+/g,'').toLowerCase();
+     if(name.length>2&&t.includes(name))score+=2;
+     (r.cabins||[]).forEach(c=>{
+       const name2=String(c.name||'').replace(/\s+/g,'').toLowerCase();
+       if(name2.length>2&&t.includes(name2))score+=1.3;
+     });
+   });
+   if(/(0?[1-9]|1[0-2])月([0-3]?\d)日?/.test(t)||/\b(0[1-9]|1[0-2])([0-3]\d)\b/.test(t))score+=0.35;
+   if(/成人|大人|儿童|小孩|人|位/.test(t))score+=0.25;
+   return score;
+ }
+ function showRecognitionOptions(options){
+   const wrap=$('voiceAlternatives');
+   if(!wrap)return;
+   wrap.innerHTML='';
+   const unique=[...new Set((options||[]).map(x=>String(x||'').trim()).filter(Boolean))].slice(0,5);
+   if(unique.length<2){wrap.hidden=true;return;}
+   wrap.hidden=false;
+   const label=document.createElement('div');label.className='voiceAltLabel';label.textContent='识别候选 · 点选可替换文字';wrap.appendChild(label);
+   unique.forEach((text,i)=>{
+     const b=document.createElement('button');b.type='button';b.className='voiceAltChoice';
+     b.textContent=(i===0?'推荐：':'候选：')+text;
+     b.addEventListener('click',()=>{
+       $('voiceText').value=text;
+       [...wrap.querySelectorAll('button')].forEach(x=>x.classList.remove('selected'));
+       b.classList.add('selected');
+       status('已替换为所选识别文字，请核对后点击发送');
+     });
+     wrap.appendChild(b);
+   });
+ }
  function startVoice(){
    const Engine=window.SpeechRecognition||window.webkitSpeechRecognition;
    if(!Engine){status('当前浏览器不支持语音识别，请使用 Chrome / Edge，或直接输入文字。');return;}
    if(listening){recognition?.stop();return;}
    try{
-     recognition=new Engine();recognition.lang='zh-CN';recognition.continuous=false;recognition.interimResults=true;recognition.maxAlternatives=1;
-     let finalTranscript='',sent=false;
-     recognition.onstart=()=>{listening=true;$('voiceMic').classList.add('recording');status('正在倾听，请说出人数、航次和房型…');};
+     recognition=new Engine();recognition.lang='zh-CN';recognition.continuous=false;recognition.interimResults=true;recognition.maxAlternatives=5;
+     let finalTranscript='';
+     $('voiceText').value='';
+     showRecognitionOptions([]);
+     recognition.onstart=()=>{listening=true;$('voiceMic').classList.add('recording');status('正在倾听，请说出航次、人数和房型…');};
      recognition.onresult=e=>{
-       let words='';
-       let finalWords='';
-       for(let i=0;i<e.results.length;i++){words+=e.results[i][0].transcript;if(e.results[i].isFinal)finalWords+=e.results[i][0].transcript;}
-       if(finalWords)finalTranscript=finalWords;
+       const segments=[];
+       let finalIndex=-1;
+       for(let i=0;i<e.results.length;i++){
+         const result=e.results[i],options=[];
+         for(let j=0;j<result.length;j++){
+           const alt=result[j];
+           options.push({text:String(alt.transcript||'').trim(),confidence:alt.confidence||0});
+         }
+         options.sort((a,b)=>recognitionScore(b.text,b.confidence)-recognitionScore(a.text,a.confidence));
+         segments.push({options,isFinal:result.isFinal});
+         if(result.isFinal)finalIndex=i;
+       }
+       const selected=segments.map(x=>x.options[0]?.text||'');
+       const words=selected.join('');
        $('voiceText').value=words;
+       if(finalIndex>=0){
+         finalTranscript=words;
+         const segment=segments[finalIndex],prefix=selected.slice(0,finalIndex).join(''),suffix=selected.slice(finalIndex+1).join('');
+         const candidates=(segment?.options||[]).map(x=>prefix+x.text+suffix).filter(Boolean);
+         showRecognitionOptions(candidates);
+       }
      };
-     recognition.onerror=e=>{status(e.error==='not-allowed'?'麦克风权限被拒绝，可在浏览器地址栏允许后重试。':'识别失败（'+e.error+'），也可以直接打字。');};
+     recognition.onerror=e=>{
+       status(e.error==='not-allowed'?'麦克风权限被拒绝，可在浏览器地址栏允许后重试。':e.error==='no-speech'?'没有听到清晰语音，请靠近麦克风再说一次。':'识别失败（'+e.error+'），也可以直接输入文字。');
+     };
      recognition.onend=()=>{
        listening=false;$('voiceMic').classList.remove('recording');
-       if(finalTranscript.trim()&&!sent){sent=true;submit(finalTranscript.trim());}
-       else if(!$('voiceStatus').textContent.includes('失败')&&!$('voiceStatus').textContent.includes('拒绝'))status('已停止语音识别');
+       const text=finalTranscript.trim()||$('voiceText').value.trim();
+       if(text){
+         $('voiceText').value=text;
+         status('识别完成。请核对航次、人数和房型，必要时选择候选文字或直接修改，再点击“发送报价”。');
+       }else if(!$('voiceStatus').textContent.includes('失败')&&!$('voiceStatus').textContent.includes('拒绝')&&!$('voiceStatus').textContent.includes('没有听到'))status('没有识别到文字，请再试一次或直接输入。');
      };
      recognition.start();
    }catch(e){status('无法启动语音识别，请检查麦克风权限或改用文字输入。');}
@@ -343,7 +407,8 @@
    btn.addEventListener('click',e=>{if(Date.now()<ignoreFloatClickUntil){e.preventDefault();return;}setOpen(panel.hidden);});
    $('voiceClose').addEventListener('click',()=>setOpen(false));
    $('voiceMic').addEventListener('click',startVoice);
-   $('voiceSend').addEventListener('click',()=>submit($('voiceText').value));
+   $('voiceSend').addEventListener('click',()=>{showRecognitionOptions([]);submit($('voiceText').value);});
+   $('voiceText').addEventListener('input',()=>{showRecognitionOptions([]);});
    $('voiceText').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();submit(e.currentTarget.value);}});
    $('voiceSpeak').addEventListener('change',e=>{speak=Boolean(e.target.checked);if(!speak)window.speechSynthesis?.cancel();});
    $('voiceCopy').addEventListener('click',()=>{if(lastReply?.shortText)copyText(lastReply.shortText);else status('请先查询一次报价');});
