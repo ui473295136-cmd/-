@@ -225,7 +225,7 @@
 <header class="mast"><div class="petals" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
 <svg class="roofArt" viewBox="0 0 400 220" aria-hidden="true"><g fill="none" stroke="#e7d2ad" stroke-linecap="round" stroke-linejoin="round"><path d="M26 128 Q122 120 193 70 Q253 115 369 115" stroke-width="5"/><path d="M42 142 Q125 132 193 88 Q251 127 354 127" stroke-width="2"/><path d="M76 143 L76 220 M326 133 L326 220 M111 137 L111 220 M291 134 L291 220" stroke-width="6"/><path d="M74 164 H329 M99 183 H302 M154 165 V220 M247 166 V220" stroke-width="2"/><path d="M20 132 Q47 140 66 130 M351 125 Q373 135 392 125" stroke-width="2"/><path d="M164 86 Q193 40 218 82 M165 85 Q195 69 218 83" stroke-width="3"/></g><g fill="#e1c69d" opacity=".18"><path d="M55 141 L195 81 L350 135 L350 220 L55 220Z"/></g></svg>
 <div class="wrap mastInner"><div><h1>甘露寺·财务部</h1>
-<div class="countdownBox"><div class="countdown"><div class="days" id="palaceDays" aria-hidden="true">—</div><div class="txt"><b id="palaceCountdown">正在计算距离休息日的天数…</b><span class="ganluAside">撑住，小主的休息日快到了。</span></div><svg class="cryFace" viewBox="0 0 64 64" role="img" aria-label="委屈巴巴的小哭脸"><circle cx="32" cy="32" r="29" fill="#ffdfa6" stroke="#e8bb7b" stroke-width="2"/><ellipse cx="18" cy="37" rx="7" ry="4" fill="#efa7a1" opacity=".65"/><ellipse cx="46" cy="37" rx="7" ry="4" fill="#efa7a1" opacity=".65"/><path d="M17 21q4 3 8 0M39 21q4 3 8 0" fill="none" stroke="#7c5a42" stroke-width="2.5" stroke-linecap="round"/><ellipse cx="22" cy="30" rx="3.4" ry="4.5" fill="#6b4c3b"/><ellipse cx="42" cy="30" rx="3.4" ry="4.5" fill="#6b4c3b"/><circle cx="23" cy="28.5" r="1.2" fill="white"/><circle cx="43" cy="28.5" r="1.2" fill="white"/><path d="M26 45q6-6 12 0" fill="none" stroke="#92614a" stroke-width="2.5" stroke-linecap="round"/><path d="M18 34c-7 10-6 15-1 15s7-5 1-15M47 34c-6 10-5 15 0 15s7-5 0-15" fill="#91cee3" stroke="#78b8d1" stroke-width=".8"/></svg></div><div class="palaceLine" id="today">北京时间</div></div>
+<div class="countdownBox"><div class="countdown"><div class="days" id="palaceDays" aria-hidden="true">—</div><div class="txt"><b id="palaceCountdown">正在计算距离休息日的天数…</b><span class="ganluAside" id="palaceCountdownAside">离周末又近了一点。</span></div><svg class="cryFace" viewBox="0 0 64 64" role="img" aria-label="委屈巴巴的小哭脸"><circle cx="32" cy="32" r="29" fill="#ffdfa6" stroke="#e8bb7b" stroke-width="2"/><ellipse cx="18" cy="37" rx="7" ry="4" fill="#efa7a1" opacity=".65"/><ellipse cx="46" cy="37" rx="7" ry="4" fill="#efa7a1" opacity=".65"/><path d="M17 21q4 3 8 0M39 21q4 3 8 0" fill="none" stroke="#7c5a42" stroke-width="2.5" stroke-linecap="round"/><ellipse cx="22" cy="30" rx="3.4" ry="4.5" fill="#6b4c3b"/><ellipse cx="42" cy="30" rx="3.4" ry="4.5" fill="#6b4c3b"/><circle cx="23" cy="28.5" r="1.2" fill="white"/><circle cx="43" cy="28.5" r="1.2" fill="white"/><path d="M26 45q6-6 12 0" fill="none" stroke="#92614a" stroke-width="2.5" stroke-linecap="round"/><path d="M18 34c-7 10-6 15-1 15s7-5 1-15M47 34c-6 10-5 15 0 15s7-5 0-15" fill="#91cee3" stroke="#78b8d1" stroke-width=".8"/></svg></div><div class="palaceLine" id="today">北京时间</div></div>
 </div><aside class="ganluVisitorStatus" aria-label="网站访客人数及政策更新时间">
  <div class="ganluVisitorPrimary"><span class="ganluVisitorDot" aria-hidden="true"></span>本站已有 <strong id="ganluVisitCount">—</strong> 位访客</div>
  <span class="ganluVisitorLatest" id="ganluVisitLatest" aria-live="polite">政策更新时间：查询中…</span>
@@ -2395,11 +2395,13 @@
  // Use the Beijing calendar date passed by bjToday(), never the visitor's local weekday.
  function weekendCountdown(s){
    const day=dayNumber(s);
-   if(!Number.isFinite(day))return {badge:'—',title:'正在计算距离休息日的天数…'};
+   if(!Number.isFinite(day))return {badge:'—',title:'正在计算距离休息日的天数…',aside:'休息日倒计时'};
    const weekday=new Date(day*86400000).getUTCDay();
-   if(weekday===0||weekday===6)return {badge:'休',title:'今天正在休息中'};
-   const remaining=Math.max(0,5-weekday);
-   return {badge:String(remaining),title:`离本周休息还有 ${remaining} 天`};
+   if(weekday===6)return {badge:'休',title:'今天是休息日，好好放松吧',aside:'周末快乐，今天不赶进度。'};
+   if(weekday===0)return {badge:'休',title:'今天也是休息日',aside:'好好休息，明天再继续。'};
+   if(weekday===5)return {badge:'明',title:'明天就可以休息啦！',aside:'今天是本周最后一个工作日。'};
+   const remaining=5-weekday;
+   return {badge:String(remaining),title:`再上 ${remaining} 天班，就可以休息啦`,aside:'不算今天，只数本周剩余工作日。'};
  }
  function policyState(r,today){
    if(!r?.hasPolicy)return {code:'none',valid:false,label:'暂无优惠政策'};
@@ -3259,6 +3261,7 @@
    const offDay=P.weekendCountdown(today);
    $('palaceDays').textContent=offDay.badge;
    $('palaceCountdown').textContent=offDay.title;
+   $('palaceCountdownAside').textContent=offDay.aside;
    $('deadline').textContent=q.policy.code==='jan18porthole'?'三层舷窗立减2000元/人 · 截止日未注明':q.policy.code==='anniversary'?'周年庆名额有限 · 额满即止（未注明截止日）':q.policy.code==='latest_unconfirmed'?'专项优惠截止日期待确认':P.dateCN(r.deadline)+'（含当日）';
    const flag=$('policyFlag');flag.textContent=q.policy.label;flag.classList.toggle('valid',q.policy.valid);flag.classList.toggle('invalid',!q.policy.valid);
    const cabinSummary=q.anniversaryUpgradeOnly?`${P.nameCabin(c)} → ${q.upgradeTarget}`:q.upgradeTarget?`${P.nameCabin(c)} · 免费升舱至${q.upgradeTarget}`:P.nameCabin(c);
