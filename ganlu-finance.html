@@ -207,6 +207,12 @@
 .voiceInputRow #voiceMic{width:41px;padding:0;font-size:19px}
 .voiceInputRow #voiceMic.recording{border-color:#c56e60;background:#fce9e6;box-shadow:0 0 0 4px rgba(197,110,96,.12);animation:voicePulse 1.2s ease-in-out infinite}
 .voiceInputRow #voiceSend{background:#826449;color:#fff;border-color:#826449;font-weight:700}
+.voiceAlternatives[hidden]{display:none!important}
+.voiceAlternatives{display:flex;flex-direction:column;gap:5px;max-height:116px;overflow:auto;margin-top:8px;padding:7px 8px;border:1px solid #eadcc8;border-radius:9px;background:#fffaf2}
+.voiceAltLabel{font-size:10px;color:#927b60;font-weight:650}
+.voiceAltChoice{max-width:100%;overflow-wrap:anywhere;text-align:left;border:1px solid #e6d7c1;border-radius:7px;padding:6px 8px;background:#fff;color:#69533e;font-size:11px;line-height:1.45;cursor:pointer}
+.voiceAltChoice.selected{border-color:#947451;background:#f0e5d4;color:#4c3928}
+.voiceInputRow #voiceSend{padding:0 11px;font-size:11px}
 .voiceActions{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11px;color:#77614e;margin-top:9px}
 .voiceActions label{display:flex;align-items:center;gap:4px}
 .voiceActions input{accent-color:#8c7459}
@@ -3575,9 +3581,10 @@
 <section id="voicePanel" class="voicePanel" role="dialog" aria-modal="false" aria-labelledby="voiceTitle" hidden>
  <div class="voiceHead"><div><strong id="voiceTitle">✦ 航次智能问价助手</strong><small>说话 / 打字 · 自动核算真实报价</small></div><button type="button" id="voiceClose" aria-label="关闭报价助手">×</button></div>
  <div id="voiceMessages" class="voiceMessages" role="log" aria-live="polite" aria-relevant="additions"><div class="voiceBubble fromBot"><div class="voiceBubbleText">你好！可以问我：\n“三位成人报名1204，四层多少钱？有什么优惠？”\n\n我会根据航次、人数和房型调用网站现有的报价政策。</div></div></div>
- <div class="voiceBottom"><div class="voiceInputRow"><input id="voiceText" type="text" autocomplete="off" enterkeyhint="send" placeholder="例如：3人报名1204四层多少钱" aria-label="输入航次报价问题"><button type="button" id="voiceMic" aria-label="开始语音输入" title="开始/停止语音识别">🎤</button><button type="button" id="voiceSend" aria-label="发送问题">发送</button></div>
+ <div class="voiceBottom"><div class="voiceInputRow"><input id="voiceText" type="text" autocomplete="off" enterkeyhint="send" placeholder="识别后可修改：3人报名1204四层多少钱" aria-label="输入或校对航次报价问题"><button type="button" id="voiceMic" aria-label="开始语音输入" title="点击开始语音识别，再核对文字">🎤</button><button type="button" id="voiceSend" aria-label="确认文字并发送报价">发送报价</button></div>
+ <div id="voiceAlternatives" class="voiceAlternatives" hidden></div>
  <div class="voiceActions"><label><input id="voiceSpeak" type="checkbox"> 语音播报结果</label><button type="button" id="voiceCopy">复制上次客户报价</button></div>
  <div id="voiceStatus" class="voiceStatus">识别功能由浏览器提供，无法使用时可直接打字</div></div>
 </section>
-<script defer src="./ganlu-voice-v1.js?v=20261112-assistive-touch-v3"></script>
+<script defer src="./ganlu-voice-v1.js?v=20261113-voice-accuracy-v1"></script>
 </body></html>
