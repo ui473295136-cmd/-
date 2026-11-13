@@ -416,7 +416,7 @@
      let finalTranscript='';
      $('voiceText').value='';
      showRecognitionOptions([]);
-     recognition.onstart=()=>{listening=true;$('voiceMic').classList.add('recording');status(hasContextHints?'正在使用航次、船名和房型词库辅助识别…':'正在倾听，请说出航次、人数和房型…');};
+     recognition.onstart=()=>{listening=true;$('voiceMic').classList.add('recording');status(hasContextHints?'已加载航次、船名和舱型词库辅助识别，请开始说话…':'当前浏览器不支持专业词库辅助识别；仍可使用多候选和人工校对，建议升级 Chrome / Edge。请开始说话…');};
      recognition.onresult=e=>{
        const segments=[];
        let finalIndex=-1;
