@@ -40,6 +40,15 @@
      if(m){const mo=cnNum(m[1]),day=cnNum(m[2]);if(mo>=1&&mo<=12&&day>=1&&day<=31)date=String(mo).padStart(2,'0')+String(day).padStart(2,'0');}
    }
    if(!date){
+     const spokenDigits={'零':'0','〇':'0','一':'1','二':'2','两':'2','三':'3','四':'4','五':'5','六':'6','七':'7','八':'8','九':'9'};
+     m=t.match(/([零〇一二两三四五六七八九]{4})/);
+     if(m){
+       const digits=[...m[1]].map(x=>spokenDigits[x]).join('');
+       const month=Number(digits.slice(0,2)),day=Number(digits.slice(2));
+       if(month>=1&&month<=12&&day>=1&&day<=31)date=digits;
+     }
+   }
+   if(!date){
      m=t.match(/(?:^|[^\d])(0[1-9]|1[0-2])([0-3]\d)(?!\d)/);
      if(m)date=m[1]+m[2];
    }
@@ -312,6 +321,34 @@
      status('输入文字或点击麦克风，说出航次和人数');
    }else if(listening&&recognition){recognition.stop();}
  }
+ function recognitionHints(){
+   const hints=new Map();
+   const add=(phrase,boost=3)=>{
+     const value=String(phrase||'').trim();
+     if(value.length>1&&value.length<45)hints.set(value,Math.max(hints.get(value)||0,boost));
+   };
+   ['南极','南美','北极','加拉帕戈斯','加帕','海神号','庞洛','舷窗','海景房','阳台房','三人海景房','套房','单房差','免单间差','单人入住','免费升舱','飞船游南极','奇遇王企鹅','天涯双城记','南乔治亚','德雷克','成人','儿童','新客户','老客户','新客','老客','两人一间','夫妻同住','一人独住'].forEach(x=>add(x,3.6));
+   routes().forEach(r=>{
+     add(r.name,4.2);
+     const date=String(r.date||'');
+     if(date.length>=10){
+       const month=Number(date.slice(5,7)),day=Number(date.slice(8,10));
+       const mm=String(month).padStart(2,'0'),dd=String(day).padStart(2,'0');
+       add(mm+dd,4.5);add(month+'月'+day+'日',4.5);add(month+'月'+day+'号',4.2);
+       add(mm+'月'+dd+'日',3.8);
+     }
+     (r.cabins||[]).forEach(c=>{add(c.name,4.2);add(c.id,2.4);});
+   });
+   return [...hints].map(([phrase,boost])=>({phrase,boost})).slice(0,180);
+ }
+ function applyRecognitionHints(engine){
+   const Phrase=window.SpeechRecognitionPhrase;
+   if(!Phrase||!('phrases' in engine))return false;
+   try{
+     engine.phrases=recognitionHints().map(x=>new Phrase(x.phrase,Math.min(6,x.boost)));
+     return true;
+   }catch(e){return false;}
+ }
  function recognitionScore(text,confidence){
    const t=String(text||'').replace(/\s+/g,'').toLowerCase();
    let score=(Number(confidence)||0)*2;
@@ -359,10 +396,11 @@
    if(listening){recognition?.stop();return;}
    try{
      recognition=new Engine();recognition.lang='zh-CN';recognition.continuous=false;recognition.interimResults=true;recognition.maxAlternatives=5;
+     const hasContextHints=applyRecognitionHints(recognition);
      let finalTranscript='';
      $('voiceText').value='';
      showRecognitionOptions([]);
-     recognition.onstart=()=>{listening=true;$('voiceMic').classList.add('recording');status('正在倾听，请说出航次、人数和房型…');};
+     recognition.onstart=()=>{listening=true;$('voiceMic').classList.add('recording');status(hasContextHints?'正在使用航次、船名和房型词库辅助识别…':'正在倾听，请说出航次、人数和房型…');};
      recognition.onresult=e=>{
        const segments=[];
        let finalIndex=-1;
