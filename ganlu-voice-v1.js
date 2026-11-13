@@ -67,7 +67,23 @@
    return {route:routes().find(r=>r.id===state.routeId)||null,specified:false};
  }
  function partyFromText(text){
-   const t=text.replace(/\s+/g,'').replace(/(?:二|两|三|四|2|3|4)人(?:海景|间|舱|房)/g,'房型');
+   let t=text.replace(/\s+/g,'').replace(/(?:二|两|三|四|2|3|4)人(?:海景|间|舱|房)/g,'房型');
+   const matchedRoute=routeFromText(text);
+   if(matchedRoute.route&&matchedRoute.specified){
+     const date=String(matchedRoute.route.date||''),mmdd=date.slice(5).replace('-','');
+     const digitMap={'0':'零','1':'一','2':'二','3':'三','4':'四','5':'五','6':'六','7':'七','8':'八','9':'九'};
+     const spoken=[...mmdd].map(x=>digitMap[x]||x).join('');
+     const cnNumber=n=>{
+       const d=['零','一','二','三','四','五','六','七','八','九'];
+       if(n<=9)return d[n];
+       if(n===10)return '十';
+       if(n<20)return '十'+d[n%10];
+       if(n%10===0)return d[Math.floor(n/10)]+'十';
+       return d[Math.floor(n/10)]+'十'+d[n%10];
+     };
+     const month=Number(date.slice(5,7)),day=Number(date.slice(8,10));
+     [mmdd,spoken,date.slice(0,4),date,month+'月'+day,cnNumber(month)+'月'+cnNumber(day)].filter(Boolean).forEach(token=>{t=t.split(token).join('');});
+   }
    let adults=null,children=null,total=null,solo=null;
    const pair=t.match(new RegExp(numPat+'\\s*(?:位|个)?\\s*(?:大|成人|大人)\\s*'+numPat+'\\s*(?:位|个)?\\s*(?:小|儿童|小孩|孩子)'));
    if(pair){adults=cnNum(pair[1]);children=cnNum(pair[2]);}
